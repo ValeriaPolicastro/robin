@@ -1,34 +1,36 @@
 ######PREPARAZIONE NETWORK########## 
-prepNet <- function(net){
-    edge<-read.table(net, quote="\"")
-    edge<-as.matrix(edge)
-    ee<-edge
-    vet1<-as.vector(t(edge))
-    un<-unique(sort(vet1))
-    if(max(un)!=length(un)){ ##se non vi sono tutti i nodi il massimo del vettore non è uguale alla lunghezza
-        id<-seq(1,length(un))  ##il nome dei nodi è vet che è uguale all'id, altrimenti è vet1
-        vet<-vet1
-        for(i in c(1:length(un))){
-            ind<-which(vet1==un[i])
-            vet[ind]<-id[i]
-            }
-        edge<-matrix(vet,ncol=2,byrow=TRUE)
-        graph<-graph(vet, directed=FALSE )
-        }else{
-            graph<-graph(vet1, directed=FALSE )
-            }
-    graph<-simplify(graph) #grafici che non contengono loop ed archi multipli
+prepNet <- function(net) 
+{
+    edge <- read.table(net, quote="\"")
+    edge <- as.matrix(edge)
+    ee <- edge
+    vet1 <- as.vector(t(edge))
+    un <- unique(sort(vet1))
+    if(max(un) != length(un)) { ##se non vi sono tutti i nodi il massimo del vettore non è uguale alla lunghezza
+        id <- seq(1,length(un))  ##il nome dei nodi è vet che è uguale all'id, altrimenti è vet1
+        vet <- vet1
+        for(i in c(1:length(un))) {
+            ind <- which(vet1 == un[i])
+            vet[ind] <- id[i]
+        }
+        edge <- matrix(vet, ncol=2, byrow=TRUE)
+        graph <- graph(vet, directed=FALSE)
+    }else{
+        graph <- graph(vet1, directed=FALSE)
+    }
+    graph <- simplify(graph) #grafici che non contengono loop ed archi multipli
     return(graph)
 }
 #tenere gli id?
  
- ######MODELLO RANDOM#########
-random<-function(graph){
-   z<- ecount(graph) #numero di archi
-   graphRandom<-rewire(graph,with=keeping_degseq(loops = FALSE, niter = z))
-   #Riordinare casualmente i vertici preservando i gradi del grafico
-   return(graphRandom)
- }
+######MODELLO RANDOM#########
+random <- function(graph)
+{
+    z <- ecount(graph) #numero di archi
+    graphRandom <- rewire(graph, with=keeping_degseq(loops=FALSE, niter=z))
+    #Riordinare casualmente i vertici preservando i gradi del grafico
+    return(graphRandom)
+}
 
 #####TUTTI I METODI DI IGRAPH####    
 #' methodCommunity
@@ -64,7 +66,7 @@ methodCommunity <- function(graph,
         weights <- E(graph)$weight
     }
         
-    switch(type,
+    communities <- switch(type,
            louvain=cluster_louvain(graph=graph, weights=weights),
            
            walktrap={
@@ -88,6 +90,7 @@ methodCommunity <- function(graph,
            infomap=cluster_infomap(graph=graph, e.weights = NULL,
                                    v.weights = NULL, nb.trials = 10)
     )
+    # return(membership(communities))
 }
 com<-membership(methodCommunity(graph=graph,type="louvain"))
 # com2<-membership(methodCommunity(graph,type="walktrap"))
