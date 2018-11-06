@@ -31,19 +31,60 @@ random<-function(graph){
  }
 
 #####TUTTI I METODI DI IGRAPH####    
-methodCommunity<- function(graph,type,weights = NULL,steps = 4,spins = 25,e.weights = NULL,v.weights = NULL, nb.trials = 10,directed = TRUE){
+#' methodCommunity
+#' @description the entire description of the function
+#' @param graph 
+#' @param type the clustering method, one of "walktrap", "edgeBetweenness", 
+#' "fastGreedy", "louvain", "spinglass", "leadingEigen", ...
+#' @param weights 
+#' @param steps 
+#' @param spins 
+#' @param e.weights this argument is settable only for "cluster_infomap" method
+#' @param v.weights this argument is settable only for "cluster_infomap" method
+#' @param nb.trials 
+#' @param directed 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+methodCommunity <- function(graph,
+                            type,
+                            weights=NULL,
+                            steps=4,
+                            spins=25,
+                            e.weights=NULL,
+                            v.weights=NULL, 
+                            nb.trials=10,
+                            directed=TRUE) {
+    
+    if(is.null(weights) & 
+        (sum(type %in% c("walktrap", "edgeBetweenness", "fastGreedy") == 1 ))) 
+    {
+        weights <- E(graph)$weight
+    }
+        
     switch(type,
-           louvain=cluster_louvain(graph=graph,weights = NULL),
-           walktrap=cluster_walktrap(graph=graph,
-                                     weights = E(graph)$weight,steps = 4),
-           spinglass=cluster_spinglass(graph=graph, weights = NULL,spins = 25),
+           louvain=cluster_louvain(graph=graph, weights=weights),
+           
+           walktrap={
+               
+               cluster_walktrap(graph=graph,
+                                    weights=weights,
+                                    steps = 4)
+               },
+           
+           spinglass=cluster_spinglass(graph=graph, weights = weights, spins = 25),
            leadingEigen=cluster_leading_eigen(graph=graph, steps = -1,
                                               weights = NULL),
+           
            edgeBetweenness=cluster_edge_betweenness(graph=graph,
-                                                    weights = E(graph)$weight, directed = TRUE),
-           fastGreedy=cluster_fast_greedy(graph=graph,weights = E(graph)$weight),
-           #usato questo loro fastgreedy.community(graph)
-           labelProp=cluster_label_prop(graph=graph, weights = NULL),
+                                                    weights = weights, directed = TRUE),
+           
+           fastGreedy=cluster_fast_greedy(graph=graph, weights =weights),
+           
+           # usato questo loro fastgreedy.community(graph)
+           labelProp=cluster_label_prop(graph=graph, weights = weights),
            infomap=cluster_infomap(graph=graph, e.weights = NULL,
                                    v.weights = NULL, nb.trials = 10)
     )
