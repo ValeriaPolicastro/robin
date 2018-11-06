@@ -1,12 +1,11 @@
 source("functions.R")
 library(igraph)
 
-f_net <- "rip_348.edges.txt"
+net <- "rip_348.edges.txt"
 
-g2 <- prep_net(f_net)
+graph<- prepNet(net)
 
-g2_random <- random(g2)
+graphRandom <- random(graph)
 
-iter(base="facebook_348_fastgreedy",g2,g2_random,method="fastgreedy")
+iter(base="facebook_348_fastgreedy",graph,graphRandom,methodCommunity(type ="fastGreedy" ))
 
-#modifica inutile

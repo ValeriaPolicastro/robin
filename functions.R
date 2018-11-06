@@ -1,47 +1,77 @@
 ######PREPARAZIONE NETWORK########## 
-#######' Title
-#'
-#' @param g2 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-prep_net <- function(f_net){
-    edge<-read.table(f_net, quote="\"")
+prepNet <- function(net){
+    edge<-read.table(net, quote="\"")
     edge<-as.matrix(edge)
     ee<-edge
     vet1<-as.vector(t(edge))
     un<-unique(sort(vet1))
-    if(max(un)!=length(un)){ #se non vi sono tutti i nodi il massimo del vettore non è uguale alla lunghezza
-        id<-seq(1,length(un))  #il nome dei nodi è vet che è uguale all'id, altrimenti è vet1
+    if(max(un)!=length(un)){ ##se non vi sono tutti i nodi il massimo del vettore non è uguale alla lunghezza
+        id<-seq(1,length(un))  ##il nome dei nodi è vet che è uguale all'id, altrimenti è vet1
         vet<-vet1
         for(i in c(1:length(un))){
             ind<-which(vet1==un[i])
             vet[ind]<-id[i]
             }
         edge<-matrix(vet,ncol=2,byrow=TRUE)
-        g2<-graph(vet, directed=FALSE )
+        graph<-graph(vet, directed=FALSE )
         }else{
-            g2<-graph(vet1, directed=FALSE )
+            graph<-graph(vet1, directed=FALSE )
             }
-    g2<-simplify(g2) #grafici che non contengono loop ed archi multipli
-    return(g2)
-    }
- #tenere gli id?
+    graph<-simplify(graph) #grafici che non contengono loop ed archi multipli
+    return(graph)
+}
+#tenere gli id?
  
  ######MODELLO RANDOM#########
-
-random<-function(g2){
-   z<- ecount(g2) #numero di archi
-   g2_random<-rewire(g2,with=keeping_degseq(loops = FALSE, niter = z))
+random<-function(graph){
+   z<- ecount(graph) #numero di archi
+   graphRandom<-rewire(graph,with=keeping_degseq(loops = FALSE, niter = z))
    #Riordinare casualmente i vertici preservando i gradi del grafico
-   return(g2_random)
+   return(graphRandom)
  }
 
+#####TUTTI I METODI DI IGRAPH####    
+methodCommunity<- function(graph,type,weights = NULL,steps = 4,spins = 25,e.weights = NULL,v.weights = NULL, nb.trials = 10,directed = TRUE){
+    switch(type,
+           louvain=cluster_louvain(graph=graph,weights = NULL),
+           walktrap=cluster_walktrap(graph=graph,
+                                     weights = E(graph)$weight,steps = 4),
+           spinglass=cluster_spinglass(graph=graph, weights = NULL,spins = 25),
+           leadingEigen=cluster_leading_eigen(graph=graph, steps = -1,
+                                              weights = NULL),
+           edgeBetweenness=cluster_edge_betweenness(graph=graph,
+                                                    weights = E(graph)$weight, directed = TRUE),
+           fastGreedy=cluster_fast_greedy(graph=graph,weights = E(graph)$weight),
+           #usato questo loro fastgreedy.community(graph)
+           labelProp=cluster_label_prop(graph=graph, weights = NULL),
+           infomap=cluster_infomap(graph=graph, e.weights = NULL,
+                                   v.weights = NULL, nb.trials = 10)
+    )
+}
+com<-membership(methodCommunity(graph=graph,type="louvain"))
+# com2<-membership(methodCommunity(graph,type="walktrap"))
+# com3<-membership(methodCommunity(graph,type="spinglass"))
+# com4<-membership(methodCommunity(graph,type="leadingEigen",steps =-1))
+# com5<-membership(methodCommunity(graph,type="edgeBetweenness"))
+# com6<-membership(methodCommunity(graph,type="fastGreedy"))
+# com7<-membership(methodCommunity(graph,type="labelProp"))
+# com8<-membership(methodCommunity(graph,type="infomap"))
+# 
+# com1
+# com2
+# com3
+# com4
+# com5
+# com6
+# com7
+# com8
+##non sono tutti i parametri dati e la nostra è directed FALSE se gli metto nello switch i parametri di defoult se li prende? 
+
+
+
+
 ########OUTPUT#######
-iter <- function(base, g2, graphRandom, method) {
-    library(igraph)
+iter <- function(base, graph, graphRandom, methodCommunity) {
     fileoutbats <- paste(base,"_BATS.txt",sep="")
     filepdf <- paste(base,"_VI.pdf",sep="")
     fileoutvirand <- paste(base,"_VI_random.txt",sep="")
@@ -50,33 +80,25 @@ iter <- function(base, g2, graphRandom, method) {
     fileoutvirandbio <- paste(base,"_VI_random_bio.txt",sep="")
     fileoutvicasebio <- paste(base,"_VI_case_bio.txt",sep="")
     nrep <- 10
-    N <- vcount(g2)  ##numero di vertici
+    N <- vcount(graph)  ##numero di vertici
 
-#####TUTTI I METODI DI IGRAPH####    
-methodCommunity<- function(g2, type) {
-        switch(type,
-               louvain = cluster_louvain(graph=g2,),
-               fast_greedy= fastgreedy.community(g2))
-    }
-   method(g2, "louvain")
-    method(g2, "fast_greedy")
-    
+
 ####RETE VERA#
 if(method=="louvain"){  #cercare le community con louvain o con fastgreedy
-  ebc <- cluster_louvain(g2)
+  ebc <- cluster_louvain(graph)
   }else{
-      ebc <- fastgreedy.community(g2)
+      ebc <- fastgreedy.community(graph)
       }
     com<-membership(ebc)#gives the division of the vertices, into communities
 
 ####RETE RANDOM#
 if(method=="louvain"){ 
-   ebc <- cluster_louvain(g2_random)
+   ebc <- cluster_louvain(graphRandom)
 }else{
-  ebc <- fastgreedy.community(g2_random)
+  ebc <- fastgreedy.community(graphRandom)
   }
     comn <- membership(ebc)
-    de <- ecount(g2)
+    de <- ecount(graph)
 
 vet1 <- seq(5,100,5) #dal 5 a 100 con passo 5 
 vet <- round(vet1*de/100,0)#arrotonda a 0 cifre decimali
@@ -98,7 +120,7 @@ for(z in vet){
      vet_bhl <- NULL
      k <- 1
      ###perturba il grafo reale e ricalcola le community
-     g3 <- rewire(g2,with=keeping_degseq(loops = FALSE, niter = z))
+     g3 <- rewire(graph,with=keeping_degseq(loops = FALSE, niter = z))
      
      if(method=="louvain"){
        ebc <- igraph::cluster_louvain(g3)
@@ -110,7 +132,7 @@ for(z in vet){
      vet_bhl[k] <- compare(com,comr,method="vi")
      vi_bhl[count2,count] <- vet_bhl[k]
      ###perturba il grafo random e ricalcola le community
-     g3_random <- rewire(g2_random,with=keeping_degseq(loops = FALSE, niter = z))
+     g3_random <- rewire(graphRandom,with=keeping_degseq(loops = FALSE, niter = z))
      if(method=="louvain"){
         ebc <- cluster_louvain(g3_random)
      }else{
