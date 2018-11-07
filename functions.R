@@ -1,4 +1,12 @@
 ######PREPARAZIONE NETWORK########## 
+#' Title
+#'
+#' @param net network
+#'
+#' @return simple graph
+#' @export
+#'
+#' @examples
 prepNet <- function(net) 
 {
     edge <- read.table(net, quote="\"")
@@ -24,11 +32,20 @@ prepNet <- function(net)
 #tenere gli id?
  
 ######MODELLO RANDOM#########
+#' graphRandom
+#'
+#' @param graph graph data
+#'
+#' @return graph random
+#' @export
+#'
+#' @examples
 random <- function(graph)
 {
-    z <- ecount(graph) #numero di archi
+    z <- ecount(graph) #number of edges
     graphRandom <- rewire(graph, with=keeping_degseq(loops=FALSE, niter=z))
-    #Riordinare casualmente i vertici preservando i gradi del grafico
+    #Randomly rewire the edges while preserving the original graph's degree distribution
+    #for z all the edges
     return(graphRandom)
 }
 
@@ -46,7 +63,7 @@ random <- function(graph)
 #' @param nb.trials this argument is settable only for "infomap" method
 #' @param directed this argument is settable only for "edgeBetweenness" method
 #'
-#' @return
+#' @return membership vector of the community structure
 #' @export
 #'
 #' @examples
@@ -59,23 +76,22 @@ methodCommunity <- function(graph,
                             v.weights=NULL, 
                             nb.trials=10,
                             directed=TRUE){
-    
+
     if(is.null(weights) &
         (sum(method %in% c("walktrap", "edgeBetweenness", "fastGreedy") == 1 )))
     {
         weights <- E(graph)$weight
     }
-    
-    # if(steps == 4) &
-    #     (method == "leadingEigen") 
-    #  {
-    #       steps <--1
-    #   }    
+
+    if((steps == 4) & (method == "leadingEigen"))
+     {
+          steps <--1
+      }
     communities <- switch(method,
            louvain=cluster_louvain(graph=graph,weights=weights),
            walktrap=cluster_walktrap(graph=graph,weights=weights,steps=steps),
            spinglass=cluster_spinglass(graph=graph,weights=weights,spins=spins),
-           leadingEigen=cluster_leading_eigen(graph=graph,steps=-1,
+           leadingEigen=cluster_leading_eigen(graph=graph,steps=steps,
                                               weights=weights),
            edgeBetweenness=cluster_edge_betweenness(graph=graph,
                                                     weights=weights,
@@ -92,6 +108,18 @@ methodCommunity <- function(graph,
 
 
 ########ITER#######
+#' Title
+#'
+#' @param base name of the output
+#' @param graph graph data
+#' @param graphRandom graph random data
+#' @param method community method
+#' @param type dependent or independent  
+#'
+#' @return
+#' @export
+#'
+#' @examples
 iter<- function(base, graph, graphRandom,method,type) {
     nrep <- 10
     N <- vcount(graph) 
@@ -153,68 +181,80 @@ iter<- function(base, graph, graphRandom,method,type) {
             viMeanBhl[s,count]<-mean(vetBhl)
             }
         }
-        
-        
-        
-        
+#DEPENDENT 
     }else{
-            
-            
-            
-        
-            for(z in vet1){
+        (type=="dependent")
+    vet<-round((5*ecount(graph))/100,0)
+    diff<-NULL
+    diffR<-NULL
+    diffRI<-NULL
+        for(z in vet){
                         count2<-0
                         vi<-NULL
                         count<-count+1
-                    for(s in c(1:nrep)){
+                   #for(s in c(1:nrep)){
                             count2<-count2+1
                             vetRandom<-NULL
                             vetBhl<-NULL
-                            k<-1
-                           
+                           #k<-1
+                        ###REAL
                             #perturba il grafo reale e ricalcola le community
-                            graphRewire<-graph
-                            intersec<-intersection(graph,graphRewire)
-                            graphRewire<-rewire(intersec,
-                                with=keeping_degseq(loops = FALSE,niter = z))
-                            comr <-methodCommunity(graphRewire,method)
-                            
-                            #compare the community of real and rewired through VI
+                            graphRewire<-rewire(graph,
+                                                with=keeping_degseq(loops = FALSE,
+                                                                    niter = z))
+                            graphRewire<-union(graphRewire,diff)
+                            comr<-methodCommunity(graphRewire,method)
                             vetBhl[k]<-compare(com,comr,method="vi")
-                        viBhl[count2,count]<-vetBhl[k]
-                        
-                            #perturba il grafo random e ricalcola le community
-                        graphRewireRandom<-graphRandom
-                        intersecRandom<-intersection(graphRandom,graphRewireRandom)
-                            graphRewireRandom<-rewire(intersececRandom,
-                                 with=keeping_degseq(loops = FALSE, niter = z))
-                            comr<- methodCommunity(graphRewireRandom,method)
-                            #compare the community made with the random 
-                            #model and the rewired
-                            vetRandom[k]<-compare(comn,comr,method="vi")
-                        viRandom[count2,count]<-vetRandom[k]
-                    for(k in c(2:nrep)){
-                                count2<-count2+1
-                                graphRewireIter<-rewire(graphRewire,
-                                with=keeping_degseq(loops = FALSE, niter = round(0.01*z)))
-                                comr<-methodCommunity(graphRewireIter,method)
-                                #compare distance real and rewired through VI
-                                vetBhl[k]<-compare(com,comr,method="vi")
-                                viBhl[count2,count]<-vetBhl[k]
-                                graphRewireRandIt<-rewire(graphRewireRandom,
-                                                          with=keeping_degseq(loops = FALSE, niter = round(0.01*z)))
-                                comr <- methodCommunity(graphRewireRandIt,method)
-                                #compare random and rewired random through VI
-                                vetRandom[k]<-compare(comn,comr,method="vi")
-                                viRandom[count2,count]<-vetRandom[k]
+                            viBhl[count2,count]<-vetBhl[k]
+                            diff<-difference(graph,graphRewire)
+                            graph<-intersection(graph,graphRewire)
+                            vet<-round((5*ecount(graph))/100,0)
+                            com<-comr
+                            
+                            
+                        ###RANDOM    
+                            # graphRewireRandom<-rewire(graphRandom,
+                            #                           with=keeping_degseq(loops = FALSE, niter = z))
+                            # graphRewireRandom<-union(graphRewire,diffR)
+                            # comr<- methodCommunity(graphRewireRandom,method)
+                            # vetRandom[k]<-compare(comn,comr,method="vi")
+                            # viRandom[count2,count]<-vetRandom
+                            # diffR<-difference(graphRandom,graphRewireRandom)
+                            # graphRandom<-intersection(graphRandom,graphRewireRandom)
+                            # vetR<-round((5*ecount(graphRandom))/100,0)
+                            # #deve avere un for da solo questo vet è diverso dall' altro 
+                            # comn<-comr
+                            
+     
+
+                            # for(k in c(2:nrep)){
+                            #     count2<-count2+1
+                            #     graphRewireIter<-rewire(graphRewire,
+                            #        with=keeping_degseq(loops = FALSE, niter = round(0.01*z)))
+                            #     graphRewire<-union(graphRewireInter,diffRI)
+                            #     comr<-methodCommunity(graphRewireIter,method)
+                            #     #compare distance real and rewired through VI
+                            #     vetBhl[k]<-compare(com,comr,method="vi")
+                            #     viBhl[count2,count]<-vetBhl[k]
+                            #     diffRI<-difference(graphRewire,graphRewireIter)
+                            #     graph<-intersection(graphRewire,graphRewireIter)
+                            #     vetIR<-round((5*ecount(graph))/100,0)
+                            #     com<-comr
+                            #     
+                            #######RANDOM    
+                            #     graphRewireRandIt<-rewire(graphRewireRandom,
+                            #      with=keeping_degseq(loops = FALSE, niter = round(0.01*z)))
+                            #     comr <- methodCommunity(graphRewireRandIt,method)
+                            # vetRandom[k]<-compare(comn,comr,method="vi")
+                            #     viRandom[count2,count]<-vetRandom[k]
                             }
-                            viMeanRandom[s,count]<-mean(vetRandom)
+                           # viMeanRandom[s,count]<-mean(vetRandom)
                             viMeanBhl[s,count]<-mean(vetBhl)
-                        }
-                    }                
-                    
-                    
-          }
+                   }
+        }
+    
+    
+         
     
     
     
@@ -263,5 +303,6 @@ iter<- function(base, graph, graphRandom,method,type) {
 }
 ###COMPARISON DIFFERENT METHODS####
 comparison<-function(method1,method2){
-    iter()
-}
+    fist<-iter()
+    second<-
+        }

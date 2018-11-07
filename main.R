@@ -7,5 +7,7 @@ graph<- prepNet(net)
 
 graphRandom <- random(graph)
 
-iter(base="facebook_348_fastgreedy", graph, graphRandom, methodCommunity(type="fastGreedy"))
+iter(base="output",graph=graph,graphRandom=graphRandom,method="fastGreedy",type="independent")
+
+comparison(method1,method2)
 
