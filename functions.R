@@ -171,8 +171,8 @@ iter <- function(base, graph, graphRandom, method,
 {
     type <- match.arg(type)
     nrep <- 10
-    comReal <- methodCommunity(graph=graph, method="fastGreedy") # real network
-    comRandom <- methodCommunity(graph=graphRandom, method="fastGreedy") # random network
+    comReal <- methodCommunity(graph=graph, method=method) # real network
+    comRandom <- methodCommunity(graph=graphRandom, method=method) # random network
     de <- ecount(graph)
     VI <- NULL
     vetBhl <- NULL
@@ -180,10 +180,11 @@ iter <- function(base, graph, graphRandom, method,
     graphRewireRandom <- NULL
     graphRewire <- NULL
     count <- 1
-    vet1 <- seq(5, 100, 5)  #dal 5 a 100 con passo 5 
+     
     #INDEPENDENT    
     if(type == "independent") 
     {
+        vet1 <- seq(5, 100, 5)  #dal 5 a 100 con passo 5
         vet <- round(vet1*de/100, 0)#arrotonda a 0 cifre decimali
         #OUTPUT MATRIX
         viBhl <- matrix(0, nrep^2, length(vet)+1)
@@ -232,25 +233,32 @@ iter <- function(base, graph, graphRandom, method,
                 viMeanBhl[s, count] <- mean(vetBhl)
             }
         }
+        nn1<-c(0,vet1)
+        colnames(viRandom) <- nn1
+        colnames(viBhl) <- nn1
+        colnames(viMeanRandom) <- nn1
+        colnames(viMeanBhl) <- nn1
+        nn <- rep(nn1, each=nrep)
+       
         #DEPENDENT 
     }else{
-        
         z <- round((5*ecount(graph))/100, 0)
-        #ultimo <- de-(sum(vet))
-        viBhl <- rep(0, nrep^2) 
-        #viBhl <- list(rep(0, nrep^2)) 
-        #viBhl<-rep(list(0),nrep^2)
-        viRandom <- rep(0, nrep^2)
+        z1 <- ecount(graph)
+        z2 <- ecount(graphRandom)
+        viBhl<-rep(0, nrep^2)
+        viBhl1<-NULL
+        viRandom<-rep(0, nrep^2)
+        viRandom1<-NULL
         viMeanRandom <- rep(0, nrep)
         viMeanBhl <-rep(0, nrep)
-        #viMeanBhl<-rep(list(0),nrep^2)
+        viMeanRandom1 <- NULL
+        viMeanBhl1 <-NULL
         diff <- NULL
         diffR <- NULL
-        vet1 <- ecount(graph)
-        while(vet1>=z)
-        {
-            count2 <- 0
+       while(z1>z|z2>z)
+        {   
             count <- count+1
+            count2 <- 0
             for(s in c(1:nrep))
                 {
                 count2 <- count2+1
@@ -258,62 +266,87 @@ iter <- function(base, graph, graphRandom, method,
                 ###REAL
                 graphRewire <- rewireOnl(data=graph, number=z)
                 graphRewire <- union(graphRewire, diff)
-                comr <- methodCommunity(graph=graphRewire, method="fastGreedy")
+                comr <- methodCommunity(graph=graphRewire, method=method)
                 vetBhl[k] <- compare(comReal, comr, method="vi")
-                viBhl[count2] <- vetBhl[k]
-                ####devo far girare il count con cbind per ogni z 
+                viBhl1[count2] <- vetBhl[k]
                 diff <- difference(graph, graphRewire)
-                graph <- intersection(graph, graphRewire)
-                vet1 <- ecount(graph)
-                ###RANDOM  
+                
+                ###RANDOM
                 graphRewireRandom <- rewireOnl(data=graphRandom, number=z)
                 graphRewireRandom <- union(graphRewireRandom, diffR)
-                comr <- methodCommunity(graph=graphRewireRandom, method=method)
-                vetBhl[k] <- compare(comRandom, comr, method="vi")
-                viBhl[count2] <- vetBhl[k]
+                comr <- methodCommunity(graph=graphRewireRandom,method=method)
+                vetRandom[k] <- compare(comRandom, comr, method="vi")
+                viRandom1[count2] <- vetRandom[k]
                 diffR <- difference(graphRandom, graphRewireRandom)
-                graphRandom <- intersection(graphRandom, graphRewireRandom)
-                vet2 <- ecount(graphRandom)
+                
+                
                 for(k in c(2:nrep)) 
                 {
                     count2 <- count2+1
-                    #REAL
+                    ##REAL
                     Real <- rewireCompl(data=graphRewire, number=round(0.01*z),
-                                        method="fastGreedy",
+                                        method=method,
                                         community=comReal)
                     vetBhl[k] <- Real$VI
-                    viBhl[count2] <- vetBhl[k]
+                    viBhl1[count2] <- vetBhl[k]
+                    
                     ## RANDOM
                     Random <- rewireCompl(data=graphRewireRandom,
                                           method=method,
                                           number=round(0.01*z), community=comRandom)
                     vetRandom[k] <- Random$VI
-                    viRandom[count2] <- vetRandom[k]
+                    viRandom1[count2] <- vetRandom[k]
+                      
                 }
-                viMeanRandom[s] <- mean(vetRandom)
-                viMeanBhl[s] <- mean(vetBhl)
+                viMeanBhl1[s] <- mean(viBhl1)
+                viMeanRandom1[s] <- mean(viRandom1)  
             }
-        }
+            graph <- intersection(graph, graphRewire)
+            graphRandom <- intersection(graphRandom, graphRewireRandom)
+            viRandom<-cbind(viRandom,viRandom1)
+            viBhl<-cbind(viBhl,viBhl1)
+            viMeanBhl<-cbind(viMeanBhl,viMeanBhl1)
+            viMeanRandom<-cbind(viMeanRandom,viMeanRandom1)
+            z1 <- ecount(graph)
+            print(z1)
+            # if(z1>z) {
+            #     z<-z
+            #    }else {
+            #      z<-z1  
+            #    }
+            z2<-ecount(graphRandom)
+            # if(z2>z) {
+            #     z<-z
+            # }else {
+            #     z<-z2  
+            # }
+       }
+        vet1<-rep("5%",(dim(viBhl)[2])-1)
+        vet2<-rep("5%",(dim(viRandom)[2])-1)
+        nn1 <- c(0, vet1)
+        nn2 <- c(0, vet2)
+        colnames(viRandom) <- nn2
+        colnames(viBhl) <- nn1
+        colnames(viMeanRandom) <- nn2
+        colnames(viMeanBhl) <- nn1
+        nn <- rep(nn1, each=nrep)
+        
     }
-    nn1 <- c(0, vet1)
-    colnames(viRandom) <- nn1
-    colnames(viBhl) <- nn1
-    colnames(viMeanRandom) <- nn1
-    colnames(viMeanBhl) <- nn1
-    
     ratios <- log2((viMeanBhl+0.001)/(viMeanRandom+0.001))
     #rapporto tra la media delle distanze VI tra il modello reale e quello
     ##perturbato e la media delle distanze tra il random e la sua perturbazione
     bats <- as.vector(ratios)
-    nn <- rep(c(0, vet1), each=nrep)
     names(bats) <- nn
     resBats <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
+    
     output <- list(viBhl=viBhl,
-                   viRandom=viRandom,
-                   viMeanBhl=viMeanBhl,
-                   viMeanRandom=viMeanRandom,
-                   resBats=resBats) 
-    return(output)
+                    viRandom=viRandom,
+                    viMeanBhl=viMeanBhl,
+                    viMeanRandom=viMeanRandom,
+                    resBats=resBats
+                    )
+      return(output)
+    
     
 }
 
@@ -327,14 +360,14 @@ iter <- function(base, graph, graphRandom, method,
 #' @export
 #'
 #' @examples
-plotRobin <-  function(graph,viMeanBhl,viMeanRandom,base)
+plotRobin <-  function(base,graph,List)
 {   
     filepdf <- paste(base, "_VI.pdf", sep="")
     N <- vcount(graph)
     mviBhl <- apply(viMeanBhl, 2, mean)
     mviRandom <- apply(viMeanRandom, 2, mean)
-    vet1 <- seq(5, 100, 5)
-    vv <- c(0, vet1/100)
+    vv1<-seq(0,100,(100/((length(mviRandom))-1)))
+    vv<-vv1/100
     plotVI <- pdf(filepdf)
     plot(vv, mviRandom/log2(N), col="red", type="o", axes=FALSE, ann=FALSE, ylim=c(0, 1))
     axis(1, at=c(0, 0.2, 0.4, 0.6, 0.8, 1), lab=c(0, 0.2, 0.4, 0.6, 0.8, 1))
@@ -346,7 +379,6 @@ plotRobin <-  function(graph,viMeanBhl,viMeanRandom,base)
     title(xlab="percentage of perturbation")
     title(ylab="variation of information (VI)")
     dev.off() 
-    return(plotVI)
 }
 
 
@@ -395,7 +427,7 @@ comparison <- function(graph, method1, method2)
             vetBhl[k] <- compare(comr1, comr2, method="vi")
             viBhl[count2, count] <- vetBhl[k]
             diff <- difference(graph, graphRewire)
-            graph <- intersection(graph, graphRewire)
+            
             for(k in c(2:nrep))
                 {
                 count2 <- count2+1
@@ -407,6 +439,7 @@ comparison <- function(graph, method1, method2)
             }
             viMeanBhl[s, count] <- mean(vetBhl)
         }
+        graph <- intersection(graph, graphRewire)
     }
     return(viMeanBhl)
 }

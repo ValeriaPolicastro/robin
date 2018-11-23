@@ -10,7 +10,7 @@ graphRandom <- random(graph)
 List<-iter(base="independent",graph=graph,graphRandom=graphRandom,method="fastGreedy",type="independent")
 List<-iter(base="dependent",graph=graph,graphRandom=graphRandom,method="fastGreedy",type="dependent")
 
-plotRobin(graph=graph,viMeanBhl=List$viMeanBhl,viMeanRandom=List$viMeanRandom,base="indip")
+plotRobin(base="dependent",graph=graph,robinList=List)
 
 comparison(graph=graph,method1="fastGreedy",method2="louvain")
 
