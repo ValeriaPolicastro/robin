@@ -7,32 +7,16 @@ graph <- prepNet(net)
 
 graphRandom <- random(graph)
 
-<<<<<<< HEAD
+
 List<-iter(base="independent",graph=graph,graphRandom=graphRandom,method="fastGreedy",type="independent")
 List<-iter(base="dependent",graph=graph,graphRandom=graphRandom,method="fastGreedy",type="dependent")
 
-plotRobin(base="dependent",graph=graph,robinList=List)
+plotRobin(graph=graph,viMeanBhl=List$viMeanBhl,viMeanRandom=List$viMeanRandom)
 
-comparison(graph=graph,method1="fastGreedy",method2="louvain")
-=======
-iterList <- iter(base="output",
-    graph=graph,
-    graphRandom=graphRandom,
-    method="fastGreedy", 
-    type="independent")
+Comp<-comparison(graph=graph,method1="louvain",method2="walktrap",type="independent")
 
+#plotRobin(graph=graph,viMeanBhl=Comp$viMeanBhl1,viMeanRandom=Comp$viMeanBhl2)
 
-
-iterList <- iter(base="output",
-                 graph=graph,
-                 graphRandom=graphRandom,
-                 method="fastGreedy", 
-                 type="dependent")
-
-
-
-comparison(method1, method2)
->>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
 
 # writeListAsTables <- function(list, path, prefix=NULL)
 # {
@@ -43,7 +27,7 @@ comparison(method1, method2)
 #         filaname <- file.path(paste0())
 #         write.
 #     }
-<<<<<<< HEAD
+
 # }
 # 
 #     # fileoutbats <- paste(base, "_BATS.txt", sep="")
@@ -60,7 +44,3 @@ comparison(method1, method2)
 #  write.table(viMeanRandom, fileoutvirandbio, sep="\t", row.names=FALSE, quote=FALSE)
 #  write.table(viMeanBhl, fileoutvicasebio, sep="\t", row.names=FALSE, quote=FALSE)
 # #write.table(resBats, fileoutbats, sep="\t", row.names=FALSE, quote=FALSE)
-# 
-=======
-# }
->>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
