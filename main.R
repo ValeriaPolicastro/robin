@@ -3,16 +3,36 @@ library(igraph)
 
 net <- "rip_348.edges.txt"
 
-graph<- prepNet(net)
+graph <- prepNet(net)
 
 graphRandom <- random(graph)
 
+<<<<<<< HEAD
 List<-iter(base="independent",graph=graph,graphRandom=graphRandom,method="fastGreedy",type="independent")
 List<-iter(base="dependent",graph=graph,graphRandom=graphRandom,method="fastGreedy",type="dependent")
 
 plotRobin(base="dependent",graph=graph,robinList=List)
 
 comparison(graph=graph,method1="fastGreedy",method2="louvain")
+=======
+iterList <- iter(base="output",
+    graph=graph,
+    graphRandom=graphRandom,
+    method="fastGreedy", 
+    type="independent")
+
+
+
+iterList <- iter(base="output",
+                 graph=graph,
+                 graphRandom=graphRandom,
+                 method="fastGreedy", 
+                 type="dependent")
+
+
+
+comparison(method1, method2)
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
 
 # writeListAsTables <- function(list, path, prefix=NULL)
 # {
@@ -23,6 +43,7 @@ comparison(graph=graph,method1="fastGreedy",method2="louvain")
 #         filaname <- file.path(paste0())
 #         write.
 #     }
+<<<<<<< HEAD
 # }
 # 
 #     # fileoutbats <- paste(base, "_BATS.txt", sep="")
@@ -40,3 +61,6 @@ comparison(graph=graph,method1="fastGreedy",method2="louvain")
 #  write.table(viMeanBhl, fileoutvicasebio, sep="\t", row.names=FALSE, quote=FALSE)
 # #write.table(resBats, fileoutbats, sep="\t", row.names=FALSE, quote=FALSE)
 # 
+=======
+# }
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8

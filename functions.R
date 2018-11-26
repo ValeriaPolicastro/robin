@@ -89,6 +89,7 @@ methodCommunity <- function(graph,
         steps  <- -1
     }
     communities <- switch(method, 
+<<<<<<< HEAD
                           louvain=cluster_louvain(graph=graph, 
                                                   weights=weights), 
                           walktrap=cluster_walktrap(graph=graph, 
@@ -107,6 +108,26 @@ methodCommunity <- function(graph,
                           labelProp=cluster_label_prop(graph=graph, weights=weights), 
                           infomap=cluster_infomap(graph=graph, e.weights=e.weights, 
                                                   v.weights=v.weights, nb.trials=nb.trials)
+=======
+           louvain=cluster_louvain(graph=graph, 
+                                    weights=weights), 
+           walktrap=cluster_walktrap(graph=graph, 
+                                    weights=weights, 
+                                    steps=steps), 
+           spinglass=cluster_spinglass(graph=graph, 
+                                        weights=weights, 
+                                        spins=spins), 
+           leadingEigen=cluster_leading_eigen(graph=graph, 
+                                            steps=steps, 
+                                            weights=weights), 
+           edgeBetweenness=cluster_edge_betweenness(graph=graph, 
+                                                    weights=weights, 
+                                                    directed=directed), 
+           fastGreedy=cluster_fast_greedy(graph=graph, weights=weights), 
+           labelProp=cluster_label_prop(graph=graph, weights=weights), 
+           infomap=cluster_infomap(graph=graph, e.weights=e.weights, 
+                                v.weights=v.weights, nb.trials=nb.trials)
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
     )
     return(membership(communities))
 }
@@ -151,7 +172,44 @@ rewireOnl <- function(data, number)
     return(graphRewire)
 }
 
+<<<<<<< HEAD
 
+=======
+############PLOT##############
+#' Title
+#'
+#' @param graph 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plotRobin <-  function(graph, base="indip")
+{   
+    filepdf <- paste(base, "_VI.pdf", sep="")
+    viMeanBhl <- iter(base="independent", graph=graph, graphRandom=graphRandom, 
+                    method="fastGreedy", type="independent")[[3]]
+    viMeanRandom <- iter(base="independent", graph=graph, graphRandom=graphRandom, 
+                       method="fastGreedy", type="independent")[[4]]
+    N <- vcount(graph)
+    mviBhl <- apply(viMeanBhl, 2, mean)
+    mviRandom <- apply(viMeanRandom, 2, mean)
+    vet1 <- seq(5, 100, 5)
+    vv <- c(0, vet1/100)
+    plotVI <- pdf(filepdf)
+    plot(vv, mviRandom/log2(N), col="red", type="o", axes=FALSE, ann=FALSE, ylim=c(0, 1))
+    axis(1, at=c(0, 0.2, 0.4, 0.6, 0.8, 1), lab=c(0, 0.2, 0.4, 0.6, 0.8, 1))
+    axis(2, las=1, at=c(0, 0.2, 0.4, 0.6, 0.8, 1), lab=c(0, 0.2, 0.4, 0.6, 0.8, 1))
+    box()
+    #abline(h=c(0.1, 0.2))
+    lines(vv, mviBhl/log2(N), type="o", pch=22, lty=2, col="blue")
+    legend("topleft", pch=c("o", "-"), legend=c("null model", "real data"), col=c("red", "blue"))
+    title(xlab="percentage of perturbation")
+    title(ylab="variation of information (VI)")
+    dev.off() 
+    return(plotVI)
+}
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
 
 ########ITER#######
 #' Title
@@ -167,7 +225,11 @@ rewireOnl <- function(data, number)
 #'
 #' @examples
 iter <- function(base, graph, graphRandom, method, 
+<<<<<<< HEAD
                  type=c("dependent", "independent")) 
+=======
+                type=c("dependent", "independent")) 
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
 {
     type <- match.arg(type)
     nrep <- 10
@@ -180,11 +242,18 @@ iter <- function(base, graph, graphRandom, method,
     graphRewireRandom <- NULL
     graphRewire <- NULL
     count <- 1
+<<<<<<< HEAD
      
     #INDEPENDENT    
     if(type == "independent") 
     {
         vet1 <- seq(5, 100, 5)  #dal 5 a 100 con passo 5
+=======
+    vet1 <- seq(5, 100, 5)  #dal 5 a 100 con passo 5 
+ #INDEPENDENT    
+    if(type == "independent") 
+    {
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
         vet <- round(vet1*de/100, 0)#arrotonda a 0 cifre decimali
         #OUTPUT MATRIX
         viBhl <- matrix(0, nrep^2, length(vet)+1)
@@ -205,12 +274,20 @@ iter <- function(base, graph, graphRandom, method,
                                     community=comReal, 
                                     method=method)
                 vetBhl[k] <- Real$VI
+<<<<<<< HEAD
                 viBhl[count2, count] <- vetBhl[k]
                 graphRewire <- Real$graphRewire
                 
                 #RANDOM
                 Random <- rewireCompl(data=graphRandom, number=z, 
                                       community=comRandom, method=method)
+=======
+                graphRewire <- Real$graphRewire
+                viBhl[count2, count] <- vetBhl[k]
+                #RANDOM
+                Random <- rewireCompl(data=graphRandom, number=z, 
+                                  community=comRandom, method=method)
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
                 vetRandom[k] <- Random$VI
                 viRandom[count2, count] <- vetRandom[k]
                 graphRewireRandom <- Random$graphRewire
@@ -218,6 +295,7 @@ iter <- function(base, graph, graphRandom, method,
                 {
                     count2 <- count2+1
                     Real <- rewireCompl(data=graphRewire, 
+<<<<<<< HEAD
                                         number=round(0.01*z), 
                                         community=comReal, 
                                         method=method)
@@ -226,6 +304,16 @@ iter <- function(base, graph, graphRandom, method,
                     Random <- rewireCompl(data=graphRewireRandom, 
                                           number=round(0.01*z), community=comRandom, 
                                           method=method)
+=======
+                                    number=round(0.01*z), 
+                                    community=comReal, 
+                                    method=method)
+                    vetBhl[k] <- Real$VI
+                    viBhl[count2, count] <- vetBhl[k]
+                    Random <- rewireCompl(data=graphRewireRandom, 
+                                     number=round(0.01*z), community=comRandom, 
+                                     method=method)
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
                     vetRandom[k] <- Random$VI
                     viRandom[count2, count] <- vetRandom[k]
                 }
@@ -242,6 +330,7 @@ iter <- function(base, graph, graphRandom, method,
        
         #DEPENDENT 
     }else{
+<<<<<<< HEAD
         z <- round((5*ecount(graph))/100, 0)
         z1 <- ecount(graph)
         z2 <- ecount(graphRandom)
@@ -261,6 +350,23 @@ iter <- function(base, graph, graphRandom, method,
             count2 <- 0
             for(s in c(1:nrep))
                 {
+=======
+        
+        vet1 <- round((5*ecount(graph))/100, 0)
+        vet <- rep(vet1, 19) #19 volte più quello che manca all' ultimo giro
+        #ultimo <- de-(sum(vet))
+        viBhl <- matrix(0, nrep^2, length(vet1)+1)
+        viRandom <- matrix(0, nrep^2, length(vet1)+1)
+        viMeanRandom <- matrix(0, nrep, length(vet1)+1)
+        viMeanBhl <- matrix(0, nrep, length(vet1)+1)
+        diff <- NULL
+        diffR <- NULL
+        for(z in vet)
+        {
+            count2 <- 0
+            count <- count+1
+            for(s in c(1:nrep)){
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
                 count2 <- count2+1
                 k <- 1
                 ###REAL
@@ -268,6 +374,7 @@ iter <- function(base, graph, graphRandom, method,
                 graphRewire <- union(graphRewire, diff)
                 comr <- methodCommunity(graph=graphRewire, method=method)
                 vetBhl[k] <- compare(comReal, comr, method="vi")
+<<<<<<< HEAD
                 viBhl1[count2] <- vetBhl[k]
                 diff <- difference(graph, graphRewire)
                 
@@ -350,6 +457,73 @@ iter <- function(base, graph, graphRandom, method,
     
 }
 
+=======
+                viBhl[count2, count] <- vetBhl[k]
+                diff <- difference(graph, graphRewire)
+                graph <- intersection(graph, graphRewire)
+                z1 <- round((5*ecount(graph))/100, 0)
+                ###RANDOM  
+                graphRewireRandom <- rewireOnl(data=graphRandom, number=z)
+                graphRewireRandom <- union(graphRewireRandom, diffR)
+                comr <- methodCommunity(graph=graphRewireRandom, method=method)
+                vetBhl[k] <- compare(comRandom, comr, method="vi")
+                viBhl[count2, count] <- vetBhl[k]
+                diffR <- difference(graphRandom, graphRewireRandom)
+                graphRandom <- intersection(graphRandom, graphRewireRandom)
+                z2 <- round((5*ecount(graphRandom))/100, 0)
+                for(k in c(2:nrep)) 
+                {
+                    count2 <- count2+1
+                    #REAL
+                    Real <- rewireCompl(data=graphRewire, number=round(0.01*z),
+                                        method=method,
+                                   community=comReal)
+                    vetBhl[k] <- Real$VI
+                    viBhl[count2, count] <- vetBhl[k]
+                    ## RANDOM
+                    Random <- rewireCompl(data=graphRewireRandom,
+                                          method=method,
+                                      number=round(0.01*z), community=comRandom)
+                    vetRandom[k] <- Random$VI
+                    viRandom[count2, count] <- vetRandom[k]
+                }
+                viMeanRandom[s, count] <- mean(vetRandom)
+                viMeanBhl[s, count] <- mean(vetBhl)
+            }
+            }
+        }
+        nn1 <- c(0, vet1)
+        colnames(viRandom) <- nn1
+        colnames(viBhl) <- nn1
+        colnames(viMeanRandom) <- nn1
+        colnames(viMeanBhl) <- nn1
+       
+       # fileoutbats <- paste(base, "_BATS.txt", sep="")
+       #  filepdf <- paste(base, "_VI.pdf", sep="")
+       #  fileoutvirand <- paste(base, "_VI_random.txt", sep="")
+       #  fileoutvicase <- paste(base, "_VI_case.txt", sep="")
+       #  #file utilizzati da Italia per FAD
+       #  fileoutvirandbio <- paste(base, "_VI_random_bio.txt", sep="")
+       #  fileoutvicasebio <- paste(base, "_VI_case_bio.txt", sep="")
+      
+      
+       #  write.table(viRandom, fileoutvirand, sep="\t", row.names=FALSE, quote=FALSE)
+       #  write.table(viBhl, fileoutvicase, sep="\t", row.names=FALSE, quote=FALSE)
+       #  write.table(viMeanRandom, fileoutvirandbio, sep="\t", row.names=FALSE, quote=FALSE)
+       #  write.table(viMeanBhl, fileoutvicasebio, sep="\t", row.names=FALSE, quote=FALSE)
+       #pdf(filepdf)
+    
+        ratios <- log2((viMeanBhl+0.001)/(viMeanRandom+0.001))
+        #rapporto tra la media delle distanze VI tra il modello reale e quello
+        ##perturbato e la media delle distanze tra il random e la sua perturbazione
+        bats <- as.vector(ratios)
+        nn <- rep(c(0, vet1), each=nrep)
+        names(bats) <- nn
+        resBats <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
+        #write.table(resBats, fileoutbats, sep="\t", row.names=FALSE, quote=FALSE)
+        output <- list(viBhl=viBhl, viRandom=viRandom, viMeanBhl=viMeanBhl, viMeanRandom=viMeanRandom, resBats=resBats) 
+        return(output)
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
 
 ############PLOT##############
 #' Title
@@ -398,8 +572,12 @@ plotRobin <-  function(base,graph,List)
 #' @export
 #'
 #' @examples
+<<<<<<< HEAD
 comparison <- function(graph, method1, method2)
     {
+=======
+ comparison <- function(graph, method1, method2){
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
     nrep <- 10
     de <- ecount(graph)
     vet1 <- round((5*de)/100, 0)
@@ -411,6 +589,7 @@ comparison <- function(graph, method1, method2)
     graphRewire <- NULL
     count <- 1
     diff <- NULL
+<<<<<<< HEAD
     for(s in c(1:nrep))
         {
         count2 <- 0
@@ -418,6 +597,13 @@ comparison <- function(graph, method1, method2)
         count <- count+1
         for(z in vet)
             {
+=======
+    for(s in c(1:nrep)){
+        count2 <- 0
+        vi <- NULL
+        count <- count+1
+        for(z in vet){
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
             count2 <- count2+1
             k <- 1
             graphRewire <- rewireOnl(data=graph, number=z)
@@ -427,9 +613,14 @@ comparison <- function(graph, method1, method2)
             vetBhl[k] <- compare(comr1, comr2, method="vi")
             viBhl[count2, count] <- vetBhl[k]
             diff <- difference(graph, graphRewire)
+<<<<<<< HEAD
             
             for(k in c(2:nrep))
                 {
+=======
+            graph <- intersection(graph, graphRewire)
+            for(k in c(2:nrep)){
+>>>>>>> f021e7daadc6ca99c67f132cf4ac0613ed20a6d8
                 count2 <- count2+1
                 graphRewire <- rewireOnl(data=graphRewire, number=z)
                 comr1 <- methodCommunity(graph=graphRewire, method=method1)
