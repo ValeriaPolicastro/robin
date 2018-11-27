@@ -8,26 +8,22 @@ graph <- prepNet(net)
 graphRandom <- random(graph)
 
 
-List<-iter(graph=graph,graphRandom=graphRandom,method="edgeBetweenness",type="independent")
+List<-iter(graph=graph,graphRandom=graphRandom,
+           method="fastGreedy",
+           type="independent",
+           directed=FALSE,
+           weights=NULL, 
+           steps=4, 
+           spins=25, 
+           e.weights=NULL, 
+           v.weights=NULL, 
+           nb.trials=10)
 
-List<-iter(graph=graph,graphRandom=graphRandom,method="edgeBetweenness",type="dependent")
+List<-iter(graph=graph,graphRandom=graphRandom,method="fastGreedy", type="dependent")
 
 #method<-c("walktrap", "edgeBetweenness", "fastGreedy","leadingEigen","louvain","spinglass","labelProp","infomap")
 
-Comp<-comparison(graph=graph,method1="louvain",method2="walktrap",type="independent")
+Comp<-comparison(graph=graph,method1="louvain",method2="walktrap",type="independent",directed=FALSE)
 
 
 
-
-# writeListAsTables <- function(list, path, prefix=NULL)
-# {
-#     names <- names(list)
-#     
-#     for(name in names)
-#     {
-#         filaname <- file.path(paste0())
-#         write.
-#     }
-
-# }
-# 
