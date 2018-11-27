@@ -99,7 +99,8 @@ methodCommunity <- function(graph,
                                         spins=spins), 
            leadingEigen=cluster_leading_eigen(graph=graph, 
                                             steps=steps, 
-                                            weights=weights), 
+                                            weights=weights,
+                                            options=list(maxiter=1000000)), 
            edgeBetweenness=cluster_edge_betweenness(graph=graph, 
                                                     weights=weights, 
                                                     directed=directed), 
@@ -166,7 +167,7 @@ rewireOnl <- function(data, number)
 #' @export
 #'
 #' @examples
-iter <- function(base, graph, graphRandom, method,
+iter <- function(graph, graphRandom, method,
                  type=c("dependent", "independent")) 
 {
     type <- match.arg(type)
@@ -322,6 +323,9 @@ iter <- function(base, graph, graphRandom, method,
     names(bats) <- nn
     resBats <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
     
+    plotRobin(graph=graph,model1=viMeanBhl,model2=viMeanRandom,legend=c("real data", "null model"))
+    
+    
     output <- list(viBhl=viBhl,
                     viRandom=viRandom,
                     viMeanBhl=viMeanBhl,
@@ -344,21 +348,21 @@ iter <- function(base, graph, graphRandom, method,
 #' @export
 #'
 #' @examples
-plotRobin <-  function(graph,viMeanRandom,viMeanBhl)
+plotRobin <-  function(graph,model1,model2,legend)
 {   
     #filepdf <- paste(base, "_VI.pdf", sep="")
     N <- vcount(graph)
-    mviBhl <- apply(viMeanBhl, 2, mean)
-    mviRandom <- apply(viMeanRandom, 2, mean)
+    mvimodel1 <- apply(model1, 2, mean)
+    mvimodel2 <- apply(model2, 2, mean)
     percPert<-seq(0,100,5)/100
     #plotVI <- pdf(filepdf)
-    plot(percPert, mviRandom/log2(N), col="red", type="o", axes=FALSE, ann=FALSE, ylim=c(0, 1))
+    plot(percPert, mvimodel2/log2(N), col="red", type="o", axes=FALSE, ann=FALSE, ylim=c(0, 1))
     axis(1, at=c(0, 0.2, 0.4, 0.6, 0.8, 1), lab=c(0, 0.2, 0.4, 0.6, 0.8, 1))
     axis(2, las=1, at=c(0, 0.2, 0.4, 0.6, 0.8, 1), lab=c(0, 0.2, 0.4, 0.6, 0.8, 1))
     box()
     #abline(h=c(0.1, 0.2))
-    lines(percPert, mviBhl/log2(N), type="o", pch=22, lty=2, col="blue")
-    legend("topleft", pch=c("o", "-"), legend=c("null model", "real data"), col=c("red", "blue"))
+    lines(percPert, mvimodel1/log2(N), type="o", pch=22, lty=2, col="blue")
+    legend("topleft", pch=c("-", "o"), legend=legend, col=c("blue", "red"))
     title(xlab="percentage of perturbation")
     title(ylab="variation of information (VI)")
     #dev.off() 
@@ -493,8 +497,10 @@ comparison <- function(graph, method1, method2, type=c("dependent", "independent
     names(bats) <- nn
     resBats <- cbind(ID="ratios", t(bats))
     
+    plotRobin(graph=graph,model1=viMeanBhl1,model2=viMeanBhl2,legend=c("model1", "model2"))
+    
     output <- list( viMeanBhl1=viMeanBhl1,
-                   viMeanBhl2=viMeanBhl2,
+                    viMeanBhl2=viMeanBhl2,
                    resBats=resBats
     )
     return(output)

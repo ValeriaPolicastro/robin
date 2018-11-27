@@ -1,6 +1,6 @@
 source("functions.R")
 library(igraph)
-
+library(ggplot2)
 net <- "rip_348.edges.txt"
 
 graph <- prepNet(net)
@@ -8,14 +8,15 @@ graph <- prepNet(net)
 graphRandom <- random(graph)
 
 
-List<-iter(base="independent",graph=graph,graphRandom=graphRandom,method="fastGreedy",type="independent")
-List<-iter(base="dependent",graph=graph,graphRandom=graphRandom,method="fastGreedy",type="dependent")
+List<-iter(graph=graph,graphRandom=graphRandom,method="edgeBetweenness",type="independent")
 
-plotRobin(graph=graph,viMeanBhl=List$viMeanBhl,viMeanRandom=List$viMeanRandom)
+List<-iter(graph=graph,graphRandom=graphRandom,method="edgeBetweenness",type="dependent")
+
+#method<-c("walktrap", "edgeBetweenness", "fastGreedy","leadingEigen","louvain","spinglass","labelProp","infomap")
 
 Comp<-comparison(graph=graph,method1="louvain",method2="walktrap",type="independent")
 
-#plotRobin(graph=graph,viMeanBhl=Comp$viMeanBhl1,viMeanRandom=Comp$viMeanBhl2)
+
 
 
 # writeListAsTables <- function(list, path, prefix=NULL)
@@ -30,17 +31,3 @@ Comp<-comparison(graph=graph,method1="louvain",method2="walktrap",type="independ
 
 # }
 # 
-#     # fileoutbats <- paste(base, "_BATS.txt", sep="")
-#  filepdf <- paste(base, "_VI.pdf", sep="")
-#  fileoutvirand <- paste(base, "_VI_random.txt", sep="")
-#  fileoutvicase <- paste(base, "_VI_case.txt", sep="")
-#  #file utilizzati da Italia per FAD
-#  fileoutvirandbio <- paste(base, "_VI_random_bio.txt", sep="")
-#  fileoutvicasebio <- paste(base, "_VI_case_bio.txt", sep="")
-
-
-#  write.table(viRandom, fileoutvirand, sep="\t", row.names=FALSE, quote=FALSE)
-#  write.table(viBhl, fileoutvicase, sep="\t", row.names=FALSE, quote=FALSE)
-#  write.table(viMeanRandom, fileoutvirandbio, sep="\t", row.names=FALSE, quote=FALSE)
-#  write.table(viMeanBhl, fileoutvicasebio, sep="\t", row.names=FALSE, quote=FALSE)
-# #write.table(resBats, fileoutbats, sep="\t", row.names=FALSE, quote=FALSE)
