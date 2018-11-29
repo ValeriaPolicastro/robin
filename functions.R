@@ -18,7 +18,7 @@ prepNet <- function(net.file,
 {
     if(method=="igraph")
     {
-        graph <- read_graph(net.file, format=file.format)
+        graph <- igraph::read_graph(net.file, format=file.format)
     } else if(method=="robin") {
         edge <- read.table(net.file, quote="\"")
         edge <- as.matrix(edge)
@@ -35,12 +35,12 @@ prepNet <- function(net.file,
                 vet[ind] <- id[i]
             }
             edge <- matrix(vet, ncol=2, byrow=TRUE)
-            graph <- graph(vet, directed=FALSE)
+            graph <- igraph::graph(vet, directed=FALSE)
         } else {
-            graph <- graph(vet1, directed=FALSE)
+            graph <- igraph::graph(vet1, directed=FALSE)
         }
     }
-    graph <- simplify(graph) #grafici che non contengono loop ed archi multipli
+    graph <- igraph::simplify(graph) #grafici che non contengono loop ed archi multipli
     return(graph)
 }
 #tenere gli id?
