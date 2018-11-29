@@ -70,7 +70,7 @@ random <- function(graph)
 #' @examples
 methodCommunity <- function(graph, 
                             method,
-                            directed=c("TRUE", "FALSE"),
+                            directed=TRUE,
                             weights=NULL, 
                             steps=4, 
                             spins=25, 
@@ -125,7 +125,14 @@ methodCommunity <- function(graph,
 #' @export
 #'
 #' @examples
-rewireCompl <- function(data, number, community, method, directed,weights,steps,spins,e.weights,v.weights,nb.trials)
+rewireCompl <- function(data, number, community, method,
+                        directed=TRUE,
+                        weights=NULL, 
+                        steps=4, 
+                        spins=25, 
+                        e.weights=NULL, 
+                        v.weights=NULL, 
+                        nb.trials=10)
 {
     graphRewire <- rewire(data, with=keeping_degseq(loops=FALSE, niter=number))
     comR  <- methodCommunity(graph=graphRewire, method=method,
@@ -176,13 +183,13 @@ rewireOnl <- function(data, number)
 #' @examples
 iter <- function(graph, graphRandom, method,
                  type=c("dependent", "independent"),
-                 directed,
-                 weights, 
-                 steps, 
-                 spins, 
-                 e.weights, 
-                 v.weights, 
-                 nb.trials) 
+                 directed=TRUE,
+                 weights=NULL, 
+                 steps=4, 
+                 spins=25, 
+                 e.weights=NULL, 
+                 v.weights=NULL, 
+                 nb.trials=10) 
 {
     type <- match.arg(type)
     nrep <- 10
@@ -457,7 +464,6 @@ plotRobin <-  function(graph,model1,model2,legend)
 
 ###COMPARISON DIFFERENT METHODS####
 ####con la stessa perturbazione vengono testati due metodi
-
 #' Title
 #'
 #' @param data 
@@ -471,13 +477,13 @@ plotRobin <-  function(graph,model1,model2,legend)
 
 comparison <- function(graph, method1, method2,
                        type=c("dependent", "independent"),
-                       directed,
-                       weights,
-                       steps, 
-                       spins, 
-                       e.weights, 
-                       v.weights, 
-                       nb.trials)
+                       directed=TRUE,
+                       weights=NULL, 
+                       steps=4, 
+                       spins=25, 
+                       e.weights=NULL, 
+                       v.weights=NULL, 
+                       nb.trials=10)
     {
     type <- match.arg(type)
     nrep <- 10
@@ -663,8 +669,7 @@ comparison <- function(graph, method1, method2,
     
     output <- list( viMean1=viMean1,
                     viMean2=viMean2,
-                   resBats=resBats
-    )
+                   resBats=resBats)
     return(output)
 }
     
