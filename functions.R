@@ -1,31 +1,44 @@
 
 ######PREPARAZIONE NETWORK########## 
-#' Title
+
+#' prepNet
 #'
-#' @param net network
+#' @param net.file 
+#' @param file.format 
+#' @param method 
 #'
 #' @return simple graph
 #' @export
 #'
 #' @examples
-prepNet <- function(net) 
+prepNet <- function(net.file, 
+                    file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
+                                    "dimacs", "graphdb", "gml", "dl"), 
+                    method=c("igraph", "robin")) 
 {
-    edge <- read.table(net, quote="\"")
-    edge <- as.matrix(edge)
-    ee <- edge
-    vet1 <- as.vector(t(edge))
-    un <- unique(sort(vet1))
-    if(max(un) != length(un)) { ##se non vi sono tutti i nodi il massimo del vettore non è uguale alla lunghezza
-        id <- seq(1, length(un))  ##il nome dei nodi è vet che è uguale all'id, altrimenti è vet1
-        vet <- vet1
-        for(i in c(1:length(un))) {
-            ind <- which(vet1 == un[i])
-            vet[ind] <- id[i]
+    if(method=="igraph")
+    {
+        graph <- read_graph(net.file, format=file.format)
+    } else if(method=="robin") {
+        edge <- read.table(net.file, quote="\"")
+        edge <- as.matrix(edge)
+        ee <- edge
+        vet1 <- as.vector(t(edge))
+        un <- unique(sort(vet1))
+        if(max(un) != length(un)) 
+        { ##se non vi sono tutti i nodi il massimo del vettore non è uguale alla lunghezza
+            id <- seq(1, length(un))  ##il nome dei nodi è vet che è uguale all'id, altrimenti è vet1
+            vet <- vet1
+            for(i in c(1:length(un))) 
+            {
+                ind <- which(vet1 == un[i])
+                vet[ind] <- id[i]
+            }
+            edge <- matrix(vet, ncol=2, byrow=TRUE)
+            graph <- graph(vet, directed=FALSE)
+        } else {
+            graph <- graph(vet1, directed=FALSE)
         }
-        edge <- matrix(vet, ncol=2, byrow=TRUE)
-        graph <- graph(vet, directed=FALSE)
-    }else{
-        graph <- graph(vet1, directed=FALSE)
     }
     graph <- simplify(graph) #grafici che non contengono loop ed archi multipli
     return(graph)
