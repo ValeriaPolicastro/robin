@@ -6,6 +6,7 @@
 #' @param net.file 
 #' @param file.format 
 #' @param method 
+#' @param is.directed 
 #'
 #' @return simple graph
 #' @export
@@ -14,11 +15,12 @@
 prepNet <- function(net.file, 
                     file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
                                     "dimacs", "graphdb", "gml", "dl"), 
-                    method=c("igraph", "robin")) 
+                    method=c("igraph", "robin"),
+                    is.directed=FALSE)
 {
     if(method=="igraph")
     {
-        graph <- igraph::read_graph(net.file, format=file.format)
+        graph <- igraph::read_graph(net.file, format=file.format, directed=is.directed)
     } else if(method=="robin") {
         edge <- read.table(net.file, quote="\"")
         edge <- as.matrix(edge)
@@ -35,9 +37,9 @@ prepNet <- function(net.file,
                 vet[ind] <- id[i]
             }
             edge <- matrix(vet, ncol=2, byrow=TRUE)
-            graph <- igraph::graph(vet, directed=FALSE)
+            graph <- igraph::graph(vet, directed=is.directed)
         } else {
-            graph <- igraph::graph(vet1, directed=FALSE)
+            graph <- igraph::graph(vet1, directed=is.directed)
         }
     }
     graph <- igraph::simplify(graph) #grafici che non contengono loop ed archi multipli
@@ -56,21 +58,26 @@ prepNet <- function(net.file,
 #' @examples
 random <- function(graph)
 {
-    z <- ecount(graph) ## number of edges
-    graphRandom <- rewire(graph, with=keeping_degseq(loops=FALSE, niter=z))
-    ## Randomly rewire the edges while preserving the original graph's degree distribution
+    z <- igraph::ecount(graph) ## number of edges
+    graphRandom <- igraph::rewire(graph, 
+                            with=igraph::keeping_degseq(loops=FALSE, niter=z))
+    ## Randomly rewire the edges while preserving the original graph's degree
+    ## distribution
     ## for z all the edges
     return(graphRandom)
 }
 
 #####COMMUNITY METHOD####    
 #' methodCommunity
-#' @description This function gives the membership vector of the community structure. The community structure was found by functions implemented in igraph.
+#' @description This function gives the membership vector of the community 
+#' structure. The community structure was found by functions 
+#' implemented in igraph.
 #' @param graph the input graph
 #' @param method the clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap"
 #' @param weights this argument is not settable for "infomap" method
-#' @param steps this argument is settable only for "leadingEigen"and"walktrap" method
+#' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
+#' method
 #' @param spins this argument is settable only for "infomap" method
 #' @param e.weights this argument is settable only for "infomap" method
 #' @param v.weights this argument is settable only for "infomap" method
@@ -83,7 +90,7 @@ random <- function(graph)
 #' @examples
 methodCommunity <- function(graph, 
                             method,
-                            directed=TRUE,
+                            directed=FALSE,
                             weights=NULL, 
                             steps=4, 
                             spins=25, 
@@ -104,21 +111,28 @@ methodCommunity <- function(graph,
     communities <- switch(method, 
            louvain=cluster_louvain(graph=graph, 
                                     weights=weights), 
+           
            walktrap=cluster_walktrap(graph=graph, 
                                     weights=weights, 
                                     steps=steps), 
+           
            spinglass=cluster_spinglass(graph=graph, 
                                         weights=weights, 
                                         spins=spins), 
+           
            leadingEigen=cluster_leading_eigen(graph=graph, 
                                             steps=steps, 
                                             weights=weights,
                                             options=list(maxiter=1000000)), 
+           
            edgeBetweenness=cluster_edge_betweenness(graph=graph, 
                                                     weights=weights, 
                                                     directed=directed), 
+           
            fastGreedy=cluster_fast_greedy(graph=graph, weights=weights), 
+           
            labelProp=cluster_label_prop(graph=graph, weights=weights), 
+           
            infomap=cluster_infomap(graph=graph, e.weights=e.weights, 
                                 v.weights=v.weights, nb.trials=nb.trials)
     )
@@ -133,6 +147,14 @@ methodCommunity <- function(graph,
 #' @param data 
 #' @param number 
 #' @param community 
+#' @param method 
+#' @param directed 
+#' @param weights 
+#' @param steps 
+#' @param spins 
+#' @param e.weights 
+#' @param v.weights 
+#' @param nb.trials 
 #'
 #' @return
 #' @export
@@ -169,13 +191,13 @@ rewireCompl <- function(data, number, community, method,
 #' @param data 
 #' @param number 
 #'
-#' @return
+#' @return A igraph::graph object
 #' @export
 #'
 #' @examples
 rewireOnl <- function(data, number)
 {
-    graphRewire <- rewire(data, with=keeping_degseq(loops = FALSE, niter = number))
+    graphRewire <- rewire(data, with=keeping_degseq(loops=FALSE, niter=number))
     return(graphRewire)
 }
 
@@ -207,20 +229,21 @@ iter <- function(graph, graphRandom, method,
     type <- match.arg(type)
     nrep <- 10
     comReal <- methodCommunity(graph=graph, method=method, directed=directed,
-                               weights=weights, 
-                               steps=steps, 
-                               spins=spins, 
-                               e.weights=e.weights, 
-                               v.weights=v.weights, 
-                               nb.trials=nb.trials) # real network
+                                weights=weights, 
+                                steps=steps, 
+                                spins=spins, 
+                                e.weights=e.weights, 
+                                v.weights=v.weights, 
+                                nb.trials=nb.trials) # real network
 
-    comRandom <- methodCommunity(graph=graphRandom, method=method, directed=directed,
-                                 weights=weights,
-                                 steps=steps, 
-                                 spins=spins, 
-                                 e.weights=e.weights, 
-                                 v.weights=v.weights, 
-                                 nb.trials=nb.trials) # random network
+    comRandom <- methodCommunity(graph=graphRandom, method=method, 
+                                directed=directed,
+                                weights=weights,
+                                steps=steps, 
+                                spins=spins, 
+                                e.weights=e.weights, 
+                                v.weights=v.weights, 
+                                nb.trials=nb.trials) # random network
     de <- ecount(graph)
     VI <- NULL
     vector <- NULL
@@ -266,16 +289,16 @@ iter <- function(graph, graphRandom, method,
                 
                 #RANDOM
                 Random <- rewireCompl(data=graphRandom,
-                                      number=z, 
-                                      community=comRandom, 
-                                      method=method, 
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps, 
-                                      spins=spins, 
-                                      e.weights=e.weights, 
-                                      v.weights=v.weights, 
-                                      nb.trials=nb.trials)
+                                        number=z, 
+                                        community=comRandom, 
+                                        method=method, 
+                                        directed=directed,
+                                        weights=weights,
+                                        steps=steps, 
+                                        spins=spins, 
+                                        e.weights=e.weights, 
+                                        v.weights=v.weights, 
+                                        nb.trials=nb.trials)
                 vectRandom[k] <- Random$VI
                 viRandom[count2, count] <- vectRandom[k]
                 graphRewireRandom <- Random$graphRewire
@@ -392,33 +415,32 @@ iter <- function(graph, graphRandom, method,
                     
                     ## RANDOM
                     Random <- rewireCompl(data=graphRewireRandom,
-                                          method=method,
-                                          number=round(0.01*z),
-                                          community=comRandom,
-                                          directed=directed,
-                                          weights=weights,
-                                          steps=steps, 
-                                          spins=spins, 
-                                          e.weights=e.weights, 
-                                          v.weights=v.weights, 
-                                          nb.trials=nb.trials)
+                                            method=method,
+                                            number=round(0.01*z),
+                                            community=comRandom,
+                                            directed=directed,
+                                            weights=weights,
+                                            steps=steps, 
+                                            spins=spins, 
+                                            e.weights=e.weights, 
+                                            v.weights=v.weights, 
+                                            nb.trials=nb.trials)
                     vectRandom[k] <- Random$VI
                     viRandom1[count2] <- vectRandom[k]
-                      
                 }
                 viMean1[s] <- mean(vi1)
                 viMeanRandom1[s] <- mean(viRandom1)  
             }
             graph <- intersection(graph, graphRewire)
-            graphRandom<- intersection(graphRandom, graphRewireRandom)
-            viRandom<-cbind(viRandom,viRandom1)
-            vi<-cbind(vi,vi1)
-            viMean<-cbind(viMean,viMean1)
-            viMeanRandom<-cbind(viMeanRandom,viMeanRandom1)
+            graphRandom <- intersection(graphRandom, graphRewireRandom)
+            viRandom <- cbind(viRandom,viRandom1)
+            vi <- cbind(vi,vi1)
+            viMean <- cbind(viMean,viMean1)
+            viMeanRandom <- cbind(viMeanRandom,viMeanRandom1)
             z1 <- ecount(graph)
             print(z1)
-            z2<-ecount(graphRandom)
-            }
+            z2 <- ecount(graphRandom)
+        }
     }
     colnames(viRandom) <- nRewire
     colnames(vi) <- nRewire
@@ -433,7 +455,7 @@ iter <- function(graph, graphRandom, method,
     names(bats) <- nn
     resBats <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
     
-    plotRobin(graph=graph,model1=viMean,model2=viMeanRandom,legend=c("real data", "null model"))
+    plotRobin(graph=graph, model1=viMean, model2=viMeanRandom, legend=c("real data", "null model"))
     
     
     output <- list(vi=vi,
@@ -458,12 +480,12 @@ iter <- function(graph, graphRandom, method,
 #' @export
 #'
 #' @examples
-plotRobin <-  function(graph,model1,model2,legend)
+plotRobin <-  function(graph, model1, model2, legend)
 {   
     N <- vcount(graph)
     mvimodel1 <- apply(model1, 2, mean)
     mvimodel2 <- apply(model2, 2, mean)
-    percPert<-seq(0,100,5)/100
+    percPert <- seq(0,100,5)/100
     plot(percPert, mvimodel2/log2(N), col="red", type="o", axes=FALSE, ann=FALSE, ylim=c(0, 1))
     axis(1, at=c(0, 0.2, 0.4, 0.6, 0.8, 1), lab=c(0, 0.2, 0.4, 0.6, 0.8, 1))
     axis(2, las=1, at=c(0, 0.2, 0.4, 0.6, 0.8, 1), lab=c(0, 0.2, 0.4, 0.6, 0.8, 1))
