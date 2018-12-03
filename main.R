@@ -1,6 +1,7 @@
 source("functions.R")
 library(igraph)
 library(ggplot2)
+library(gridExtra)
 net <- "rip_348.edges.txt"
 
 ##CREATE GRAPHS
@@ -19,12 +20,10 @@ plotRobin(graph=graph)
 
 
 ##COMPARISON
-Comp<-comparison(graph=graph,method1="walktrap",method2="fastGreedy",
-                 type="dependent")
-Comp<-comparison(graph=graph,method1="fastGreedy",method2="walktrap",
+Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="walktrap",
+                 method2="fastGreedy",type="independent")
+Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",method2="walktrap",
                  type="dependent")
 
-plotRobin(graph=graph,model1=Comp$viMean1,model2=Comp$viMean2,
-          legend=c("model1", "model2"))
-
+plotRobinCompare(graph,legend1vs2=c("method1", "method2"))
 
