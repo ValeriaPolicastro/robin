@@ -542,8 +542,6 @@ plotRobin <- function(graph,
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap"
 #' @param type The type of robin costruction dependent or independent data
-#' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
-#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap"
 #' @param weights this argument is not settable for "infomap" method
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
 #' method
@@ -552,6 +550,7 @@ plotRobin <- function(graph,
 #' @param v.weights This argument is settable only for "infomap" method
 #' @param nb.trials This argument is settable only for "infomap" method
 #' @param directed This argument is settable only for "edgeBetweenness" method
+#' @param graphRandom The randomly rewired graph
 #'
 #' @return A list object
 #' @export
@@ -907,14 +906,26 @@ comparison <- function(graph,graphRandom,
 
 
 ################### PLOT COMPARISON ##################
+#' plotRobinCompare
+#'
+#' @param graph The input graph prepNet
+#' @param legend The legend for the two graphs of the two methods. 
+#' The default is c("real data","null model")
+#' @param legend1vs2 The legend for the graph of he comparison of the two method.
+#' The default is c("method1","method2")
+#'
+#' @return A plot
+#' @export
+#'
+#' @examples
 plotRobinCompare<- function(graph,legend=c("real data", "null model"),
-                            legend1vs2)
+                            legend1vs2=c("method1", "method2"))
 {
-    plot1<-plotRobin(graph=graph,model1=Comp$viMean1,model2=Comp$viMeanRandom1,
+    plot1 <- plotRobin(graph=graph,model1=Comp$viMean1,model2=Comp$viMeanRandom1,
               legend=legend)
-    plot2<-plotRobin(graph=graph,model1=Comp$viMean2,model2=Comp$viMeanRandom2,
+    plot2 <- plotRobin(graph=graph,model1=Comp$viMean2,model2=Comp$viMeanRandom2,
               legend=legend)
-    plot3<-plotRobin(graph=graph,model1=Comp$viMean1,model2=Comp$viMean2,
+    plot3 <- plotRobin(graph=graph,model1=Comp$viMean1,model2=Comp$viMean2,
               legend=legend1vs2)
     gridExtra::grid.arrange(plot1,plot2,plot3, nrow=2)
 }

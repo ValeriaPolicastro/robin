@@ -25,5 +25,5 @@ Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="walktrap",
 Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",method2="walktrap",
                  type="dependent")
 
-plotRobinCompare(graph,legend1vs2=c("method1", "method2"))
+plotRobinCompare(graph)
 
