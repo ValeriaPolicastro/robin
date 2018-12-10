@@ -74,6 +74,7 @@ random <- function(graph)
 
 #####COMMUNITY METHOD####    
 #' methodCommunity
+#' 
 #' @description This function gives the membership vector of the community 
 #' structure. The community structure was found by functions 
 #' implemented in igraph.
@@ -168,7 +169,7 @@ methodCommunity <- function(graph,
 #'
 #' @examples
 rewireCompl <- function(data, number, community, method,
-                        directed=TRUE,
+                        directed=FALSE,
                         weights=NULL, 
                         steps=4, 
                         spins=25, 
@@ -235,7 +236,7 @@ rewireOnl <- function(data, number)
 #' @examples
 iter <- function(graph, graphRandom, method,
                 type=c("dependent", "independent"),
-                directed=TRUE,
+                directed=FALSE,
                 weights=NULL, 
                 steps=4, 
                 spins=25, 
@@ -451,8 +452,8 @@ iter <- function(graph, graphRandom, method,
             vi <- cbind(vi,vi1)
             viMean <- cbind(viMean,viMean1)
             viMeanRandom <- cbind(viMeanRandom,viMeanRandom1)
-            #z1 <- igraph::ecount(graph)
-            #print(z1)
+            z1 <- igraph::ecount(graph)
+            print(z1)
             #z2 <- igraph::ecount(graphRandom)
         }
     }
@@ -565,7 +566,7 @@ comparison <- function(graph,graphRandom,
                                  "leadingEigen","louvain","spinglass",
                                  "labelProp","infomap"),
                        type=c("dependent", "independent"),
-                       directed=TRUE,
+                       directed=FALSE,
                        weights=NULL, 
                        steps=4, 
                        spins=25, 
@@ -870,8 +871,8 @@ comparison <- function(graph,graphRandom,
             graphRandom <- igraph::intersection(graphRandom, Random)
             viMeanRandom1 <-cbind(viMeanRandom1,viMeanRandom11)
             viMeanRandom2 <-cbind(viMeanRandom2,viMeanRandom22)
-            #z1 <- igraph::ecount(graph)
-            #print(z1)
+            z1 <- igraph::ecount(graph)
+            print(z1)
             }
     }
     colnames(viMean1) <- nRewire
