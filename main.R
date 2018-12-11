@@ -36,7 +36,7 @@ plotRobinCompare(graph)
 ###network pesata
 library(igraphdata)
 ###1
-graph<-make_graph("Zachary")
+graph <- make_graph("Zachary")
 graph <- igraph::simplify(graph) 
 graphRandom <- random(graph)
 List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
@@ -46,15 +46,18 @@ List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
 plotRobin(graph=graph)
 Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
                  method2="walktrap",type="dependent")
+Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
+                 method2="walktrap",type="independent")
 plotRobinCompare(graph)
+
 
 ###2
 ###
 data(USairports)
-graph<-USairports
+graph <- USairports
 graph <- igraph::simplify(graph) 
 graphRandom <- random(graph)
-List<-iter(graph=graph,graphRandom=graphRandom, method="edgeBetweenness",
+List <- iter(graph=graph,graphRandom=graphRandom, method="edgeBetweenness",
            type="independent",directed=TRUE)
 #Error: Modularity is implemented for undirected graph only
 
@@ -65,8 +68,8 @@ graph<-Koenigsberg
 graph <- igraph::simplify(graph)
 graphRandom <- random(graph)
 List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
-           type="independent")
-#non lo fa perchè sono nomi 
+           type="dependent")
+#troppi pochi nodi non riesce a farlo
 
 
 

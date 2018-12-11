@@ -132,7 +132,7 @@ methodCommunity <- function(graph,
                                             options=list(maxiter=1000000)), 
            
             edgeBetweenness=igraph::cluster_edge_betweenness(graph=graph, 
-                                                    weights=weights, 
+                                                    weights=weights,
                                                     directed=directed), 
            
             fastGreedy=igraph::cluster_fast_greedy(graph=graph, weights=weights), 
