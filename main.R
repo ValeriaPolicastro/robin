@@ -69,7 +69,7 @@ graph <- igraph::simplify(graph)
 graphRandom <- random(graph)
 List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
            type="dependent")
-#troppi pochi nodi non riesce a farlo
+#troppi pochi nodi non riesce a farlo dovremmo scriverlo 
 
 
 
