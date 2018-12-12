@@ -28,6 +28,11 @@ Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
 plotRobinCompare(graph)
 
 
+##TEST
+library(fdatest)
+
+
+
 
 
 ##############    PROVE   ######################
@@ -35,7 +40,10 @@ plotRobinCompare(graph)
 ###network con nomi
 ###network pesata
 library(igraphdata)
+
+
 ###1
+###
 graph <- make_graph("Zachary")
 graph <- igraph::simplify(graph) 
 graphRandom <- random(graph)
@@ -59,12 +67,17 @@ graph <- igraph::simplify(graph)
 graphRandom <- random(graph)
 List <- iter(graph=graph,graphRandom=graphRandom, method="edgeBetweenness",
            type="independent",directed=TRUE)
-#Error: Modularity is implemented for undirected graph only
+#Non gira questo gira solo il comando ma con errore
+#Error: Modularity is implemented for undirected graph only 
+#anche se metto modularity= FALSE
+graph <- prepNet(net,file.format="edgelist",method="igraph",is.directed = TRUE)
+cluster_edge_betweenness(graph=graph,directed=TRUE,modularity = FALSE)
+
 
 ###3
 ###
 data(Koenigsberg)
-graph<-Koenigsberg
+graph <- Koenigsberg
 graph <- igraph::simplify(graph)
 graphRandom <- random(graph)
 List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
@@ -72,4 +85,12 @@ List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
 #troppi pochi nodi non riesce a farlo dovremmo scriverlo 
 
 
-
+###4
+###
+data(karate)
+graph <- karate
+graph <- igraph::simplify(graph)
+graphRandom <- random(graph)
+List <- iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
+           type="independent")
+#non funziona 
