@@ -952,11 +952,11 @@ robinTest <- function(graph,
     #con igraph
     N <- igraph::vcount(graph)
     mvimodel1 <- cbind(as.vector((model1)/log2(N)),legend[1],seq(1,10),rep((seq(0,100,5)/100),each=10))
-    mvimodel2 <- cbind(as.vector((model2)/log2(N)),legend[2],seq(1,10),rep((seq(0,100,5)/100),each=10))
+    mvimodel2 <- cbind(as.vector((model2)/log2(N)),legend[2],seq(11,20),rep((seq(0,100,5)/100),each=10))
     mvi <- rbind(mvimodel1,mvimodel2)
     colnames(mvi) <- c("mvi","model","s","percPert")
     dataFrame <- data.frame(mvi)
-    plot <- ggplot(dataFrame, aes(x=percPert, y=as.numeric(as.character(mvi)), colour=model,group=model)) + geom_smooth()+ 
+    plot <- ggplot(dataFrame, aes(x=percPert, y=as.numeric(as.character(mvi)), color= model, group=s)) + geom_line()+ 
         xlab("Percentage of perturbation") +
         ylab("Variation of Information (VI)")+
         ggtitle("Robin plot")
