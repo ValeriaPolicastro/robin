@@ -30,7 +30,7 @@ plotRobinCompare(graph)
 
 ##TEST
 library(fdatest)
-
+robinTest(graph=graph)
 
 
 
