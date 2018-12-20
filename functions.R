@@ -22,11 +22,11 @@ prepNet <- function(net.file,
                     is.directed=FALSE)
 {
     method <- match.arg(method)
-    if(method=="igraph")
+    if(method == "igraph")
     {
         graph <- igraph::read_graph(net.file, format=file.format, 
                                     directed=is.directed)
-    } else if(method=="robin") {
+    } else if(method == "robin") {
         edge <- read.table(net.file, quote="\"")
         edge <- as.matrix(edge)
         ee <- edge
@@ -923,8 +923,8 @@ comparison <- function(graph,graphRandom,
 plotRobinCompare <- function(graph,legend=c("real data", "null model"),
                             legend1vs2=c("method1", "method2"))
 {
-    plot1 <- plotRobin(graph=graph,model1=Comp$viMean1,model2=Comp$viMeanRandom1,
-              legend=legend)
+    plot1 <- plotRobin(graph=graph, model1=Comp$viMean1, 
+                    model2=Comp$viMeanRandom1, legend=legend)
     plot2 <- plotRobin(graph=graph,model1=Comp$viMean2,model2=Comp$viMeanRandom2,
               legend=legend)
     plot3 <- plotRobin(graph=graph,model1=Comp$viMean1,model2=Comp$viMean2,
@@ -946,32 +946,35 @@ plotRobinCompare <- function(graph,legend=c("real data", "null model"),
 #'
 #' @examples
 robinTest <- function(graph,
-                      model1=List$viMean,
-                      model2=List$viMeanRandom, 
-                      legend=c("real data", "null model"))
+                        model1=List$viMean,
+                        model2=List$viMeanRandom, 
+                        legend=c("real data", "null model"))
 {
     #con igraph
     N <- igraph::vcount(graph)
-    mvimodel1 <- cbind(as.vector((model1)/log2(N)),legend[1],seq(1,10),rep((seq(0,100,5)/100),each=10))
-    mvimodel2 <- cbind(as.vector((model2)/log2(N)),legend[2],seq(11,20),rep((seq(0,100,5)/100),each=10))
-    mvi <- rbind(mvimodel1,mvimodel2)
+    mvimodel1 <- cbind(as.vector((model1)/log2(N)), legend[1], 
+                        seq(1,10), rep((seq(0,100,5)/100), each=10))
+    mvimodel2 <- cbind(as.vector((model2)/log2(N)), legend[2], 
+                        seq(11,20),rep((seq(0,100,5)/100),each=10))
+    mvi <- rbind(mvimodel1, mvimodel2)
     colnames(mvi) <- c("mvi","model","s","percPert")
     dataFrame <- data.frame(mvi)
-    plot <- ggplot(dataFrame, aes(x=percPert, y=as.numeric(as.character(mvi)), color= model, group=s)) + geom_line()+ 
-        xlab("Percentage of perturbation") +
-        ylab("Variation of Information (VI)")+
-        ggtitle("Robin plot")
+    plot <- ggplot2::ggplot(dataFrame, ggplot2::aes(x=percPert, y=as.numeric(as.character(mvi)), color= model, group=s)) + 
+        ggplot2::geom_line() + 
+        ggplot2::xlab("Percentage of perturbation") +
+        ggplot2::ylab("Variation of Information (VI)")+
+        ggplot2::ggtitle("Robin plot")
     plot
     
     
     #Italia:
-    nn <- log2(igraph::vcount(graph))#vedere se è giusto
+    nn <- log2(igraph::vcount(graph))#vPedere se è giusto
     ntimes <- 20
     case <- as.matrix(model1)/nn
     random <- as.matrix(model2)/nn
     #Two populations Interval Testing Procedure with B-spline basis
-    ITPresult <- fdatest::ITP2bspline(case,random,mu=0,order=4,
-                           nknots=12,B=10000,paired=TRUE)
+    ITPresult <- fdatest::ITP2bspline(case, random, mu=0, order=4,
+                            nknots=12, B=10000, paired=TRUE)
     pvalues <- ITPresult$pval
     pvaluesAd <- p.adjust(pvalues, method = "bonferroni", n = length(pvalues))
     #plot
@@ -986,11 +989,11 @@ robinTest <- function(graph,
     layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE),widths=c(1,1,1))
     
     xxNtimes <- c(0:ntimes)/ntimes
-    matplot(xxNtimes,t(random),type="l", col="red",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
+    matplot(xxNtimes, t(random),type="l", col="red",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
     matlines(xxNtimes,t(case),type="l", col="black",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
     
-    plot(ITPresult,main='VI',xrange=c(0,1),xlab='perturbation',ylab="VI")
-    lines(xxNtimes,rep(0.05,21),type="l",col="red")
+    plot(ITPresult, main='VI', xrange=c(0,1), xlab='perturbation', ylab="VI")
+    lines(xxNtimes, rep(0.05,21), type="l", col="red")
     
     
     
@@ -1007,126 +1010,126 @@ robinTest <- function(graph,
 #     
 #     
 #     
-#     ylab='Functional Data'
-#     lwd=1
-#     alpha1=0.05
-#     alpha2=0.01
-#     xrange=c(0,1)
-#     main=NULL
-#     col=c(1,2)
-#     object=ITP.result
-#     ylim=range(object$data.eval)
-#     p <- length(object$pval)
-#     J <- dim(object$data.eval)[2]
-#     n <- dim(object$data.eval)[1]
-#     xmin <- xrange[1]
-#     xmax <- xrange[2]
-#     abscissa.pval = seq(xmin,xmax,len=p)
-#     Abscissa = seq(xmin,xmax,len=J)
-#     main.data <- paste(main,': Functional Data')
-#     main.data <- sub("^ : +", "", main.data)
-#     colors <- numeric(n)
-#     colors[which(object$labels==1)] <- "red"
-#     colors[which(object$labels==2)] <- "blue"
-#     difference1 <- which(pvalues_ad<alpha1 & pvalues_ad>=alpha2)
-#     
-#     #pdf(file_out_plot1)
-#     setEPS()
-#     postscript(file_out_plot1)
-#     
-#     xx_ntimes=c(0:ntimes)/ntimes
-#     matplot(xx_ntimes,t(random),type="l", col="white",xlab='perturbation',ylab="VI",main="VI : Sampled Data",cex.lab=2,cex.main=3)
-#     if (length(difference1) > 0) {
-#         for (j in 1:length(difference1)) {
-#             min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-#             max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-#             rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
-#         }
-#         rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-#     }
-#     difference2 <- which(pvalues_ad<alpha2)
-#     if (length(difference2) > 0) {
-#         for (j in 1:length(difference2)) {
-#             min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-#             max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-#             rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
-#         }
-#         rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-#     }
-#     matlines(xx_ntimes,t(random),type="l", col="blue",xlab='perturbation',ylab="VI",main="VI : Sampled Data",cex.lab=2,cex.main=3)
-#     matlines(xx_ntimes,t(case),type="l", col="red",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
-#     legend(0.2,0.3,c(as.expression(~VIc[random]),as.expression(~VIc)),lty=c(1,1),lwd=c(2,2),col=c("blue","red"),cex=3)
-#     dev.off()
-#     
-# ### functional data
-#     
-#     #  pdf(file_out_plot2)
-#     setEPS()
-#     postscript(file_out_plot2)
-#     
-#     xx_ntimes=c(0:ntimes)/ntimes
-#     matplot(xx_ntimes,t(random_bio),type="l", col="white",xlab='perturbation',ylab="VI",main="VI : Data",cex.lab=2,cex.main=3)
-#     if (length(difference1) > 0) {
-#         for (j in 1:length(difference1)) {
-#             min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-#             max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-#             rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
-#         }
-#         rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-#     }
-#     difference2 <- which(pvalues_ad<alpha2)
-#     if (length(difference2) > 0) {
-#         for (j in 1:length(difference2)) {
-#             min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-#             max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-#             rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
-#         }
-#         rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-#     }
-#     matlines(Abscissa,t(object$data.eval),type='l',main=main.data,ylab=ylab,col=colors,lwd=lwd,ylim=ylim)
-#     legend(0.45,0.13,c(as.expression(~VIc[random]),as.expression(~VIc)),lty=c(1,1),lwd=c(2,2),col=c("blue","red"),cex=2.3)
-#     
-#     dev.off()
-#     
-#     
-#     
-#     ####copiato dal codice fdatest: plot.ITP2.r
-#     
-#     #pdf(file_out_plot3)
-#     setEPS()
-#     postscript(file_out_plot3)
-#     
-#     main.p <- paste(main,': Adjusted p-values')
-#     main.p <- sub("^ : +", "", main.p)
-#     plot(abscissa.pval,pvalues_ad,pch=16,ylim=c(0,1),main=main.p,ylab='p-value',xlab='perturbation',cex.lab=2,cex.main=3)
-#     
-#     if (length(difference1) > 0) {
-#         for (j in 1:length(difference1)) {
-#             min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-#             max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-#             rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
-#         }
-#         #gray90
-#         rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-#     }
-#     difference2 <- which(pvalues_ad<alpha2)
-#     if (length(difference2) > 0) {
-#         for (j in 1:length(difference2)) {
-#             min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-#             max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-#             rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
-#         }
-#         #gray80
-#         rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-#     }
-#     for(j in 0:10){
-#         abline(h=j/10,col='lightgray',lty="dotted")
-#     }
-#     points(abscissa.pval,pvalues_ad,pch=16,cex=2)
-#     lines(xx_ntimes,rep(0.05,21),type="l",col="red")
-#     
-#     dev.off()
-#     
+    ylab='Functional Data'
+    lwd=1
+    alpha1=0.05
+    alpha2=0.01
+    xrange=c(0,1)
+    main=NULL
+    col=c(1,2)
+    object=ITPresult
+    ylim=range(object$data.eval)
+    p <- length(object$pval)
+    J <- dim(object$data.eval)[2]
+    n <- dim(object$data.eval)[1]
+    xmin <- xrange[1]
+    xmax <- xrange[2]
+    abscissa.pval = seq(xmin,xmax,len=p)
+    Abscissa = seq(xmin,xmax,len=J)
+    main.data <- paste(main,': Functional Data')
+    main.data <- sub("^ : +", "", main.data)
+    colors <- numeric(n)
+    colors[which(object$labels==1)] <- "red"
+    colors[which(object$labels==2)] <- "blue"
+    difference1 <- which(pvaluesAd<alpha1 & pvaluesAd>=alpha2)
+
+    #pdf(file_out_plot1)
+    setEPS()
+    postscript(file_out_plot1)
+
+    xx_ntimes=c(0:ntimes)/ntimes
+    matplot(xx_ntimes,t(random),type="l", col="white",xlab='perturbation',ylab="VI",main="VI : Sampled Data",cex.lab=2,cex.main=3)
+    if (length(difference1) > 0) {
+        for (j in 1:length(difference1)) {
+            min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+            max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+            rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
+        }
+        rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    difference2 <- which(pvaluesAd<alpha2)
+    if (length(difference2) > 0) {
+        for (j in 1:length(difference2)) {
+            min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+            max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+            rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
+        }
+        rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    matlines(xx_ntimes,t(random),type="l", col="blue",xlab='perturbation',ylab="VI",main="VI : Sampled Data",cex.lab=2,cex.main=3)
+    matlines(xx_ntimes,t(case),type="l", col="red",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
+    legend(0.2,0.3,c(as.expression(~VIc[random]),as.expression(~VIc)),lty=c(1,1),lwd=c(2,2),col=c("blue","red"),cex=3)
+    dev.off()
+
+### functional data
+
+    #  pdf(file_out_plot2)
+    setEPS()
+    postscript(file_out_plot2)
+
+    xx_ntimes=c(0:ntimes)/ntimes
+    matplot(xx_ntimes,t(random),type="l", col="white",xlab='perturbation',ylab="VI",main="VI : Data",cex.lab=2,cex.main=3)
+    if (length(difference1) > 0) {
+        for (j in 1:length(difference1)) {
+            min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+            max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+            rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
+        }
+        rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    difference2 <- which(pvaluesAd<alpha2)
+    if (length(difference2) > 0) {
+        for (j in 1:length(difference2)) {
+            min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+            max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+            rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
+        }
+        rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    matlines(Abscissa,t(object$data.eval),type='l', main=main.data, ylab=ylab, col=colors, lwd=lwd, ylim=ylim)
+    legend(0.45,0.13,c(as.expression(~VIc[random]),as.expression(~VIc)),lty=c(1,1),lwd=c(2,2),col=c("blue","red"),cex=2.3)
+
+    dev.off()
+
+
+
+    ####copiato dal codice fdatest: plot.ITP2.r
+
+    #pdf(file_out_plot3)
+    setEPS()
+    postscript(file_out_plot3)
+
+    main.p <- paste(main,': Adjusted p-values')
+    main.p <- sub("^ : +", "", main.p)
+    plot(abscissa.pval,pvaluesAd,pch=16,ylim=c(0,1),main=main.p,ylab='p-value',xlab='perturbation',cex.lab=2,cex.main=3)
+
+    if (length(difference1) > 0) {
+        for (j in 1:length(difference1)) {
+            min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+            max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+            rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
+        }
+        #gray90
+        rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    difference2 <- which(pvaluesAd<alpha2)
+    if (length(difference2) > 0) {
+        for (j in 1:length(difference2)) {
+            min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+            max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+            rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
+        }
+        #gray80
+        rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    for(j in 0:10){
+        abline(h=j/10,col='lightgray',lty="dotted")
+    }
+    points(abscissa.pval, pvaluesAd,pch=16,cex=2)
+    lines(xx_ntimes,rep(0.05,21),type="l",col="red")
+
+    dev.off()
+
 
 }
 
