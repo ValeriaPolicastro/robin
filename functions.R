@@ -932,6 +932,36 @@ plotRobinCompare <- function(graph,legend=c("real data", "null model"),
     gridExtra::grid.arrange(plot1,plot2,plot3, nrow=2)
 }
 
+#' createITPSplineResult
+#' 
+#' @description creates an fdatest::ITP2 class object from an iGraph
+#' 
+#' @param graph an iGraph object
+#' @param model1 
+#' @param model2 
+#' @param muParam the mu parameter for ITP2bspline (default 0)
+#' @param orderParam the order parameter for ITP2bspline (default 4)
+#' @param nKnots the nknots parameter for ITP2bspline (default 12)
+#' @param BParam the B parameter for ITP2bspline (default 10000)
+#' @param isPaired the paired parameter for ITP2bspline (default TRUE)
+#'
+#' @return an ITP2 object
+#' @export
+#'
+#' @examples
+createITPSplineResult <- function(graph, model1, model2,
+                                muParam=0, orderParam=4, nKnots=12, 
+                                BParam=10000, isPaired=TRUE) 
+{
+    nOrder <- log2(igraph::gorder(graph))
+    modeled1 <- as.matrix(model1)/nOrder
+    modeled2 <- as.matrix(model2)/nOrder
+    ## Two populations Interval Testing Procedure with B-spline basis
+    ITPresult <- fdatest::ITP2bspline(modeled1, modeled2, mu=muParam, 
+                                    order=orderParam, nknots=nKnots, 
+                                    B=BParam, paired=isPaired)
+    return(ITPresult)
+}
 
 ################ TEST ##############################
 #-----------------FDATEST (Pini-Vantini paper)----------
@@ -966,43 +996,49 @@ robinTest <- function(graph,
         ggplot2::ggtitle("Robin plot")
     plot
     
+    ITPresult <- createITPSplineResult(graph, model1, model2)
+    plot(ITPresult, main='VI', xrange=c(0,1), xlab='perturbation', ylab="VI")
+    lines(xxNtimes, rep(0.05, 21), type="l", col="red")
+    
     
     #Italia:
-    nn <- log2(igraph::vcount(graph))#vPedere se è giusto
-    ntimes <- 20
-    case <- as.matrix(model1)/nn
-    random <- as.matrix(model2)/nn
-    #Two populations Interval Testing Procedure with B-spline basis
-    ITPresult <- fdatest::ITP2bspline(case, random, mu=0, order=4,
-                            nknots=12, B=10000, paired=TRUE)
-    pvalues <- ITPresult$pval
-    pvaluesAd <- p.adjust(pvalues, method = "bonferroni", n = length(pvalues))
+    #nn <- log2(igraph::vcount(graph))#vPedere se è giusto
+    #ntimes <- 20
+    #case <- as.matrix(model1)/nn
+    #random <- as.matrix(model2)/nn
+    ## Two populations Interval Testing Procedure with B-spline basis
+    # ITPresult <- fdatest::ITP2bspline(case, random, mu=0, order=4,
+    #                             nknots=12, B=10000, paired=TRUE)
+    
+
+    
+    #pvalues <- ITPresult$pval
+    #pvaluesAd <- p.adjust(pvalues, method = "bonferroni", n = length(pvalues))
     #plot
-    abscissaRange <- c(0,1)
-    minAscissa <- abscissaRange[1]-(abscissaRange[2]-abscissaRange[1])/2
-    maxAscissa <- abscissaRange[2]+(abscissaRange[2]-abscissaRange[1])/2
-    p <- dim(ITPresult$heatmap.matrix)[1]
-    ordinataGrafico <- seq(abscissaRange[1],abscissaRange[2],length.out=p) - abscissaRange[1]
-    nlevel <- 20
-    colori <- rainbow(nlevel,start=0.15,end=0.67)
-    colori <- colori[length(colori):1]
-    layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE),widths=c(1,1,1))
+    #abscissaRange <- c(0,1)
+    # minAscissa <- abscissaRange[1]-(abscissaRange[2]-abscissaRange[1])/2
+    # maxAscissa <- abscissaRange[2]+(abscissaRange[2]-abscissaRange[1])/2
+    # p <- dim(ITPresult$heatmap.matrix)[1]
+    # ordinataGrafico <- seq(abscissaRange[1],abscissaRange[2],length.out=p) - abscissaRange[1]
+    # nlevel <- 20
+    # colori <- rainbow(nlevel,start=0.15,end=0.67)
+    # colori <- colori[length(colori):1]
+    # layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE),widths=c(1,1,1))
+    # 
+    # xxNtimes <- c(0:ntimes)/ntimes
+    # matplot(xxNtimes, t(random),type="l", col="red",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
+    # matlines(xxNtimes,t(case),type="l", col="black",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
     
-    xxNtimes <- c(0:ntimes)/ntimes
-    matplot(xxNtimes, t(random),type="l", col="red",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
-    matlines(xxNtimes,t(case),type="l", col="black",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
-    
-    plot(ITPresult, main='VI', xrange=c(0,1), xlab='perturbation', ylab="VI")
-    lines(xxNtimes, rep(0.05,21), type="l", col="red")
+   
     
     
     
     ##Heatmap
-    library("aqfig")
-    matriceQuad <- ITPresult$heatmap.matrix[,(p+1):(3*p)]
-    ascissaQuad <- seq(abscissaRange[1],abscissaRange[2],length.out=p*2)
-    image(ascissaQuad,ordinataGrafico,t(matriceQuad[p:1,]),col=colori,ylab='Interval length',main='Adjusted p-value heatmap',xlab='abscissa',zlim=c(0,1),asp=1)
-    vertical.image.legend(zlim=c(0,1), col=colori)
+    # library("aqfig")
+    # matriceQuad <- ITPresult$heatmap.matrix[,(p+1):(3*p)]
+    # ascissaQuad <- seq(abscissaRange[1],abscissaRange[2],length.out=p*2)
+    # image(ascissaQuad,ordinataGrafico,t(matriceQuad[p:1,]),col=colori,ylab='Interval length',main='Adjusted p-value heatmap',xlab='abscissa',zlim=c(0,1),asp=1)
+    # vertical.image.legend(zlim=c(0,1), col=colori)
     
 #     dev.off()
 #     
@@ -1010,7 +1046,7 @@ robinTest <- function(graph,
 #     
 #     
 #     
-    ylab='Functional Data'
+#    ylab='Functional Data'
     lwd=1
     alpha1=0.05
     alpha2=0.01
@@ -1034,39 +1070,41 @@ robinTest <- function(graph,
     difference1 <- which(pvaluesAd<alpha1 & pvaluesAd>=alpha2)
 
     #pdf(file_out_plot1)
-    setEPS()
-    postscript(file_out_plot1)
-
-    xx_ntimes=c(0:ntimes)/ntimes
-    matplot(xx_ntimes,t(random),type="l", col="white",xlab='perturbation',ylab="VI",main="VI : Sampled Data",cex.lab=2,cex.main=3)
-    if (length(difference1) > 0) {
-        for (j in 1:length(difference1)) {
-            min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-            max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-            rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
-        }
-        rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-    }
-    difference2 <- which(pvaluesAd<alpha2)
-    if (length(difference2) > 0) {
-        for (j in 1:length(difference2)) {
-            min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-            max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-            rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
-        }
-        rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-    }
-    matlines(xx_ntimes,t(random),type="l", col="blue",xlab='perturbation',ylab="VI",main="VI : Sampled Data",cex.lab=2,cex.main=3)
-    matlines(xx_ntimes,t(case),type="l", col="red",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
-    legend(0.2,0.3,c(as.expression(~VIc[random]),as.expression(~VIc)),lty=c(1,1),lwd=c(2,2),col=c("blue","red"),cex=3)
-    dev.off()
+    # setEPS()
+    # postscript(file_out_plot1)
+    # 
+    # xx_ntimes=c(0:ntimes)/ntimes
+    # matplot(xx_ntimes,t(random),type="l", col="white",xlab='perturbation',ylab="VI",main="VI : Sampled Data",cex.lab=2,cex.main=3)
+    # if (length(difference1) > 0) {
+    #     for (j in 1:length(difference1)) {
+    #         min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+    #         max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+    #         rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
+    #     }
+    #     rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    # }
+    # difference2 <- which(pvaluesAd<alpha2)
+    # if (length(difference2) > 0) {
+    #     for (j in 1:length(difference2)) {
+    #         min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+    #         max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+    #         rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
+    #     }
+    #     rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    # }
+    # matlines(xx_ntimes,t(random),type="l", col="blue",xlab='perturbation',ylab="VI",main="VI : Sampled Data",cex.lab=2,cex.main=3)
+    # matlines(xx_ntimes,t(case),type="l", col="red",xlab='perturbation',ylab="VI",main="VI : Sampled Data")
+    # legend(0.2,0.3,c(as.expression(~VIc[random]),as.expression(~VIc)),lty=c(1,1),lwd=c(2,2),col=c("blue","red"),cex=3)
+    # dev.off()
 
 ### functional data
 
     #  pdf(file_out_plot2)
-    setEPS()
-    postscript(file_out_plot2)
-
+    #setEPS()
+    #postscript(file_out_plot2)
+    
+    case <- as.matrix(model1)/nn
+    random <- as.matrix(model2)/nn
     xx_ntimes=c(0:ntimes)/ntimes
     matplot(xx_ntimes,t(random),type="l", col="white",xlab='perturbation',ylab="VI",main="VI : Data",cex.lab=2,cex.main=3)
     if (length(difference1) > 0) {
