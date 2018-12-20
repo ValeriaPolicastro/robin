@@ -5,7 +5,7 @@ library(gridExtra)
 net <- "rip_348.edges.txt"
 
 ##CREATE GRAPHS
-graph <- prepNet(net,file.format="edgelist",method="robin")
+graph <- prepNet(net, file.format="edgelist", method="robin")
 #metodo igraph un vertice in più
 graphRandom <- random(graph)
 
@@ -20,10 +20,10 @@ plotRobin(graph=graph)
 
 
 ##COMPARISON
-Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="walktrap",
-                 method2="fastGreedy",type="independent")
-Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                 method2="walktrap",type="dependent")
+Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="walktrap",
+                method2="fastGreedy",type="independent")
+Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
+                method2="walktrap",type="dependent")
 
 plotRobinCompare(graph)
 

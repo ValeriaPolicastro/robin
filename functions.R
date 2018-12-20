@@ -21,6 +21,7 @@ prepNet <- function(net.file,
                     method=c("igraph", "robin"),
                     is.directed=FALSE)
 {
+    method <- match.arg(method)
     if(method=="igraph")
     {
         graph <- igraph::read_graph(net.file, format=file.format, 
