@@ -2,6 +2,8 @@ source("functions.R")
 library(igraph)
 library(ggplot2)
 library(gridExtra)
+library(fdatest)
+library('gprege')
 net <- "rip_348.edges.txt"
 
 ##CREATE GRAPHS
@@ -30,8 +32,14 @@ plotRobinCompare(graph)
 
 
 ##TEST
-library(fdatest)
-robinTest(graph=graph)
+robinTest(graph=graph, model1=List$viMean,model2=List$viMeanRandom, 
+          legend=c("real data", "null model"))
+
+robinTest(graph=graph, model1=Comp$viMean1,model2=Comp$viMean2, 
+          legend=c("model1", "model2"))
+
+
+callgp(filename="/media/vpoli/MYFILES/CNR Tigem/robin vecchio e alto/facebook_348_fastgreedy_BATS.txt")
 
 
 
