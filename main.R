@@ -32,9 +32,10 @@ plotRobinCompare(graph)
 
 
 ##TEST
+#cofronto tra modello e modello nullo
 robinTest(graph=graph, model1=List$viMean,model2=List$viMeanRandom, 
           legend=c("real data", "null model"))
-
+#confronto tra due metodi
 robinTest(graph=graph, model1=Comp$viMean1,model2=Comp$viMean2, 
           legend=c("model1", "model2"))
 

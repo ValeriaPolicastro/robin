@@ -1030,7 +1030,7 @@ callgp <- function(filename)
         stdv[i]=sd(MA[2,ind])
         varv[i]=var(MA[2,ind])
     }
-    #sigmaest=mean(stdv)
+    #sigmaest=mean(stdv)Order of the B-spline basis expansion.
     GlobalVar=var(MA[2,])
     SigNoise=mean(varv)/GlobalVar
     if (SigNoise>1)SigNoise=1
