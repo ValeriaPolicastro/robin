@@ -3,6 +3,10 @@ library(igraph)
 library(ggplot2)
 library(gridExtra)
 library(fdatest)
+#installation gprege
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("gprege", version = "3.8")
 library('gprege')
 net <- "rip_348.edges.txt"
 
@@ -40,7 +44,7 @@ robinTest(graph=graph, model1=Comp$viMean1,model2=Comp$viMean2,
           legend=c("model1", "model2"))
 
 
-callgp(filename="/media/vpoli/MYFILES/CNR Tigem/robin vecchio e alto/facebook_348_fastgreedy_BATS.txt")
+callgp(filename="E:/CNR Tigem/robin/facebook_348_fastgreedy_BATS.txt")
 
 
 
