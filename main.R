@@ -46,10 +46,10 @@ plotRobin(graph=graph)
 
 ##COMPARISON
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                method2="walktrap",type="independent")
+                method2="louvain",type="independent")
 
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                method2="walktrap",type="dependent")
+                method2="louvain",type="dependent")
 
 plotRobinCompare(graph)
 
