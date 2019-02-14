@@ -475,7 +475,7 @@ iter <- function(graph, graphRandom, method,
                     viRandom=viRandom,
                     viMean=viMean,
                     viMeanRandom=viMeanRandom,
-                    resBats=resBats
+                    ratios=resBats
                     )
       return(output)
     
@@ -901,9 +901,9 @@ comparison <- function(graph,graphRandom,
                     viMean2=viMean2,
                     viMeanRandom1=viMeanRandom1,
                     viMeanRandom2=viMeanRandom2,
-                   resBats1=resBats1,
-                   resBats2=resBats2,
-                   resBats1vs2=resBats1vs2)
+                   ratios1=resBats1,
+                   ratios2=resBats2,
+                   ratios1vs2=resBats1vs2)
     return(output)
 }
 
@@ -966,9 +966,58 @@ createITPSplineResult <- function(graph, model1, model2,
     return(ITPresult)
 }
 
-################ TEST ##############################
-#-----------------FDATEST (Pini-Vantini paper)----------
+######################GAUSSIN PROCESS#################
 
+callgp <- function(ratio)
+{
+    gpregeOptions = list(indexRange=(1:2), explore=FALSE, 
+                         exhaustPlotRes=30, exhaustPlotLevels=10, 
+                         exhaustPlotMaxWidth=100, iters=100, 
+                         labels=rep(FALSE,2), display=FALSE)
+    MA=as.matrix(ratio[,c(2:dim(ratio)[2])])
+    MA<-t(MA)
+    vt=unique(colnames(MA))
+    ntimes=length(vt)
+    stdv=NULL
+    varv=NULL
+    for (i in c(1:ntimes)){
+        ind=which(colnames(MA)==vt[i])
+        stdv[i]=sd(MA[1,ind])
+        varv[i]=var(MA[1,ind])
+    }
+    #sigmaest=mean(stdv)Order of the B-spline basis expansion.
+    GlobalVar=var(MA[1,])
+    SigNoise=mean(varv)/GlobalVar
+    if (SigNoise>1)SigNoise=1
+    ##########
+    
+    #SigNoise=1-var(MA[2,])
+    sigmaest=1-SigNoise
+    #mod='08'
+    #ntimes=50
+    
+    gpregeOptions$inithypers <- matrix( c(
+        1/1000,	0,	1
+        ,1/ntimes,	sigmaest, SigNoise
+    ), ncol=3, byrow=TRUE)
+    #gpregeOptions$inithypers <- matrix( c(
+    # 1/1000,  0,	1
+    #,1/ntimes,	0.8,0.2
+    #), ncol=3, byrow=TRUE)
+    
+    dvet=data.matrix(as.numeric(colnames(ratio)[-1]))
+    dd=t(data.matrix(as.numeric((ratio)[-1])))
+    rownames(dd)='VI'
+    colnames(dd)=dvet
+    datadum=rbind(dd,dd)
+    gpregeOutput <-gprege::gprege(data=datadum, inputs=dvet,
+                                  gpregeOptions=gpregeOptions)
+    return(gpregeOutput)
+   
+}
+
+
+################ TEST ##############################
 
 #' robinTest
 #'
@@ -984,8 +1033,10 @@ createITPSplineResult <- function(graph, model1, model2,
 robinTest <- function(graph,
                         model1=model1,
                         model2=model2, 
-                        legend=legend)
+                        legend=legend,
+                        ratio=ratio)
 {
+    #-----------------FDATEST (Pini-Vantini paper)----------
      N <- igraph::vcount(graph)
     mvimodel1 <- cbind(as.vector((model1)/log2(N)), legend[1], 
                         seq(1,10), rep((seq(0,100,5)/100), each=10))
@@ -1011,104 +1062,21 @@ robinTest <- function(graph,
     lines(perc, rep(0.05, 21), type="l", col="red")
     
     print(plot2)
-}  
-#-----------------GAUSSIAN PROCESS----------
-
-gpregeOptions = list(indexRange=(1:2), explore=FALSE, exhaustPlotRes=30, 
-                     exhaustPlotLevels=10, exhaustPlotMaxWidth=100, iters=100, 
-                     labels=rep(FALSE,2), display=FALSE)
-MA=as.matrix(List$resBats[,c(2:dim(List$resBats)[2])])
-MA<-t(MA)
-vt=unique(colnames(MA))
-ntimes=length(vt)
-stdv=NULL
-varv=NULL
-for (i in c(1:ntimes)){
-    ind=which(colnames(MA)==vt[i])
-    stdv[i]=sd(MA[1,ind])
-    varv[i]=var(MA[1,ind])
-}
-#sigmaest=mean(stdv)Order of the B-spline basis expansion.
-GlobalVar=var(MA[1,])
-SigNoise=mean(varv)/GlobalVar
-if (SigNoise>1)SigNoise=1
-##########
-
-#SigNoise=1-var(MA[2,])
-sigmaest=1-SigNoise
-#mod='08'
-#ntimes=50
-
-gpregeOptions$inithypers <- matrix( c(
-    1/1000,	0,	1
-    ,1/ntimes,	sigmaest, SigNoise
-), ncol=3, byrow=TRUE)
-#gpregeOptions$inithypers <- matrix( c(
-# 1/1000,  0,	1
-#,1/ntimes,	0.8,0.2
-#), ncol=3, byrow=TRUE)
-
-dvet=data.matrix(colnames(List$resBats)[-1])
-dd=t(data.matrix(as.numeric((List$resBats)[-1])))
-rownames(dd)='VI'
-colnames(dd)=dvet
-datadum=rbind(dd,dd)
-gpregeOutput <- gprege(data=datadum, inputs=dvet, gpregeOptions=gpregeOptions)
-#non va 
-bf=gpregeOutput$rankingScores[1]
-return(bf)
-
-
-###Gaussian Process Luisa
-callgp <- function(filename)
-    {
-    #inizializzazione
-    gpregeOptions = list(indexRange=(1:2), explore=FALSE, exhaustPlotRes=30, 
-                    exhaustPlotLevels=10, exhaustPlotMaxWidth=100, iters=100, 
-                    labels=rep(FALSE,2), display=FALSE)
-    AA=read.table(filename ,header = FALSE)
-    MA=as.matrix(AA[,c(2:dim(AA)[2])])
-    vt=unique(as.numeric(MA[1,]))
-    ntimes=length(vt)
-    stdv=NULL
-    varv=NULL
-    for (i in c(1:ntimes)){
-        ind=which(MA[1,]==vt[i])
-        stdv[i]=sd(MA[2,ind])
-        varv[i]=var(MA[2,ind])
-    }
-    #sigmaest=mean(stdv)Order of the B-spline basis expansion.
-    GlobalVar=var(MA[2,])
-    SigNoise=mean(varv)/GlobalVar
-    if (SigNoise>1)SigNoise=1
-    ##########
-    
-    #SigNoise=1-var(MA[2,])
-    sigmaest=1-SigNoise
-    #mod='08'
-    #ntimes=50
-    
-    gpregeOptions$inithypers <- matrix( c(
-        1/1000,	0,	1
-        ,1/ntimes,	sigmaest, SigNoise
-    ), ncol=3, byrow=TRUE)
-    #gpregeOptions$inithypers <- matrix( c(
-    # 1/1000,  0,	1
-    #,1/ntimes,	0.8,0.2
-    #), ncol=3, byrow=TRUE)
-    
-    
-    
-    dat=read.table(filename, header = FALSE, sep = "\t") 
-    dvet=t(data.matrix(dat[1,2:211]))
-    dd=(data.matrix(dat[2,2:211]))
-    rownames(dd)='VI'
-    colnames(dd)=dvet
-    datadum=rbind(dd,dd)
-    gpregeOutput <- gprege(data=datadum, inputs=dvet, gpregeOptions=gpregeOptions)
+    #-----------------GAUSSIAN PROCESS----------
+    gpregeOutput <- callgp (ratio)
     bf=gpregeOutput$rankingScores[1]
-    return(bf)
-}
+    
+    #-----------------AREA UNDER THE CURVE----------
+    mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)))
+    mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)))
+    area1<-DescTools::AUC(x=(seq(0,100,5)/100), y=mvimeanmodel1, method ="spline")
+    area2<-DescTools::AUC(x=(seq(0,100,5)/100), y=mvimeanmodel2, method ="spline")
+    
+    output <- list( Bayes_Factor=bf,
+                    area1=area1,
+                    area2=area2)
+    return(output)
+   }  
 
 
 

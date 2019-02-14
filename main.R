@@ -3,11 +3,10 @@ library(igraph)
 library(ggplot2)
 library(gridExtra)
 library(fdatest)
-#installation gprege
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("gprege", version = "3.8")
 library('gprege')
+library("networkD3")
+library(DescTools)
+
 net <- "rip_348.edges.txt"
 
 ##CREATE GRAPHS
@@ -15,6 +14,26 @@ graph <- prepNet(net, file.format="edgelist", method="robin")
 #metodo igraph un vertice in più
 graphRandom <- random(graph)
 
+##PLOT COMMUNITIES
+
+#fastgreedy
+fg <- cluster_fast_greedy(graph)
+members <- membership(fg)
+# Convert to object suitable for networkD3
+graph_d3 <- igraph_to_networkD3(graph, group = members)
+# Create force directed network plot
+forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,Source ='source', 
+             Target ='target', NodeID ='name',Group ='group')
+#con network grandi si blocca 
+
+#louvain
+lv <- cluster_louvain(graph)
+members <- membership(lv)
+# Convert to object suitable for networkD3
+graph_d3 <- igraph_to_networkD3(graph, group = members)
+# Create force directed network plot
+forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,Source ='source', 
+             Target ='target', NodeID ='name',Group ='group')
 
 ##REAL RANDOM
 List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
@@ -26,8 +45,8 @@ plotRobin(graph=graph)
 
 
 ##COMPARISON
-Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="walktrap",
-                method2="fastGreedy",type="independent")
+Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
+                method2="walktrap",type="independent")
 
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
                 method2="walktrap",type="dependent")
@@ -38,13 +57,10 @@ plotRobinCompare(graph)
 ##TEST
 #cofronto tra modello e modello nullo
 robinTest(graph=graph, model1=List$viMean,model2=List$viMeanRandom, 
-          legend=c("real data", "null model"))
+          ratio=List$ratios, legend=c("real data", "null model"))
 #confronto tra due metodi
 robinTest(graph=graph, model1=Comp$viMean1,model2=Comp$viMean2, 
-          legend=c("model1", "model2"))
-
-
-callgp(filename="E:/CNR Tigem/robin/facebook_348_fastgreedy_BATS.txt")
+          ratio=Comp$ratios1vs2,legend=c("model1", "model2"))
 
 
 
@@ -71,7 +87,12 @@ Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
 Comp<-comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
                  method2="walktrap",type="independent")
 plotRobinCompare(graph)
-
+karate <- make_graph("Zachary")
+wc <- cluster_walktrap(karate)
+members <- membership(wc)# Convert to object suitable for networkD3
+karate_d3 <- igraph_to_networkD3(karate, group = members)# Create force directed network plot
+forceNetwork(Links = karate_d3$links, Nodes = karate_d3$nodes,Source ='source', 
+             Target ='target', NodeID ='name',Group ='group')
 
 ###2
 ###
