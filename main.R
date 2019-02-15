@@ -8,6 +8,7 @@ library("networkD3")
 library(DescTools)
 
 net <- "rip_348.edges.txt"
+net <-"Dati/facebook_combined.txt"
 
 ##CREATE GRAPHS
 graph <- prepNet(net, file.format="edgelist", method="robin")
@@ -15,20 +16,25 @@ graph <- prepNet(net, file.format="edgelist", method="robin")
 graphRandom <- random(graph)
 
 ##PLOT COMMUNITIES
-
 #fastgreedy
 fg <- cluster_fast_greedy(graph)
 members <- membership(fg)
+#plot 
+V(graph)$color <- members+1
+graph <- set_graph_attr(graph, "layout", layout_with_kk(graph))
+plot(graph, vertex.label.dist=1.5)
 # Convert to object suitable for networkD3
 graph_d3 <- igraph_to_networkD3(graph, group = members)
 # Create force directed network plot
 forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,Source ='source', 
              Target ='target', NodeID ='name',Group ='group')
-#con network grandi si blocca 
-
 #louvain
 lv <- cluster_louvain(graph)
 members <- membership(lv)
+#plot
+V(graph)$color <- members+1
+graph <- set_graph_attr(graph, "layout", layout_with_kk(graph))
+plot(graph, vertex.label.dist=1.5)
 # Convert to object suitable for networkD3
 graph_d3 <- igraph_to_networkD3(graph, group = members)
 # Create force directed network plot
@@ -46,10 +52,10 @@ plotRobin(graph=graph)
 
 ##COMPARISON
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                method2="louvain",type="independent")
+                method2="walktrap",type="independent")
 
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                method2="louvain",type="dependent")
+                method2="walktrap",type="dependent")
 
 plotRobinCompare(graph)
 
