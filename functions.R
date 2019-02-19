@@ -136,7 +136,8 @@ methodCommunity <- function(graph,
                                                     weights=weights,
                                                     directed=directed), 
            
-            fastGreedy=igraph::cluster_fast_greedy(graph=graph, weights=weights), 
+            fastGreedy=igraph::cluster_fast_greedy(graph=graph, 
+                                                   weights=weights), 
            
             labelProp=igraph::cluster_label_prop(graph=graph, weights=weights), 
            
@@ -146,6 +147,18 @@ methodCommunity <- function(graph,
     return(membership(communities))
 }
 
+####PLOT COMMUNITIES
+plotCommu <- function(graph, method)
+{
+    members<-methodCommunity(graph=graph,method=method)
+    # Convert to object suitable for networkD3
+    graph_d3 <- igraph_to_networkD3(graph, group = members)
+    # Create force directed network plot
+    plot <- forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,
+                         Source ='source', 
+                 Target ='target', NodeID ='name',Group ='group')
+    return(plot)
+}
 
 
 #########REWIRE COMPLETE
@@ -280,7 +293,8 @@ iter <- function(graph, graphRandom, method,
         viMeanRandom <- matrix(0, nrep, length(nRewire))
         viMean <- matrix(0, nrep, length(nRewire))
         vet1 <- seq(5, 100, 5)  #dal 5 a 100 con passo 5
-        vet <- round(vet1*de/100, 0)#arrotonda a 0 cifre decimali
+        vet <- round(vet1*de/100, 0)
+        #arrotonda a 0 cifre decimali
  
         for(z in vet)
         {
@@ -877,8 +891,8 @@ comparison <- function(graph,graphRandom,
             print(z1)
             }
     }
-    colnames(viMean1) <- nRewire
-    colnames(viMean2) <- nRewire
+    colnames(viMean1) <- nRewire 
+    colnames(viMean2) <- nRewire 
     colnames(viMeanRandom1) <- nRewire
     colnames(viMeanRandom2) <- nRewire
     nn <- rep(nRewire, each=nrep) 
@@ -922,15 +936,17 @@ comparison <- function(graph,graphRandom,
 #'
 #' @examples
 plotRobinCompare <- function(graph,legend=c("real data", "null model"),
-                            legend1vs2=c("method1", "method2"))
+                            legend1vs2=c("method1", "method2"),
+                            title1="Method1",title2="Method2",
+                            title1vs2="Method1 vs Method2")
 {
     plot1 <- plotRobin(graph=graph, model1=Comp$viMean1, 
                     model2=Comp$viMeanRandom1, legend=legend)+
-                    ggtitle("Model1")
+                    ggtitle(title1)
     plot2 <- plotRobin(graph=graph,model1=Comp$viMean2,model2=Comp$viMeanRandom2,
-              legend=legend)+ggtitle("Model2")
+              legend=legend)+ggtitle(title2)
     plot3 <- plotRobin(graph=graph,model1=Comp$viMean1,model2=Comp$viMean2,
-              legend=legend1vs2)+ggtitle("Model1 vs Model2")
+              legend=legend1vs2)+ggtitle(title1vs2)
     gridExtra::grid.arrange(plot1,plot2,plot3, nrow=2)
 }
 
@@ -1071,7 +1087,6 @@ robinTest <- function(graph,
     mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)))
     area1<-DescTools::AUC(x=(seq(0,100,5)/100), y=mvimeanmodel1, method ="spline")
     area2<-DescTools::AUC(x=(seq(0,100,5)/100), y=mvimeanmodel2, method ="spline")
-    
     output <- list( Bayes_Factor=bf,
                     area1=area1,
                     area2=area2)

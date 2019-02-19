@@ -7,39 +7,37 @@ library('gprege')
 library("networkD3")
 library(DescTools)
 
+net <- "Dati/3437.edges.txt"
 net <- "rip_348.edges.txt"
-net <-"Dati/facebook_combined.txt"
 
 ##CREATE GRAPHS
 graph <- prepNet(net, file.format="edgelist", method="robin")
 #metodo igraph un vertice in più
 graphRandom <- random(graph)
 
+##MODULARITY
+inf <- cluster_infomap(graph)
+modularity(inf)
+infR <- cluster_infomap(graphRandom)
+modularity(infR)
+
+
+fast <- cluster_fast_greedy(graph)
+modularity(fast)
+fastR <- cluster_fast_greedy(graphRandom)
+modularity(fastR)
+
 ##PLOT COMMUNITIES
+plotCommu(graph,method="infomap") #plot 3 D
+
+#plot non 3 D
 #fastgreedy
 fg <- cluster_fast_greedy(graph)
 members <- membership(fg)
-#plot 
 V(graph)$color <- members+1
 graph <- set_graph_attr(graph, "layout", layout_with_kk(graph))
 plot(graph, vertex.label.dist=1.5)
-# Convert to object suitable for networkD3
-graph_d3 <- igraph_to_networkD3(graph, group = members)
-# Create force directed network plot
-forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,Source ='source', 
-             Target ='target', NodeID ='name',Group ='group')
-#louvain
-lv <- cluster_louvain(graph)
-members <- membership(lv)
-#plot
-V(graph)$color <- members+1
-graph <- set_graph_attr(graph, "layout", layout_with_kk(graph))
-plot(graph, vertex.label.dist=1.5)
-# Convert to object suitable for networkD3
-graph_d3 <- igraph_to_networkD3(graph, group = members)
-# Create force directed network plot
-forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,Source ='source', 
-             Target ='target', NodeID ='name',Group ='group')
+
 
 ##REAL RANDOM
 List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
@@ -55,9 +53,18 @@ Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
                 method2="walktrap",type="independent")
 
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                method2="walktrap",type="dependent")
+                method2="louvain",type="dependent")
 
-plotRobinCompare(graph)
+Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
+                   method2="leadingEigen",type="dependent")
+
+Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="louvain",
+                   method2="walktrap",type="dependent")
+
+plotRobinCompare(graph,legend=c("real data", "null model"),
+                 legend1vs2=c("fast greedy", "louvain"),
+                 title1="Fast Greedy",title2="Louvain",
+                 title1vs2="Fast Greedy vs Louvain")
 
 
 ##TEST
