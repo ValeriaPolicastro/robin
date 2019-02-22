@@ -15,8 +15,6 @@ graph <- prepNet(net, file.format="edgelist", method="robin")
 #metodo igraph un vertice in più
 graphRandom <- random(graph)
 
-##PLOT GRAPHS
-plotNet(graph)
 
 ##MODULARITY
 inf <- cluster_infomap(graph)

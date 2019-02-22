@@ -72,17 +72,6 @@ random <- function(graph)
     ## distribution,rewiring for z all the edges
     return(graphRandom)
 }
-#############PLOT GRAPHS#############
-plotNet<-function(graph)
-{
-    #Convert to object suitable for networkD3
-    graph_d3 <- igraph_to_networkD3(graph)
-    # Create force directed network plot
-    plot <- forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,
-                         Source ='source', 
-                         Target ='target', NodeID ='name') 
-return(plot)
-    }
 
 
 #####COMMUNITY METHOD####    
@@ -158,6 +147,7 @@ methodCommunity <- function(graph,
     )
     return(membership(communities))
 }
+
 
 ######################## PLOT COMMUNITIES ##############
 plotCommu <- function(graph, method)
