@@ -72,6 +72,18 @@ random <- function(graph)
     ## distribution,rewiring for z all the edges
     return(graphRandom)
 }
+#############PLOT GRAPHS#############
+plotNet<-function(graph)
+{
+    #Convert to object suitable for networkD3
+    graph_d3 <- igraph_to_networkD3(graph)
+    # Create force directed network plot
+    plot <- forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,
+                         Source ='source', 
+                         Target ='target', NodeID ='name') 
+return(plot)
+    }
+
 
 #####COMMUNITY METHOD####    
 #' methodCommunity
@@ -147,7 +159,7 @@ methodCommunity <- function(graph,
     return(membership(communities))
 }
 
-####PLOT COMMUNITIES
+######################## PLOT COMMUNITIES ##############
 plotCommu <- function(graph, method)
 {
     members<-methodCommunity(graph=graph,method=method)
@@ -161,7 +173,7 @@ plotCommu <- function(graph, method)
 }
 
 
-#########REWIRE COMPLETE
+######### REWIRE COMPLETE ########
 #' rewireCompl
 #'
 #' @param data The input graph prepNet
@@ -208,7 +220,7 @@ rewireCompl <- function(data, number, community, method,
 #perturba il grafo e ricalcola le community
 #compare the community through VI
 
-#########REWIRE ONLY
+#########REWIRE ONLY ###########
 #' rewireOnl
 #'
 #' @param data The input graph prepNet
@@ -1005,7 +1017,7 @@ callgp <- function(ratio)
     GlobalVar=var(MA[1,])
     SigNoise=mean(varv)/GlobalVar
     if (SigNoise>1)SigNoise=1
-    ##########
+    #
     
     #SigNoise=1-var(MA[2,])
     sigmaest=1-SigNoise
@@ -1094,7 +1106,7 @@ robinTest <- function(graph,
    }  
 
 
-################################## PROVA ITPSPline ###################
+################################## ITPSPline code for ggplot2 ###################
 
 ####PER METTRE GGPLOT
 ###geom_rect(aes(xmin = 2, xmax = 4, ymin = -Inf, ymax = Inf),
