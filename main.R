@@ -7,14 +7,14 @@ library('gprege')
 library("networkD3")
 library(DescTools)
 
-net <- "Dati/3437.edges.txt"
+#net <- "Dati/3437.edges.txt"
 net <- "rip_348.edges.txt"
 
 ##CREATE GRAPHS
 graph <- prepNet(net, file.format="edgelist", method="robin")
 #metodo igraph un vertice in più
+#Graph Random
 graphRandom <- random(graph)
-
 
 ##MODULARITY
 inf <- cluster_infomap(graph)
@@ -54,18 +54,13 @@ Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
                 method2="walktrap",type="independent")
 
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                method2="louvain",type="dependent")
+                   method2="infomap",type="dependent")
 
-Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                   method2="leadingEigen",type="dependent")
-
-Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="louvain",
-                   method2="walktrap",type="dependent")
 
 plotRobinCompare(graph,legend=c("real data", "null model"),
-                 legend1vs2=c("fast greedy", "louvain"),
-                 title1="Fast Greedy",title2="Louvain",
-                 title1vs2="Fast Greedy vs Louvain")
+                 legend1vs2=c("fast greedy", "infomap"),
+                 title1="Fast Greedy",title2="infomap",
+                 title1vs2="Fast Greedy vs Infomap")
 
 
 ##TEST
