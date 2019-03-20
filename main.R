@@ -8,7 +8,7 @@ library("networkD3")
 library(DescTools)
 
 #net <- "Dati/3437.edges.txt"
-net <- "rip_348.edges.txt"
+net <- "Dati/rip_348.edges.txt"
 
 ##CREATE GRAPHS
 graph <- prepNet(net, file.format="edgelist", method="robin")
@@ -58,9 +58,9 @@ Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
 
 
 plotRobinCompare(graph,legend=c("real data", "null model"),
-                 legend1vs2=c("fast greedy", "infomap"),
-                 title1="Fast Greedy",title2="infomap",
-                 title1vs2="Fast Greedy vs Infomap")
+                 legend1vs2=c("fast greedy", "walktrap"),
+                 title1="Fast Greedy",title2="walktrap",
+                 title1vs2="Fast Greedy vs Walktrap")
 
 
 ##TEST

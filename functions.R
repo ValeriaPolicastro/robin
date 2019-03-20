@@ -285,7 +285,7 @@ iter <- function(graph, graphRandom, method,
     graphRewireRandom <- NULL
     graphRewire <- NULL
     count <- 1
-    nRewire <- seq(0,100,5)
+    nRewire <- seq(0,60,5)
     #INDEPENDENT    
     if(type == "independent") 
     {
@@ -294,8 +294,8 @@ iter <- function(graph, graphRandom, method,
         viRandom <- matrix(0, nrep^2, length(nRewire))
         viMeanRandom <- matrix(0, nrep, length(nRewire))
         viMean <- matrix(0, nrep, length(nRewire))
-        vet1 <- seq(5, 100, 5)  #dal 5 a 100 con passo 5
-        vet <- round(vet1*de/100, 0)
+        vet1 <- seq(5, 60, 5) #each step 
+        vet <- round(vet1*de/100, 0) #the numbers of edges to rewire
         #arrotonda a 0 cifre decimali
  
         for(z in vet)
@@ -374,7 +374,7 @@ iter <- function(graph, graphRandom, method,
         }
   #DEPENDENT 
     }else{
-        z <- round((5*de)/100, 0)
+        z <- round((5*de)/100, 0) #the 5% of the edges
         vi <- rep(0, nrep^2)
         vi1 <- NULL
         viRandom <- rep(0, nrep^2)
@@ -523,7 +523,7 @@ plotRobin <- function(graph,
     N <- igraph::vcount(graph)
     mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)),legend[1])
     mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)),legend[2])
-    percPert <- rep((seq(0,100,5)/100),2)
+    percPert <- rep((seq(0,60,5)/100),2)
     mvi <- rbind(mvimodel1,mvimodel2)
     colnames(mvi) <- c("mvi","model")
     dataFrame <- data.frame(percPert,mvi)
@@ -633,7 +633,7 @@ comparison <- function(graph,graphRandom,
     graphRewire <- NULL
     Random<-NULL
     count <- 1
-    nRewire <- seq(0,100,5)
+    nRewire <- seq(0,60,5)
     if(type == "independent") 
     {
         vi1 <- matrix(0, nrep^2, length(nRewire))
@@ -644,7 +644,7 @@ comparison <- function(graph,graphRandom,
         viMean2 <- matrix(0, nrep, length(nRewire))
         viMeanRandom1 <- matrix(0, nrep, length(nRewire))
         viMeanRandom2 <- matrix(0, nrep, length(nRewire))
-        vet1 <- seq(5, 100, 5) 
+        vet1 <- seq(5, 60, 5) 
         vet <- round(vet1*de/100, 0)
         
         for(z in vet)
@@ -1057,9 +1057,9 @@ robinTest <- function(graph,
     #-----------------FDATEST (Pini-Vantini paper)----------
      N <- igraph::vcount(graph)
     mvimodel1 <- cbind(as.vector((model1)/log2(N)), legend[1], 
-                        seq(1,10), rep((seq(0,100,5)/100), each=10))
+                        seq(1,10), rep((seq(0,60,5)/100), each=10))
     mvimodel2 <- cbind(as.vector((model2)/log2(N)), legend[2], 
-                        seq(11,20),rep((seq(0,100,5)/100),each=10))
+                        seq(11,20),rep((seq(0,60,5)/100),each=10))
     mvi <- rbind(mvimodel1, mvimodel2)
     colnames(mvi) <- c("mvi","model","s","percPert")
     dataFrame <- data.frame(mvi)
@@ -1073,22 +1073,22 @@ robinTest <- function(graph,
     
     print(plot1)
    
-    perc<-rep((seq(0,100,5)/100))
+    perc<-rep((seq(0,60,5)/100))
     ITPresult <- createITPSplineResult(graph, model1, model2)
-    plot2<-plot(ITPresult, main='VI', xrange=c(0,1), xlab='perturbation', 
+    plot2<-plot(ITPresult, main='VI', xrange=c(0,0.6), xlab='perturbation', 
                 ylab="VI")
-    lines(perc, rep(0.05, 21), type="l", col="red")
+    lines(perc, rep(0.05, 13), type="l", col="red")
     
     print(plot2)
     #-----------------GAUSSIAN PROCESS----------
     gpregeOutput <- callgp (ratio)
     bf=gpregeOutput$rankingScores[1]
-    
+
     #-----------------AREA UNDER THE CURVE----------
     mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)))
     mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)))
-    area1<-DescTools::AUC(x=(seq(0,100,5)/100), y=mvimeanmodel1, method ="spline")
-    area2<-DescTools::AUC(x=(seq(0,100,5)/100), y=mvimeanmodel2, method ="spline")
+    area1<-DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel1, method ="spline")
+    area2<-DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel2, method ="spline")
     output <- list( Bayes_Factor=bf,
                     area1=area1,
                     area2=area2)
