@@ -117,6 +117,8 @@ methodCommunity <- function(graph,
         steps  <- -1
     }
     communities <- switch(method, 
+            optimal=igraph::cluster_optimal(graph, 
+                                            weights = weights),
             louvain=igraph::cluster_louvain(graph=graph, 
                                     weights=weights), 
            
@@ -1099,12 +1101,11 @@ robinTest <- function(graph,
 ################################## ITPSPline code for ggplot2 ###################
 
 ####PER METTRE GGPLOT
-###geom_rect(aes(xmin = 2, xmax = 4, ymin = -Inf, ymax = Inf),
-###         fill = "pink", alpha = 0.03)
-
+# geom_rect(aes(xmin = 2, xmax = 4, ymin = -Inf, ymax = Inf),
+#          fill = "pink", alpha = 0.03)
 # 
 # 
-# pvalues=ITPresult$pval
+#  pvalues=ITPresult$pval
 # pvalues_ad=p.adjust(pvalues, method = "bonferroni", n = length(pvalues))
 # 
 # # par(mfrow=c(2,2))
