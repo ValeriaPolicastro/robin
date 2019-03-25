@@ -29,7 +29,9 @@ prepNet <- function(net.file,
     } else if(method == "robin") {
         edge <- read.table(net.file, quote="\"")
         edge <- as.matrix(edge)
-        ee <- edge
+        
+        #graph_from_edgelist(edge,direct=FALSE)
+        
         vet1 <- as.vector(t(edge))
         un <- unique(sort(vet1))
         if(max(un) != length(un)) 
@@ -53,6 +55,14 @@ prepNet <- function(net.file,
     #graphs which do not contain loop and multiple edges.
     return(graph)
 }
+
+#Altro metodo
+edge <- read.table(net,colClasses = "character", quote="\"")
+edge <- as.matrix(edge)
+graph<-graph_from_edgelist(edge,direct=FALSE)
+graph <- igraph::simplify(graph)
+
+
 
 ######GRAPH RANDOM#########
 #' graphRandom
@@ -516,7 +526,7 @@ iter <- function(graph, graphRandom, method,
 #' @return A plot
 #' @export
 #'
-#' @examples
+#' @examples 
 plotRobin <- function(graph,
                       model1=List$viMean,
                       model2=List$viMeanRandom, 
