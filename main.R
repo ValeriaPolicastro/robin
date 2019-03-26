@@ -7,11 +7,14 @@ library('gprege')
 library("networkD3")
 library(DescTools)
 
-#net <- "Dati/3437.edges.txt"
-net <- "Dati/rip_348.edges.txt"
+#file <- "Dati/3437.edges.txt"
+file <- "Dati/rip_348.edges.txt"
 
 ##CREATE GRAPHS
-graph <- prepNet(net, file.format="edgelist", method="robin")
+graph <- prepGraph(file) 
+graph
+
+#graph <- prepNet(file, file.format="edgelist", method="robin")
 #metodo igraph un vertice in più
 #Graph Random
 graphRandom <- random(graph)
@@ -41,9 +44,9 @@ plot(graph, vertex.label.dist=1.5)
 
 
 ##REAL RANDOM
-List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
+List<-robinProcedure(graph=graph,graphRandom=graphRandom, method="fastGreedy",
            type="independent")
-List<-iter(graph=graph,graphRandom=graphRandom, method="fastGreedy",
+List<-robinProcedure(graph=graph,graphRandom=graphRandom, method="fastGreedy",
            type="dependent")
 
 plotRobin(graph=graph)
@@ -65,8 +68,14 @@ plotRobinCompare(graph,legend=c("real data", "null model"),
 
 ##TEST
 #cofronto tra modello e modello nullo
-robinTest(graph=graph, model1=List$viMean,model2=List$viMeanRandom, 
-          ratio=List$ratios, legend=c("real data", "null model"))
+robinGPTest(ratio=List$ratios)
+
+robinFDATest(graph=graph, model1=List$viMean,model2=List$viMeanRandom, 
+           legend=c("real data", "null model"))
+
+robinAUCTest(graph=graph,model1=List$viMean,model2=List$viMeanRandom)
+
+
 #confronto tra due metodi
 robinTest(graph=graph, model1=Comp$viMean1,model2=Comp$viMean2, 
           ratio=Comp$ratios1vs2,legend=c("model1", "model2"))
