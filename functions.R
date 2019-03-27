@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-prepGraph <- function(file
+prepGraph <- function(file, header=FALSE
                     #file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
                     #                "dimacs", "graphdb", "gml", "dl"), 
                     #method=c("igraph", "robin"),
@@ -23,7 +23,7 @@ prepGraph <- function(file
                     )
 {
     
-    edge <- read.table(file,colClasses = "character", quote="\"", header=FALSE)
+    edge <- read.table(file,colClasses = "character", quote="\"", header=header)
     edge <- as.matrix(edge)
     graph<-graph_from_edgelist(edge,direct=FALSE)
     graph <- igraph::simplify(graph)
@@ -537,13 +537,13 @@ robinProcedure <- function(graph, graphRandom, method,
 #'
 #' @examples 
 plotRobin <- function(graph,
-                      model1=List$viMean,
-                      model2=List$viMeanRandom, 
+                      model=Proc$viMean,
+                      modelR=Proc$viMeanRandom, 
                       legend=c("real data", "null model"))
 {   
     N <- igraph::vcount(graph)
-    mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)),legend[1])
-    mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)),legend[2])
+    mvimodel1 <- cbind(as.vector((apply(model, 2, mean))/log2(N)),legend[1])
+    mvimodel2 <- cbind(as.vector((apply(modelR, 2, mean))/log2(N)),legend[2])
     percPert <- rep((seq(0,60,5)/100),2)
     mvi <- rbind(mvimodel1,mvimodel2)
     colnames(mvi) <- c("mvi","model")
@@ -945,18 +945,20 @@ comparison <- function(graph,graphRandom,
 #' @export
 #'
 #' @examples
-plotRobinCompare <- function(graph,legend=c("real data", "null model"),
+plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2, 
+                            legend=c("real data", "null model"),
                             legend1vs2=c("method1", "method2"),
                             title1="Method1",title2="Method2",
                             title1vs2="Method1 vs Method2")
 {
-    plot1 <- plotRobin(graph=graph, model1=Comp$viMean1, 
-                    model2=Comp$viMeanRandom1, legend=legend)+
+    plot1 <- plotRobin(graph=graph, model=model1, 
+                    modelR=modelR1, legend=legend)+
                     ggtitle(title1)
-    plot2 <- plotRobin(graph=graph,model1=Comp$viMean2,model2=Comp$viMeanRandom2,
+    plot2 <- plotRobin(graph=graph, model=model2, modelR=modelR2,
               legend=legend)+ggtitle(title2)
-    plot3 <- plotRobin(graph=graph,model1=Comp$viMean1,model2=Comp$viMean2,
+    plot3 <- plotRobin(graph=graph, model=model1, modelR=modelR2,
               legend=legend1vs2)+ggtitle(title1vs2)
+    
     gridExtra::grid.arrange(plot1,plot2,plot3, nrow=2)
 }
 

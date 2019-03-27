@@ -11,7 +11,7 @@ library(DescTools)
 file <- "Dati/rip_348.edges.txt"
 
 ##CREATE GRAPHS
-graph <- prepGraph(file) 
+graph <- prepGraph(file, header=FALSE) 
 graph
 
 #graph <- prepNet(file, file.format="edgelist", method="robin")
@@ -44,12 +44,14 @@ plot(graph, vertex.label.dist=1.5)
 
 
 ##REAL RANDOM
-List<-robinProcedure(graph=graph,graphRandom=graphRandom, method="fastGreedy",
+Proc <-robinProcedure(graph=graph,graphRandom=graphRandom, method="fastGreedy",
            type="independent")
-List<-robinProcedure(graph=graph,graphRandom=graphRandom, method="fastGreedy",
+Proc <-robinProcedure(graph=graph,graphRandom=graphRandom, method="fastGreedy",
            type="dependent")
 
-plotRobin(graph=graph)
+plotRobin(graph=graph,model=Proc$viMean,
+          modelR=Proc$viMeanRandom, 
+          legend=c("real data", "null model"))
 
 
 ##COMPARISON
@@ -60,13 +62,15 @@ Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
                    method2="infomap",type="dependent")
 
 
-plotRobinCompare(graph,legend=c("real data", "null model"),
+plotRobinCompare(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2,
+                 modelR1=Comp$viMeanRandom1, modelR2=Comp$viMeanRandom2,
+                 legend=c("real data", "null model"),
                  legend1vs2=c("fast greedy", "walktrap"),
                  title1="Fast Greedy",title2="walktrap",
                  title1vs2="Fast Greedy vs Walktrap")
 
 
-##TEST
+######### TEST
 #cofronto tra modello e modello nullo
 robinGPTest(ratio=List$ratios)
 
@@ -76,11 +80,14 @@ robinFDATest(graph=graph, model1=List$viMean,model2=List$viMeanRandom,
 robinAUCTest(graph=graph,model1=List$viMean,model2=List$viMeanRandom)
 
 
+
 #confronto tra due metodi
-robinTest(graph=graph, model1=Comp$viMean1,model2=Comp$viMean2, 
-          ratio=Comp$ratios1vs2,legend=c("model1", "model2"))
+robinGPTest(ratio=Comp$ratios1vs2)
 
+robinFDATest(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2, 
+             legend=c("model1", "model2"))
 
+robinAUCTest(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2)
 
 
 ##############    PROVE   ######################
