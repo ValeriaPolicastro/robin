@@ -15,7 +15,7 @@
 #' @export
 #'
 #' @examples
-prepGraph <- function(file, header=FALSE
+prepGraph <- function(file, header=FALSE, direct=FALSE
                     #file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
                     #                "dimacs", "graphdb", "gml", "dl"), 
                     #method=c("igraph", "robin"),
@@ -25,7 +25,7 @@ prepGraph <- function(file, header=FALSE
     
     edge <- read.table(file,colClasses = "character", quote="\"", header=header)
     edge <- as.matrix(edge)
-    graph<-graph_from_edgelist(edge,direct=FALSE)
+    graph<-graph_from_edgelist(edge,direct=direct)
     graph <- igraph::simplify(graph)
     
     # method <- match.arg(method)
@@ -175,9 +175,9 @@ plotCommu <- function(graph, method)
 {
     members<-methodCommunity(graph=graph,method=method)
     # Convert to object suitable for networkD3
-    graph_d3 <- igraph_to_networkD3(graph, group = members)
+    graph_d3 <- networkD3::igraph_to_networkD3(graph, group = members)
     # Create force directed network plot
-    plot <- forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,
+    plot <- networkD3 ::forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,
                          Source ='source', 
                  Target ='target', NodeID ='name',Group ='group')
     return(plot)
@@ -390,7 +390,7 @@ robinProcedure <- function(graph, graphRandom, method,
                 }
                 viMeanRandom[s, count] <- mean(vectRandom)
                 viMean[s, count] <- mean(vector)
-                
+                print(count)
             }
         }
   #DEPENDENT 
@@ -500,7 +500,6 @@ robinProcedure <- function(graph, graphRandom, method,
     colnames(viMeanRandom) <- nRewire
     colnames(viMean) <- nRewire
     nn <- rep(nRewire, each=nrep) 
-    
     ratios <- log2((viMean+0.001)/(viMeanRandom+0.001))
     #rapporto tra la media delle distanze VI tra il modello reale e quello
     ##perturbato e la media delle distanze tra il random e la sua perturbazione
@@ -508,8 +507,8 @@ robinProcedure <- function(graph, graphRandom, method,
     names(bats) <- nn
     resBats <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
     
-    output <- list(#vi=vi,
-                    #viRandom=viRandom,
+    output <- list(vi=vi,
+                    viRandom=viRandom,
                     viMean=viMean,
                     viMeanRandom=viMeanRandom,
                     ratios=resBats

@@ -9,6 +9,7 @@ library(DescTools)
 
 #file <- "Dati/3437.edges.txt"
 file <- "Dati/rip_348.edges.txt"
+#file <- "Dati/edgelistQ08.txt"
 
 ##CREATE GRAPHS
 graph <- prepGraph(file, header=FALSE) 
@@ -18,18 +19,14 @@ graph
 #metodo igraph un vertice in più
 #Graph Random
 graphRandom <- random(graph)
+graphRandom
 
 ##MODULARITY
-inf <- cluster_infomap(graph)
-modularity(inf)
-infR <- cluster_infomap(graphRandom)
-modularity(infR)
+net <- cluster_edge_betweenness(graph)
+modularity(net)
+net2 <- cluster_edge_betweenness(graphRandom)
+modularity(net2)
 
-
-fast <- cluster_fast_greedy(graph)
-modularity(fast)
-fastR <- cluster_fast_greedy(graphRandom)
-modularity(fastR)
 
 ##PLOT COMMUNITIES
 plotCommu(graph,method="infomap") #plot 3 D
@@ -46,8 +43,15 @@ plot(graph, vertex.label.dist=1.5)
 ##REAL RANDOM
 Proc <-robinProcedure(graph=graph,graphRandom=graphRandom, method="fastGreedy",
            type="independent")
-Proc <-robinProcedure(graph=graph,graphRandom=graphRandom, method="fastGreedy",
+
+Proc <-robinProcedure(graph=graph,graphRandom=graphRandom, method="edgeBetweenness",
            type="dependent")
+
+write.csv(Proc$viMean,file="VIMeanindependent08.csv")
+write.csv(Proc$ratios,file="VIratiosindependent08.csv")
+write.csv(Proc$viMeanRandom,file="VIMeanRandomindependent08.csv")
+write.csv(Proc$vi,file="VIindependent08.csv")
+write.csv(Proc$viRandom,file="VIRandomindependent08.csv")
 
 plotRobin(graph=graph,model=Proc$viMean,
           modelR=Proc$viMeanRandom, 
@@ -72,12 +76,12 @@ plotRobinCompare(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2,
 
 ######### TEST
 #cofronto tra modello e modello nullo
-robinGPTest(ratio=List$ratios)
+robinGPTest(ratio=Proc$ratios)
 
-robinFDATest(graph=graph, model1=List$viMean,model2=List$viMeanRandom, 
+robinFDATest(graph=graph, model1=Proc$viMean,model2=Proc$viMeanRandom, 
            legend=c("real data", "null model"))
 
-robinAUCTest(graph=graph,model1=List$viMean,model2=List$viMeanRandom)
+robinAUCTest(graph=graph,model1=Proc$viMean,model2=Proc$viMeanRandom)
 
 
 
