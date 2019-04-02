@@ -15,8 +15,6 @@ file <- "Dati/rip_348.edges.txt"
 graph <- prepGraph(file, header=FALSE) 
 graph
 
-#graph <- prepNet(file, file.format="edgelist", method="robin")
-#metodo igraph un vertice in più
 #Graph Random
 graphRandom <- random(graph)
 graphRandom
@@ -26,6 +24,9 @@ net <- cluster_edge_betweenness(graph)
 modularity(net)
 net2 <- cluster_edge_betweenness(graphRandom)
 modularity(net2)
+
+## PLOT GRAPH
+plotGraph (graph)
 
 
 ##PLOT COMMUNITIES

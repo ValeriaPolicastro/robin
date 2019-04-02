@@ -15,19 +15,22 @@
 #' @export
 #'
 #' @examples
-prepGraph <- function(file, header=FALSE, direct=FALSE
-                    #file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
-                    #                "dimacs", "graphdb", "gml", "dl"), 
-                    #method=c("igraph", "robin"),
-                    #is.directed=FALSE
-                    )
+prepGraph <- function(file, header=FALSE, direct=FALSE,
+                    file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
+                                    "dimacs", "graphdb", "gml", "dl"))
 {
-    
-    edge <- read.table(file,colClasses = "character", quote="\"", header=header)
-    edge <- as.matrix(edge)
-    graph<-graph_from_edgelist(edge,direct=direct)
+    net <- igraph::read_graph(file=file,format=file.format,directed=direct)
+    ind <- igraph::V(net)[degree(net) == 0] #isolate node
+    graph <- igraph::delete.vertices(net, ind)
     graph <- igraph::simplify(graph)
     
+    ##2
+    # edge <- read.table(file,colClasses = "character", quote="\"", header=header)
+    # edge <- as.matrix(edge)
+    # graph<-graph_from_edgelist(edge,direct=direct)
+    # graph <- igraph::simplify(graph)
+    
+    ##1
     # method <- match.arg(method)
     # if(method == "igraph")
     # {
@@ -160,6 +163,14 @@ methodCommunity <- function(graph,
     return(membership(communities))
 }
 
+################ PLOT GRAPH ###############
+plotGraph <- function(graph)
+{
+    graph_d3 <- networkD3::igraph_to_networkD3(g=graph)
+    plot <- networkD3::simpleNetwork(graph_d3$links)
+    return(plot)
+}   
+
 
 ######################## PLOT COMMUNITIES ##############
 #' Title
@@ -175,7 +186,7 @@ plotCommu <- function(graph, method)
 {
     members<-methodCommunity(graph=graph,method=method)
     # Convert to object suitable for networkD3
-    graph_d3 <- networkD3::igraph_to_networkD3(graph, group = members)
+    graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group = members)
     # Create force directed network plot
     plot <- networkD3 ::forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,
                          Source ='source', 
