@@ -12,12 +12,13 @@ file <- "Dati/rip_348.edges.txt"
 #file <- "Dati/edgelistQ08.txt"
 
 ##CREATE GRAPHS
-graph <- prepGraph(file, header=FALSE) 
+graph <- prepGraph(file,file.format="edgelist", direct=FALSE) 
 graph
 
 #Graph Random
 graphRandom <- random(graph)
 graphRandom
+
 
 ##MODULARITY
 net <- cluster_edge_betweenness(graph)
@@ -42,10 +43,10 @@ plot(graph, vertex.label.dist=1.5)
 
 
 ##REAL RANDOM
-Proc <-robinProcedure(graph=graph,graphRandom=graphRandom, method="fastGreedy",
+Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="fastGreedy",
            type="independent")
 
-Proc <-robinProcedure(graph=graph,graphRandom=graphRandom, method="edgeBetweenness",
+Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="edgeBetweenness",
            type="dependent")
 
 write.csv(Proc$viMean,file="VIMeanindependent08.csv")

@@ -15,11 +15,11 @@
 #' @export
 #'
 #' @examples
-prepGraph <- function(file, header=FALSE, direct=FALSE,
+prepGraph <- function(file, direct=FALSE,
                     file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
                                     "dimacs", "graphdb", "gml", "dl"))
 {
-    net <- igraph::read_graph(file=file,format=file.format,directed=direct)
+    net <- igraph::read_graph(file=file, format=file.format, directed=direct)
     ind <- igraph::V(net)[degree(net) == 0] #isolate node
     graph <- igraph::delete.vertices(net, ind)
     graph <- igraph::simplify(graph)
@@ -262,7 +262,7 @@ rewireOnl <- function(data, number)
 
 
 ########  ROBIN PROCEDURE #######
-#' robinProcedure
+#' robinProc
 #'
 #' @param graph The input graph prepNet
 #' @param graphRandom The randomly rewired graph
@@ -282,7 +282,7 @@ rewireOnl <- function(data, number)
 #' @export
 #'
 #' @examples
-robinProcedure <- function(graph, graphRandom, method,
+robinProc <- function(graph, graphRandom, method,
                 type=c("dependent", "independent"),
                 directed=FALSE,
                 weights=NULL, 
@@ -966,15 +966,15 @@ plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
                     ggtitle(title1)
     plot2 <- plotRobin(graph=graph, model=model2, modelR=modelR2,
               legend=legend)+ggtitle(title2)
-    plot3 <- plotRobin(graph=graph, model=model1, modelR=modelR2,
+    plot3 <- plotRobin(graph=graph, model=model1, modelR=model2,
               legend=legend1vs2)+ggtitle(title1vs2)
     
     gridExtra::grid.arrange(plot1,plot2,plot3, nrow=2)
 }
 
-################## TEST ROBIN ###################
+########################### TEST ROBIN ###################
 
-###################### CREATE ITPSpline #####################
+################ CREATE ITPSpline ##################
 #' createITPSplineResult
 #' 
 #' @description creates an fdatest::ITP2 class object from an iGraph
