@@ -2,24 +2,24 @@
 ######PREPARATION GRAPH########## 
 
 #' prepGraph
-#'
-#' @param net.file The connection to read from.
+#' 
+#' @description The prepGraph function is able to read graphs from a file and 
+#' to prepare them for the analysis.
+#' @param file The file to read from.
 #' @param file.format Character constant giving the file format. Right now
 #' as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs and graphdb are 
 #' supported.
-#' @param method How to prepare the network 
-#' @param is.directed Logical scalar, whether to create a directed graph.
-#' The default value is TRUE.
 #'
 #' @return A simple graph
+#' @import igraph
 #' @export
 #'
-#' @examples
-prepGraph <- function(file, direct=FALSE,
+#' @examples graph <- prepGraph(file=my_file, file.format="edgelist")
+prepGraph <- function(file,
                     file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
                                     "dimacs", "graphdb", "gml", "dl"))
 {
-    net <- igraph::read_graph(file=file, format=file.format, directed=direct)
+    net <- igraph::read_graph(file=file, format=file.format, directed=FALSE)
     ind <- igraph::V(net)[degree(net) == 0] #isolate node
     graph <- igraph::delete.vertices(net, ind)
     graph <- igraph::simplify(graph)
@@ -68,21 +68,23 @@ prepGraph <- function(file, direct=FALSE,
 
 
 ######GRAPH RANDOM#########
-#' graphRandom
+#' random
 #'
-#' @param graph output of prepGraph
+#' @description Randomly rewire the edges while preserving the original graph's 
+#' degree distribution.
+#' @param graph The output of prepGraph
 #'
 #' @return A randomly rewired graph
+#' @import igraph
 #' @export
 #'
-#' @examples
+#' @examples graphRandom <- random(graph=graph)
 random <- function(graph)
 {
     z <- igraph::gsize(graph) ## number of edges
     graphRandom <- igraph::rewire(graph, 
                             with=igraph::keeping_degseq(loops=FALSE, niter=z))
-    ## Randomly rewire the edges while preserving the original graph's degree
-    ## distribution,rewiring for z all the edges
+    #rewiring for z all the edges
     return(graphRandom)
 }
 
@@ -95,7 +97,8 @@ random <- function(graph)
 #' implemented in igraph.
 #' @param graph The input graph created with prepGraph
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
-#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap"
+#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
+#' "optimal"
 #' @param weights this argument is not settable for "infomap" method
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
 #' method
@@ -106,9 +109,11 @@ random <- function(graph)
 #' @param directed This argument is settable only for "edgeBetweenness" method
 #'
 #' @return Membership vector of the community structure
+#' @import igraph
 #' @export
 #'
-#' @examples
+#' @examples methodCommunity (graph=graph, method="louvain")
+#' #with all the method implemented in igraph
 methodCommunity <- function(graph, 
                             method,
                             directed=FALSE,
@@ -164,6 +169,16 @@ methodCommunity <- function(graph,
 }
 
 ################ PLOT GRAPH ###############
+#' plotGraph
+#'
+#' @description Graphical interactive representation of the network
+#' @param graph The output of prepGraph
+#'
+#' @return An interactive plot
+#' @import networkD3
+#' @export
+#'
+#' @examples plotGraph (graph)
 plotGraph <- function(graph)
 {
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph)
@@ -173,15 +188,19 @@ plotGraph <- function(graph)
 
 
 ######################## PLOT COMMUNITIES ##############
-#' Title
+#' plotCommu
 #'
-#' @param graph 
-#' @param method 
+#' @description An interactive 3D plot of the communities
+#' @param graph The output of prepGraph
+#' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
+#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
+#' "optimal"
 #'
-#' @return
+#' @return An interactive plot
+#' @import networkD3
 #' @export
 #'
-#' @examples
+#' @examples plotCommu(graph=graph, method="louvain")
 plotCommu <- function(graph, method)
 {
     members<-methodCommunity(graph=graph,method=method)
@@ -197,8 +216,8 @@ plotCommu <- function(graph, method)
 
 ######### REWIRE COMPLETE ########
 #' rewireCompl
-#'
-#' @param data The input graph prepNet
+#' 
+#' @param data The output of prepGraph
 #' @param number Number of rewiring trials to perform.
 #' @param community Community to compare with.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
@@ -213,9 +232,7 @@ plotCommu <- function(graph, method)
 #' @param directed This argument is settable only for "edgeBetweenness" method
 #'
 #' @return A list object
-#' @export
-#'
-#' @examples
+
 rewireCompl <- function(data, number, community, method,
                         directed=FALSE,
                         weights=NULL, 
@@ -245,13 +262,10 @@ rewireCompl <- function(data, number, community, method,
 #########REWIRE ONLY ###########
 #' rewireOnl
 #'
-#' @param data The input graph prepNet
+#' @param data The output of prepGraph
 #' @param number Number of rewiring trials to perform.
 #'
 #' @return A graph object
-#' @export
-#'
-#' @examples
 rewireOnl <- function(data, number)
 {
     graphRewire <- igraph::rewire(data,
@@ -259,13 +273,13 @@ rewireOnl <- function(data, number)
     return(graphRewire)
 }
 
-
-
 ########  ROBIN PROCEDURE #######
 #' robinProc
 #'
-#' @param graph The input graph prepNet
-#' @param graphRandom The randomly rewired graph
+#' @description A procedure to examine the stability of the partition recovered 
+#' against random perturbations of the original graph structure.
+#' @param graph The output of prepGraph
+#' @param graphRandom The output of random command
 #' @param type The type of robin costruction dependent or independent data
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap"
@@ -279,9 +293,10 @@ rewireOnl <- function(data, number)
 #' @param directed This argument is settable only for "edgeBetweenness" method
 #'
 #' @return A list object
+#' @import igraph
 #' @export
 #'
-#' @examples
+#' @examples Proc<- robinProc(graph=graph,graphRandom=graphRandom, method="louvain",type="independent")
 robinProc <- function(graph, graphRandom, method,
                 type=c("dependent", "independent"),
                 directed=FALSE,
@@ -534,10 +549,12 @@ robinProc <- function(graph, graphRandom, method,
 ############PLOT##############
 #' plotRobin
 #'
-#' @param graph The input graph prepNet
-#' @param model1 The viMean output of the iter function or the viMean1 output 
+#' @description The plot of the two VI curves, the null model and 
+#' the real graph.
+#' @param graph The output of prepGraph
+#' @param model The viMean output of the robinProc function or the viMean output 
 #' of the comparison function. The default value is viMean.
-#' @param model2 The viMeanRandom output of the iter function or the viMean2
+#' @param modelR The viMeanRandom output of the iter function or the viMean2
 #'  output of the comparison function. The default value is viMean.
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model")
@@ -558,13 +575,15 @@ plotRobin <- function(graph,
     mvi <- rbind(mvimodel1,mvimodel2)
     colnames(mvi) <- c("mvi","model")
     dataFrame <- data.frame(percPert,mvi)
-    plot <- ggplot(dataFrame, aes(x=percPert, y=as.numeric(as.character(mvi)), 
-                    colour=model,group=factor(model)))+ geom_line()+
-                    geom_point()+ 
-                    xlab("Percentage of perturbation") +
-                    ylab("Variation of Information (VI)")+
-                             ggtitle("Robin plot")
-    plot+ scale_y_continuous(limits=c(0,1))
+    plot <- ggplot2::  ggplot(dataFrame, aes(x=percPert, 
+                                             y=as.numeric(as.character(mvi)), 
+                                             colour=model,group=factor(model)))+ 
+        geom_line()+
+        geom_point()+ 
+        xlab("Percentage of perturbation") +
+        ylab("Variation of Information (VI)")+
+        ggtitle("Robin plot")
+    plot+ scale_y_continuous(limits=c(0,0.6))
 }
 
 ############### COMPARISON DIFFERENT METHODS ##########
@@ -1099,31 +1118,6 @@ robinFDATest <- function(graph,
         ggplot2::ylab("Variation of Information (VI)")+
         ggplot2::ggtitle("Robin plot")
     plot1
-    
-    
-   #  ITPresult <- createITPSplineResult(graph, model1, model2)
-   #  pvalues <- ITPresult$pval
-   #  pvalues_ad <- p.adjust(pvalues, method = "bonferroni", n = length(pvalues))
-   #  alpha1=0.05
-   #  alpha2=0.01
-   #  difference1 <- which(pvalues_ad<0.05 & pvalues_ad>=0.01)
-   #  if (length(difference1) > 0) {
-   #      for (j in 1:length(difference1)) {
-   #          min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-   #          max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-   #      }
-   #  }
-   #  difference2 <- which(pvalues_ad<0.01)
-   #  if (length(difference2) > 0) {
-   #      for (j in 1:length(difference2)) {
-   #          min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-   #          max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-   #      }
-   # }
-   #  plot1+geom_rect(aes(xmin = min.rect, xmax = max.rect,ymin = -Inf, ymax = Inf),
-   #            fill = "gray90")
-    
-    
     print(plot1)
    
     perc<-rep((seq(0,60,5)/100))
