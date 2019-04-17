@@ -8,11 +8,12 @@ library("networkD3")
 library(DescTools)
 
 #file <- "Dati/3437.edges.txt"
-file <- "Dati/rip_348.edges.txt"
+#file <- "Dati/rip_348.edges.txt"
+file<-"Dati/email-Eu-core.txt" 
 #file <- "Dati/edgelistQ08.txt"
 
 ##CREATE GRAPHS
-graph <- prepGraph(file,file.format="edgelist", direct=FALSE) 
+graph <- prepGraph(file,file.format="edgelist",numbers=TRUE) 
 graph
 
 #Graph Random
@@ -21,17 +22,23 @@ graphRandom
 
 
 ##MODULARITY
-net <- cluster_edge_betweenness(graph)
+net <- cluster_fast_greedy(graph)
 modularity(net)
-net2 <- cluster_edge_betweenness(graphRandom)
+net2 <- cluster_fast_greedy(graphRandom)
 modularity(net2)
+
+###COMMUNITY
+methodCommunity (graph=graph, method="fastGreedy")#with all the method implemented in igraph
+membri<-membershipCommunities(graph=graph, method="fastGreedy")
+membri<-as.vector(membri)
+write.csv(membri,file="Membri_email-Eu-core")
 
 ## PLOT GRAPH
 plotGraph (graph)
 
 
 ##PLOT COMMUNITIES
-plotCommu(graph,method="infomap") #plot 3 D
+plotCommu(graph,method="fastGreedy") #plot 3 D
 
 #plot non 3 D
 #fastgreedy
@@ -62,10 +69,10 @@ plotRobin(graph=graph,model=Proc$viMean,
 
 ##COMPARISON
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                method2="walktrap",type="independent")
+                method2="louvain",type="independent")
 
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                   method2="infomap",type="dependent")
+                   method2="louvain",type="dependent")
 
 
 plotRobinCompare(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2,

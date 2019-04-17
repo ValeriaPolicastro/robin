@@ -5,32 +5,41 @@
 #' 
 #' @description The prepGraph function is able to read graphs from a file and 
 #' to prepare them for the analysis.
+#'
 #' @param file The file to read from.
 #' @param file.format Character constant giving the file format. Right now
 #' as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs and graphdb are 
 #' supported.
+#' @param directed Logical scalar, whether to create a directed graph. 
+#' The default value is FALSE.
 #'
-#' @return A simple graph
+#' @return A simple graph.
 #' @import igraph
 #' @export
 #'
 #' @examples graph <- prepGraph(file=my_file, file.format="edgelist")
 prepGraph <- function(file,
                     file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
-                                    "dimacs", "graphdb", "gml", "dl"))
-{
-    net <- igraph::read_graph(file=file, format=file.format, directed=FALSE)
-    ind <- igraph::V(net)[degree(net) == 0] #isolate node
-    graph <- igraph::delete.vertices(net, ind)
-    graph <- igraph::simplify(graph)
+                                    "dimacs", "graphdb", "gml", "dl"),
+                    numbers= FALSE,
+                    directed=FALSE,
+                    header=FALSE)
+{ 
+    if((file.format == "edgelist") & (numbers == TRUE))
+    {
+        edge <- read.table(file,colClasses = "character", quote="\"", header=header)
+        edge <- as.matrix(edge)
+        graph<-graph_from_edgelist(edge,direct=directed)
+        graph <- igraph::simplify(graph)
+    }else{
+        net <- igraph::read_graph(file=file, format=file.format, 
+                                  directed=directed)
+        ind <- igraph::V(net)[degree(net) == 0] #isolate node
+        graph <- igraph::delete.vertices(net, ind)
+        graph <- igraph::simplify(graph)
+    }
     
-    ##2
-    # edge <- read.table(file,colClasses = "character", quote="\"", header=header)
-    # edge <- as.matrix(edge)
-    # graph<-graph_from_edgelist(edge,direct=direct)
-    # graph <- igraph::simplify(graph)
-    
-    ##1
+    ##METODO ANNAMARIA
     # method <- match.arg(method)
     # if(method == "igraph")
     # {
@@ -72,9 +81,9 @@ prepGraph <- function(file,
 #'
 #' @description Randomly rewire the edges while preserving the original graph's 
 #' degree distribution.
-#' @param graph The output of prepGraph
+#' @param graph The output of prepGraph.
 #'
-#' @return A randomly rewired graph
+#' @return A randomly rewired graph.
 #' @import igraph
 #' @export
 #'
@@ -95,20 +104,20 @@ random <- function(graph)
 #' @description This function gives the membership vector of the community 
 #' structure. The community structure was found by functions 
 #' implemented in igraph.
-#' @param graph The input graph created with prepGraph
+#' @param graph The input graph created with prepGraph.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-#' "optimal"
-#' @param weights this argument is not settable for "infomap" method
+#' "optimal".
+#' @param weights this argument is not settable for "infomap" method.
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
-#' method
-#' @param spins This argument is settable only for "infomap" method
-#' @param e.weights This argument is settable only for "infomap" method
-#' @param v.weights This argument is settable only for "infomap" method
-#' @param nb.trials This argument is settable only for "infomap" method
-#' @param directed This argument is settable only for "edgeBetweenness" method
+#' method.
+#' @param spins This argument is settable only for "infomap" method.
+#' @param e.weights This argument is settable only for "infomap" method.
+#' @param v.weights This argument is settable only for "infomap" method.
+#' @param nb.trials This argument is settable only for "infomap" method.
+#' @param directed This argument is settable only for "edgeBetweenness" method.
 #'
-#' @return Membership vector of the community structure
+#' @return Membership vector of the community structure.
 #' @import igraph
 #' @export
 #'
@@ -165,16 +174,40 @@ methodCommunity <- function(graph,
             infomap=igraph::cluster_infomap(graph=graph, e.weights=e.weights, 
                                 v.weights=v.weights, nb.trials=nb.trials)
     )
-    return(membership(communities))
+    return(communities)
+    
 }
-
+#####MEMBERSHIP COMMUNITIES####    
+#' membershipCommunities
+#' 
+membershipCommunities<- function(graph,
+                                 method,
+                                 directed=FALSE,
+                                 weights=NULL, 
+                                 steps=4, 
+                                 spins=25, 
+                                 e.weights=NULL, 
+                                 v.weights=NULL, 
+                                 nb.trials=10)
+{
+    members<-membership (methodCommunity (graph=graph, method=method,
+                                            directed=directed,
+                                            weights=weights, 
+                                            steps=steps, 
+                                            spins=spins, 
+                                            e.weights=e.weights, 
+                                            v.weights=v.weights, 
+                                            nb.trials=nb.trials))
+    
+return(members)
+}
 ################ PLOT GRAPH ###############
 #' plotGraph
 #'
-#' @description Graphical interactive representation of the network
-#' @param graph The output of prepGraph
+#' @description Graphical interactive representation of the network.
+#' @param graph The output of prepGraph.
 #'
-#' @return An interactive plot
+#' @return An interactive plot.
 #' @import networkD3
 #' @export
 #'
@@ -190,26 +223,28 @@ plotGraph <- function(graph)
 ######################## PLOT COMMUNITIES ##############
 #' plotCommu
 #'
-#' @description An interactive 3D plot of the communities
-#' @param graph The output of prepGraph
+#' @description An interactive 3D plot of the communities.
+#' @param graph The output of prepGraph.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-#' "optimal"
+#' "optimal".
 #'
-#' @return An interactive plot
+#' @return An interactive plot.
 #' @import networkD3
 #' @export
 #'
 #' @examples plotCommu(graph=graph, method="louvain")
 plotCommu <- function(graph, method)
 {
-    members<-methodCommunity(graph=graph,method=method)
+    members<-membershipCommunities(graph=graph,method=method)
     # Convert to object suitable for networkD3
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group = members)
     # Create force directed network plot
-    plot <- networkD3 ::forceNetwork(Links = graph_d3$links, Nodes = graph_d3$nodes,
-                         Source ='source', 
-                 Target ='target', NodeID ='name',Group ='group')
+    plot <- networkD3 ::forceNetwork(Links = graph_d3$links, 
+                                        Nodes = graph_d3$nodes,
+                                        Source ='source', 
+                                        Target ='target', 
+                                        NodeID ='name',Group ='group')
     return(plot)
 }
 
@@ -244,7 +279,7 @@ rewireCompl <- function(data, number, community, method,
 {
     graphRewire <- igraph::rewire(data,
                                   with=keeping_degseq(loops=FALSE,niter=number))
-    comR  <- methodCommunity(graph=graphRewire, method=method,
+    comR  <- membershipCommunities(graph=graphRewire, method=method,
                             directed=directed,
                             weights=weights,
                             steps=steps, 
@@ -278,25 +313,27 @@ rewireOnl <- function(data, number)
 #'
 #' @description A procedure to examine the stability of the partition recovered 
 #' against random perturbations of the original graph structure.
-#' @param graph The output of prepGraph
-#' @param graphRandom The output of random command
+#' @param graph The output of prepGraph.
+#' @param graphRandom The output of random function.
 #' @param type The type of robin costruction dependent or independent data
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
-#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap"
-#' @param weights this argument is not settable for "infomap" method
+#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
+#' "optimal".
+#' @param weights this argument is not settable for "infomap" method.
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
-#' method
-#' @param spins This argument is settable only for "infomap" method
-#' @param e.weights This argument is settable only for "infomap" method
-#' @param v.weights This argument is settable only for "infomap" method
-#' @param nb.trials This argument is settable only for "infomap" method
-#' @param directed This argument is settable only for "edgeBetweenness" method
+#' method.
+#' @param spins This argument is settable only for "infomap" method.
+#' @param e.weights This argument is settable only for "infomap" method.
+#' @param v.weights This argument is settable only for "infomap" method.
+#' @param nb.trials This argument is settable only for "infomap" method.
+#' @param directed This argument is settable only for "edgeBetweenness" method.
 #'
-#' @return A list object
+#' @return A list object.
 #' @import igraph
 #' @export
 #'
-#' @examples Proc<- robinProc(graph=graph,graphRandom=graphRandom, method="louvain",type="independent")
+#' @examples Proc<- robinProc(graph=graph,graphRandom=graphRandom, 
+#' method="louvain",type="independent")
 robinProc <- function(graph, graphRandom, method,
                 type=c("dependent", "independent"),
                 directed=FALSE,
@@ -309,7 +346,7 @@ robinProc <- function(graph, graphRandom, method,
 {
     type <- match.arg(type)
     nrep <- 10
-    comReal <- methodCommunity(graph=graph, method=method, directed=directed,
+    comReal <- membershipCommunities(graph=graph, method=method, directed=directed,
                                 weights=weights, 
                                 steps=steps, 
                                 spins=spins, 
@@ -317,7 +354,7 @@ robinProc <- function(graph, graphRandom, method,
                                 v.weights=v.weights, 
                                 nb.trials=nb.trials) # real network
 
-    comRandom <- methodCommunity(graph=graphRandom, method=method, 
+    comRandom <- membershipCommunities(graph=graphRandom, method=method, 
                                 directed=directed,
                                 weights=weights,
                                 steps=steps, 
@@ -416,8 +453,8 @@ robinProc <- function(graph, graphRandom, method,
                 }
                 viMeanRandom[s, count] <- mean(vectRandom)
                 viMean[s, count] <- mean(vector)
-                print(count)
             }
+            print(z) 
         }
   #DEPENDENT 
     }else{
@@ -445,7 +482,7 @@ robinProc <- function(graph, graphRandom, method,
                 ###REAL
                 graphRewire <- rewireOnl(data=graph, number=z)
                 graphRewire <-igraph::union(graphRewire, diff)
-                comr <- methodCommunity(graph=graphRewire,
+                comr <- membershipCommunities(graph=graphRewire,
                                         method=method,
                                         directed=directed,
                                         weights=weights,
@@ -461,7 +498,7 @@ robinProc <- function(graph, graphRandom, method,
                 ###RANDOM
                 graphRewireRandom <- rewireOnl(data=graphRandom, number=z)
                 graphRewireRandom <- igraph::union(graphRewireRandom, diffR)
-                comr <- methodCommunity(graph=graphRewireRandom,
+                comr <- membershipCommunities(graph=graphRewireRandom,
                                         method=method,
                                         directed=directed,
                                         weights=weights,
@@ -518,8 +555,7 @@ robinProc <- function(graph, graphRandom, method,
             viMeanRandom <- cbind(viMeanRandom,viMeanRandom1)
             z1 <- igraph::gsize(graph)
             print(z1)
-            #z2 <- igraph::gsize(graphRandom)
-        }
+            }
     }
     colnames(viRandom) <- nRewire
     colnames(vi) <- nRewire
@@ -549,20 +585,20 @@ robinProc <- function(graph, graphRandom, method,
 ############PLOT##############
 #' plotRobin
 #'
-#' @description The plot of the two VI curves, the null model and 
-#' the real graph.
+#' @description The plot of the two VI curves, the VI of the null model and 
+#' of the real graph.
 #' @param graph The output of prepGraph
-#' @param model The viMean output of the robinProc function or the viMean output 
-#' of the comparison function. The default value is viMean.
-#' @param modelR The viMeanRandom output of the iter function or the viMean2
-#'  output of the comparison function. The default value is viMean.
+#' @param model The viMean output of the robinProc function.
+#' @param modelR The viMeanRandom output of the robinProc function.
 #' @param legend The legend for the graph. The default is c("real data", 
-#' "null model")
+#' "null model").
 #'
-#' @return A plot
+#' @return A plot.
+#' @import ggplot2 igraph
 #' @export
 #'
-#' @examples 
+#' @examples plotRobin(graph=graph,model=Proc$viMean,modelR=Proc$viMeanRandom, 
+#' legend=c("real data", "null model"))
 plotRobin <- function(graph,
                       model=Proc$viMean,
                       modelR=Proc$viMeanRandom, 
@@ -577,7 +613,8 @@ plotRobin <- function(graph,
     dataFrame <- data.frame(percPert,mvi)
     plot <- ggplot2::  ggplot(dataFrame, aes(x=percPert, 
                                              y=as.numeric(as.character(mvi)), 
-                                             colour=model,group=factor(model)))+ 
+                                             colour=model,
+                                             group=factor(model)))+ 
         geom_line()+
         geom_point()+ 
         xlab("Percentage of perturbation") +
@@ -587,39 +624,43 @@ plotRobin <- function(graph,
 }
 
 ############### COMPARISON DIFFERENT METHODS ##########
-####con la stessa perturbazione vengono testati due metodi
 #' comparison
 #'
-#' @param graph The input graph prepNet
+#' @description  A procedure to compare two different methods of community 
+#' detection.
+#' @param graph The output of prepGraph.
+#' @param graphRandom The output of random function.
 #' @param method1 The first clustering method, one of "walktrap", 
 #' "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
-#' "labelProp", "infomap"
+#' "labelProp", "infomap","optimal".
 #' @param method2 The second custering method one of "walktrap",
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
-#' "labelProp", "infomap"
-#' @param type The type of robin costruction dependent or independent data
-#' @param weights this argument is not settable for "infomap" method
-#' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
-#' method
-#' @param spins This argument is settable only for "infomap" method
-#' @param e.weights This argument is settable only for "infomap" method
-#' @param v.weights This argument is settable only for "infomap" method
-#' @param nb.trials This argument is settable only for "infomap" method
-#' @param directed This argument is settable only for "edgeBetweenness" method
-#' @param graphRandom The randomly rewired graph
+#' "labelProp", "infomap","optimal".
+#' @param type The type of robin costruction dependent or independent.
+#' @param weights This argument is not settable for "infomap" method.
+#' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
+#' method.
+#' @param spins This argument is settable only for "infomap" method.
+#' @param e.weights This argument is settable only for "infomap" method.
+#' @param v.weights This argument is settable only for "infomap" method.
+#' @param nb.trials This argument is settable only for "infomap" method.
+#' @param directed This argument is settable only for "edgeBetweenness" method.
 #'
 #' @return A list object
+#' @import igraph
 #' @export
 #'
-#' @examples
+#' @examples Comp <- comparison(graph=graph, graphRandom=graphRandom, 
+#' method1="louvain", method2="fastGreedy",type="independent")
+
 
 comparison <- function(graph,graphRandom, 
                        method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                  "leadingEigen","louvain","spinglass",
-                                 "labelProp","infomap"),
+                                 "labelProp","infomap","optimal"),
                        method2=c("walktrap", "edgeBetweenness", "fastGreedy",
                                  "leadingEigen","louvain","spinglass",
-                                 "labelProp","infomap"),
+                                 "labelProp","infomap","optimal"),
                        type=c("dependent", "independent"),
                        directed=FALSE,
                        weights=NULL, 
@@ -631,21 +672,21 @@ comparison <- function(graph,graphRandom,
     {
     type <- match.arg(type)
     nrep <- 10
-    comReal1 <- methodCommunity(graph=graph, method=method1,directed=directed,
+    comReal1 <- membershipCommunities(graph=graph, method=method1,directed=directed,
                                weights=weights,
                                steps=steps, 
                                spins=spins, 
                                e.weights=e.weights, 
                                v.weights=v.weights, 
                                nb.trials=nb.trials) 
-    comReal2 <- methodCommunity(graph=graph, method=method2,directed=directed,
+    comReal2 <- membershipCommunities(graph=graph, method=method2,directed=directed,
                                 weights=weights,
                                 steps=steps, 
                                 spins=spins, 
                                 e.weights=e.weights, 
                                 v.weights=v.weights, 
                                 nb.trials=nb.trials)
-    comRandom1 <- methodCommunity(graph=graphRandom, method=method1, 
+    comRandom1 <- membershipCommunities(graph=graphRandom, method=method1, 
                                  directed=directed,
                                  weights=weights,
                                  steps=steps, 
@@ -653,7 +694,7 @@ comparison <- function(graph,graphRandom,
                                  e.weights=e.weights, 
                                  v.weights=v.weights, 
                                  nb.trials=nb.trials) 
-    comRandom2 <- methodCommunity(graph=graphRandom, method=method2, 
+    comRandom2 <- membershipCommunities(graph=graphRandom, method=method2, 
                                  directed=directed,
                                  weights=weights,
                                  steps=steps, 
@@ -693,7 +734,7 @@ comparison <- function(graph,graphRandom,
                 count2 <- count2+1
                 k <- 1
                 graphRewire <- rewireOnl(data=graph, number=z)
-                comr1 <- methodCommunity(graph=graphRewire, method=method1,
+                comr1 <- membershipCommunities(graph=graphRewire, method=method1,
                                          directed=directed,
                                          weights=weights,
                                          steps=steps, 
@@ -701,7 +742,7 @@ comparison <- function(graph,graphRandom,
                                          e.weights=e.weights, 
                                          v.weights=v.weights, 
                                          nb.trials=nb.trials)
-                comr2 <- methodCommunity(graph=graphRewire, method=method2, 
+                comr2 <- membershipCommunities(graph=graphRewire, method=method2, 
                                          directed=directed,
                                          weights=weights,
                                          steps=steps, 
@@ -714,7 +755,7 @@ comparison <- function(graph,graphRandom,
                 vi1[count2, count] <- vector1[k]
                 vi2[count2, count] <- vector2[k]
                 Random <- rewireOnl(data=graphRandom, number=z)
-                comrR1 <- methodCommunity(graph=Random, method=method1,
+                comrR1 <- membershipCommunities(graph=Random, method=method1,
                                          directed=directed,
                                          weights=weights,
                                          steps=steps, 
@@ -722,7 +763,7 @@ comparison <- function(graph,graphRandom,
                                          e.weights=e.weights, 
                                          v.weights=v.weights, 
                                          nb.trials=nb.trials)
-                comrR2 <- methodCommunity(graph=Random, method=method2, 
+                comrR2 <- membershipCommunities(graph=Random, method=method2, 
                                          directed=directed,
                                          weights=weights,
                                          steps=steps, 
@@ -739,7 +780,7 @@ comparison <- function(graph,graphRandom,
                     count2 <- count2+1
                     graphRewire <- rewireOnl(data=graphRewire,
                                             number=round(0.01*z))
-                    comr1 <- methodCommunity(graph=graphRewire, method=method1,
+                    comr1 <- membershipCommunities(graph=graphRewire, method=method1,
                                              directed=directed,
                                              weights=weights,
                                              steps=steps, 
@@ -747,7 +788,7 @@ comparison <- function(graph,graphRandom,
                                              e.weights=e.weights, 
                                              v.weights=v.weights, 
                                              nb.trials=nb.trials)
-                    comr2 <- methodCommunity(graph=graphRewire, method=method2,
+                    comr2 <- membershipCommunities(graph=graphRewire, method=method2,
                                              directed=directed,
                                              weights=weights,
                                              steps=steps, 
@@ -762,7 +803,7 @@ comparison <- function(graph,graphRandom,
                     
                     graphRewireRandom <- rewireOnl(data=Random,
                                              number=round(0.01*z))
-                    comrR1 <- methodCommunity(graph=Random, method=method1,
+                    comrR1 <- membershipCommunities(graph=Random, method=method1,
                                              directed=directed,
                                              weights=weights,
                                              steps=steps, 
@@ -770,7 +811,7 @@ comparison <- function(graph,graphRandom,
                                              e.weights=e.weights, 
                                              v.weights=v.weights, 
                                              nb.trials=nb.trials)
-                    comrR2 <- methodCommunity(graph=Random, method=method2,
+                    comrR2 <- membershipCommunities(graph=Random, method=method2,
                                              directed=directed,
                                              weights=weights,
                                              steps=steps, 
@@ -789,6 +830,7 @@ comparison <- function(graph,graphRandom,
                 viMeanRandom1[s, count] <- mean(vectorR1)
                 viMeanRandom2[s, count] <- mean(vectorR2)
             }
+            print(z)
         }
         
 }else{
@@ -820,7 +862,7 @@ comparison <- function(graph,graphRandom,
                 k <- 1
                 graphRewire <- rewireOnl(data=graph, number=z)
                 graphRewire <- igraph::union(graphRewire, diff)
-                comr1 <- methodCommunity(graph=graphRewire, method=method1,
+                comr1 <- membershipCommunities(graph=graphRewire, method=method1,
                                          directed=directed,
                                          weights=weights,
                                          steps=steps, 
@@ -828,7 +870,7 @@ comparison <- function(graph,graphRandom,
                                          e.weights=e.weights, 
                                          v.weights=v.weights, 
                                          nb.trials=nb.trials)
-                comr2 <- methodCommunity(graph=graphRewire, method=method2,
+                comr2 <- membershipCommunities(graph=graphRewire, method=method2,
                                          directed=directed,
                                          weights=weights,
                                          steps=steps, 
@@ -845,7 +887,7 @@ comparison <- function(graph,graphRandom,
                 #Random
                 Random <- rewireOnl(data=graphRandom, number=z)
                 Random <- igraph::union(Random, diffR)
-                comrR1 <- methodCommunity(graph=Random, method=method1,
+                comrR1 <- membershipCommunities(graph=Random, method=method1,
                                          directed=directed,
                                          weights=weights,
                                          steps=steps, 
@@ -853,7 +895,7 @@ comparison <- function(graph,graphRandom,
                                          e.weights=e.weights, 
                                          v.weights=v.weights, 
                                          nb.trials=nb.trials)
-                comrR2 <- methodCommunity(graph=Random, method=method2,
+                comrR2 <- membershipCommunities(graph=Random, method=method2,
                                          directed=directed,
                                          weights=weights,
                                          steps=steps, 
@@ -871,7 +913,7 @@ comparison <- function(graph,graphRandom,
                     count2 <- count2+1
                     graphRewire <- rewireOnl(data=graphRewire,
                                             number=round(0.01*z))
-                    comr1 <- methodCommunity(graph=graphRewire, method=method1,
+                    comr1 <- membershipCommunities(graph=graphRewire, method=method1,
                                              directed=directed,
                                              weights=weights,
                                              steps=steps, 
@@ -879,7 +921,7 @@ comparison <- function(graph,graphRandom,
                                              e.weights=e.weights, 
                                              v.weights=v.weights, 
                                              nb.trials=nb.trials)
-                    comr2 <- methodCommunity(graph=graphRewire, method=method2,
+                    comr2 <- membershipCommunities(graph=graphRewire, method=method2,
                                              directed=directed,
                                              weights=weights,
                                              steps=steps, 
@@ -894,7 +936,7 @@ comparison <- function(graph,graphRandom,
                     #Random
                     graphRewireRandom <- rewireOnl(data=Random,
                                              number=round(0.01*z))
-                    comrR1 <- methodCommunity(graph=Random, method=method1,
+                    comrR1 <- membershipCommunities(graph=Random, method=method1,
                                              directed=directed,
                                              weights=weights,
                                              steps=steps, 
@@ -902,7 +944,7 @@ comparison <- function(graph,graphRandom,
                                              e.weights=e.weights, 
                                              v.weights=v.weights, 
                                              nb.trials=nb.trials)
-                    comrR2 <- methodCommunity(graph=Random, method=method2,
+                    comrR2 <- membershipCommunities(graph=Random, method=method2,
                                              directed=directed,
                                              weights=weights,
                                              steps=steps, 
@@ -936,7 +978,6 @@ comparison <- function(graph,graphRandom,
     colnames(viMeanRandom2) <- nRewire
     nn <- rep(nRewire, each=nrep) 
     
-    
     ratios1 <- log2((viMean1+0.001)/(viMeanRandom1+0.001))
     ratios2 <- log2((viMean2+0.001)/(viMeanRandom2+0.001))
     ratios1vs2 <- log2((viMean1+0.001)/(viMean2+0.001))
@@ -950,10 +991,10 @@ comparison <- function(graph,graphRandom,
     resBats2 <- cbind(ID="ratios", t(bats2))
     resBats1vs2 <- cbind(ID="ratios", t(bats1vs2))
 
-    output <- list( viMean1=viMean1,
-                    viMean2=viMean2,
-                    viMeanRandom1=viMeanRandom1,
-                    viMeanRandom2=viMeanRandom2,
+    output <- list(viMean1=viMean1,
+                   viMean2=viMean2,
+                   viMeanRandom1=viMeanRandom1,
+                   viMeanRandom2=viMeanRandom2,
                    ratios1=resBats1,
                    ratios2=resBats2,
                    ratios1vs2=resBats1vs2)
@@ -961,19 +1002,35 @@ comparison <- function(graph,graphRandom,
 }
 
 
-################### PLOT COMPARISON ##################
+ ################### PLOT COMPARISON ##################
 #' plotRobinCompare
 #'
-#' @param graph The input graph prepNet
-#' @param legend The legend for the two graphs of the two methods. 
-#' The default is c("real data","null model")
-#' @param legend1vs2 The legend for the graph of he comparison of the two method.
+#' @param graph The output of prepGraph.
+#' @param model1 The viMean1 output of the comparison function.
+#' @param modelR1 The viMeanRandom1 output of the comparison function.
+#' @param model2 The viMean2 output of the comparison function.
+#' @param modelR2 The viMeanRandom2 output of the comparison function.
+#' @param legend The legend for the graph. The default is c("real data", 
+#' "null model").
+#' @param legend1vs2 The legend for the two methods.
 #' The default is c("method1","method2")
+#' @param title1 The title for the plot of the first method. 
+#' The default is "Method1".
+#' @param title2 The title for the plot of the second method.
+#' The default is "Method2".
+#' @param title1vs2 The title for the plot combined. The default is "Method1 vs
+#' Method2".
 #'
-#' @return A plot
+#' @return A plot.
+#' @import gridExtra grid.arrange
 #' @export
 #'
-#' @examples
+#' @examples plotRobinCompare(graph=graph, model1=Comp$viMean1, 
+#' model2=Comp$viMean2,modelR1=Comp$viMeanRandom1, modelR2=Comp$viMeanRandom2,
+#' legend=c("real data", "null model"),legend1vs2=c("Louvain", "Fast Greedy"),
+#' title1="Louvain",title2="Fast Greedy",
+#' title1vs2="Louvain vs Fast Greedy")
+#' 
 plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2, 
                             legend=c("real data", "null model"),
                             legend1vs2=c("method1", "method2"),
@@ -996,21 +1053,21 @@ plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
 ################ CREATE ITPSpline ##################
 #' createITPSplineResult
 #' 
-#' @description creates an fdatest::ITP2 class object from an iGraph
+#' @description creates an fdatest::ITP2 class object 
 #' 
-#' @param graph an iGraph object
-#' @param model1 
-#' @param model2 
-#' @param muParam the mu parameter for ITP2bspline (default 0)
-#' @param orderParam the order parameter for ITP2bspline (default 4)
-#' @param nKnots the nknots parameter for ITP2bspline (default 12)
-#' @param BParam the B parameter for ITP2bspline (default 10000)
-#' @param isPaired the paired parameter for ITP2bspline (default TRUE)
+#' @param graph The output of prepGraph.
+#' @param model1 The viMean output of the robinProc function (or the viMean1 
+#' output of the comparison function).
+#' @param model2 The viMeanRandom output of the robinProc function (or the 
+#' viMean2 output of the comparison function).
+#' @param muParam the mu parameter for ITP2bspline (default 0).
+#' @param orderParam the order parameter for ITP2bspline (default 4).
+#' @param nKnots the nknots parameter for ITP2bspline (default 7).
+#' @param BParam the B parameter for ITP2bspline (default 10000).
+#' @param isPaired the paired parameter for ITP2bspline (default TRUE).
 #'
 #' @return an ITP2 object
-#' @export
-#'
-#' @examples
+
 createITPSplineResult <- function(graph, model1, model2,
                                 muParam=0, orderParam=4, nKnots=7, 
                                 BParam=10000, isPaired=TRUE) 
@@ -1027,14 +1084,14 @@ createITPSplineResult <- function(graph, model1, model2,
 
 ######################GAUSSIN PROCESS#################
 
-#' Title
+#' robinGPTest
 #'
-#' @param ratio 
+#' @param ratio The output of the 
 #'
 #' @return
 #' @export
 #'
-#' @examples
+#' @examples robinGPTest(ratio=Proc$ratios)
 robinGPTest <- function(ratio)
 {
     gpregeOptions = list(indexRange=(1:2), explore=FALSE, 
@@ -1089,9 +1146,11 @@ robinGPTest <- function(ratio)
 
 #' robinFDATest
 #'
-#' @param graph The input graph created with prepGraph
-#' @param model1 
-#' @param model2 
+#' @param graph The output of prepGraph.
+#' @param model1 The viMean output of the robinProc function (or the viMean1 
+#' output of the comparison function).
+#' @param model2 The viMeanRandom output of the robinProc function (or the 
+#' viMean2 output of the comparison function).
 #' @param legend 
 #'
 #' @return
