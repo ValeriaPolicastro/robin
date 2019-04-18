@@ -8,13 +8,15 @@ library("networkD3")
 library(DescTools)
 
 #file <- "Dati/3437.edges.txt"
-#file <- "Dati/rip_348.edges.txt"
+file <- "Dati/rip_348.edges.txt"
 file<-"Dati/email-Eu-core.txt" 
 #file <- "Dati/edgelistQ08.txt"
+file<-"Dati/data/football.gml"
 
 ##CREATE GRAPHS
-graph <- prepGraph(file,file.format="edgelist",numbers=TRUE) 
+graph <- prepGraph(file,file.format="edgelist",number=TRUE) 
 graph <- prepGraph(file=football,file.format="igraph") 
+graph <- prepGraph(file,file.format="gml") 
 graph
 
 #Graph Random

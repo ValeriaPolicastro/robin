@@ -4,13 +4,17 @@
 #' 
 #' @description The prepGraph function is able to read graphs from a file and 
 #' to prepare them for the analysis.
+#'
 #' @param file The file to read from.
 #' @param file.format Character constant giving the file format. Right now
 #' as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are 
-#' supported.
-#' @param directed Logical scalar, whether to create a directed graph. 
-#' The default value is FALSE.
-#'
+#' supported
+#' @param numbers A logical value indicating if the names of the nodes are 
+#' values.This argument is settable for the edgelist format. 
+#' The default is FALSE.
+#' @param header A logical value indicating whether the file contains 
+#' the names of the variables as its first line.This argument is settable 
+#' for the edgelist format.The default is FALSE.
 #' @return A simple graph.
 #' @import igraph
 #' @export
@@ -26,17 +30,23 @@ prepGraph <- function(file,
     if (file.format =="igraph")
     {
         graph <- igraph::simplify(file) 
-     }
-    else if((file.format == "edgelist") & (numbers == TRUE))
+    }else if (file.format == "gml"){
+        net <- igraph::read_graph(file=file, format=file.format)
+        ind <- igraph::V(net)[degree(net) == 0] #isolate node
+        graph <- igraph::delete.vertices(net, ind)
+        graph <- igraph::simplify(graph)
+    }else if((file.format == "edgelist") & (numbers == TRUE))
     {
         edge <- read.table(file,colClasses = "character", quote="\"",
                            header=header)
         edge <- as.matrix(edge)
-        graph<-graph_from_edgelist(edge,direct=directed)
+        graph <- igraph::graph_from_edgelist(edge ,direct=directed
+                                   )
         graph <- igraph::simplify(graph)
     }else{
-        net <- igraph::read_graph(file=file, format=file.format, 
-                                  directed=directed)
+        net <- igraph::read_graph(file=file, format=file.format,
+                                  directed=directed
+                                  )
         ind <- igraph::V(net)[degree(net) == 0] #isolate node
         graph <- igraph::delete.vertices(net, ind)
         graph <- igraph::simplify(graph)
@@ -104,28 +114,49 @@ random <- function(graph)
 #####COMMUNITY METHOD####    
 #' methodCommunity
 #' 
-#' @description This function gives the membership vector of the community 
-#' structure. The community structure was found by functions 
-#' implemented in igraph.
-#' @param graph The input graph created with prepGraph.
+#' @description This function detects the community structure of a graph.
+#' The community structure are found by all functions implemented in igraph.
+#' @param graph The output of prepGraph.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "optimal".
-#' @param weights this argument is not settable for "infomap" method.
-#' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
-#' method.
-#' @param spins This argument is settable only for "infomap" method.
-#' @param e.weights This argument is settable only for "infomap" method.
-#' @param v.weights This argument is settable only for "infomap" method.
-#' @param nb.trials This argument is settable only for "infomap" method.
-#' @param directed This argument is settable only for "edgeBetweenness" method.
+#' @param weights  Optional positive weight vector. If the graph has a weight 
+#' edge attribute, then this is used by default. Supply NA here if the graph 
+#' has a weight edge attribute, but you want to ignore it. Larger edge weights
+#' correspond to stronger connections. This argument is not settable for 
+#' "infomap" method.
+#' @param steps The number of steps to take, this is actually the number of 
+#' tries to make a step. It is not a particularly useful parameter. This 
+#' argument is settable only for "leadingEigen"and"walktrap" method.
+#' @param spins Integer constant, the number of spins to use. This is the upper 
+#' limit for the number of communities. It is not a problem to supply a 
+#' (reasonably) big number here, in which case some spin states will be 
+#' unpopulated. This argument is settable only for "spinglass" method.
+#' @param e.weights If not NULL, then a numeric vector of edge weights. 
+#' The length must match the number of edges in the graph. By default the 
+#' ‘weight’ edge attribute is used as weights. If it is not present, then all
+#' edges are considered to have the same weight. Larger edge weights correspond 
+#' to stronger connections.  This argument is settable only for "infomap"
+#'  method.
+#' @param v.weights If not NULL, then a numeric vector of vertex weights. The
+#' length must match the number of vertices in the graph. By default the 
+#' ‘weight’ vertex attribute is used as weights. If it is not present, then all
+#' vertices are considered to have the same weight. A larger vertex weight means
+#' a larger probability that the random surfer jumps to that vertex. This 
+#' argument is settable only for "infomap" method.
+#' @param nb.trials The number of attempts to partition the network (can be any
+#' integer value equal or larger than 1). This argument is settable only for
+#' "infomap" method.
+#' @param directed Logical constant, whether to calculate directed edge 
+#' betweenness for directed graphs. This argument is settable only for 
+#' "edgeBetweenness" method.
 #'
-#' @return Membership vector of the community structure.
+#' @return Communities.
 #' @import igraph
 #' @export
 #'
 #' @examples methodCommunity (graph=graph, method="louvain")
-#' #with all the method implemented in igraph
+#' with all the method implemented in igraph
 methodCommunity <- function(graph, 
                             method,
                             directed=FALSE,
@@ -183,6 +214,51 @@ methodCommunity <- function(graph,
 #####MEMBERSHIP COMMUNITIES####    
 #' membershipCommunities
 #' 
+#' @description This function gives the membership vector of the community 
+#' structure. The community structure are found by all functions implemented 
+#' in igraph.
+#' @param graph The output of prepGraph.
+#' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
+#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
+#' "optimal".
+#' @param weights  Optional positive weight vector. If the graph has a weight 
+#' edge attribute, then this is used by default. Supply NA here if the graph 
+#' has a weight edge attribute, but you want to ignore it. Larger edge weights
+#' correspond to stronger connections. This argument is not settable for 
+#' "infomap" method.
+#' @param steps The number of steps to take, this is actually the number of 
+#' tries to make a step. It is not a particularly useful parameter. This 
+#' argument is settable only for "leadingEigen"and"walktrap" method.
+#' @param spins Integer constant, the number of spins to use. This is the upper 
+#' limit for the number of communities. It is not a problem to supply a 
+#' (reasonably) big number here, in which case some spin states will be 
+#' unpopulated. This argument is settable only for "spinglass" method.
+#' @param e.weights If not NULL, then a numeric vector of edge weights. 
+#' The length must match the number of edges in the graph. By default the 
+#' ‘weight’ edge attribute is used as weights. If it is not present, then all
+#' edges are considered to have the same weight. Larger edge weights correspond 
+#' to stronger connections.  This argument is settable only for "infomap"
+#'  method.
+#' @param v.weights If not NULL, then a numeric vector of vertex weights. The
+#' length must match the number of vertices in the graph. By default the 
+#' ‘weight’ vertex attribute is used as weights. If it is not present, then all
+#' vertices are considered to have the same weight. A larger vertex weight means
+#' a larger probability that the random surfer jumps to that vertex. This 
+#' argument is settable only for "infomap" method.
+#' @param nb.trials The number of attempts to partition the network (can be any
+#' integer value equal or larger than 1). This argument is settable only for
+#' "infomap" method.
+#' @param directed Logical constant, whether to calculate directed edge 
+#' betweenness for directed graphs. This argument is settable only for 
+#' "edgeBetweenness" method.
+#' 
+#' @return Membership vector of the community structure.
+#' @import igraph
+#' @export
+#'
+#' @examples membershipCommunities (graph=graph, method="louvain")
+#' with all the method implemented in igraph
+
 membershipCommunities<- function(graph,
                                  method,
                                  directed=FALSE,
@@ -1089,40 +1165,41 @@ createITPSplineResult <- function(graph, model1, model2,
 
 #' robinGPTest
 #'
-#' @param ratio The output of the 
+#' @description This function makes a test between the curves calculating the 
+#' Bayes factor.
+#' @param ratio The ratios output of the robinProc function (or the ratios1vs2 
+#' output of the comparison function). 
 #'
-#' @return
+#' @return The Bayes factor
+#' @import gprege
 #' @export
 #'
 #' @examples robinGPTest(ratio=Proc$ratios)
 robinGPTest <- function(ratio)
 {
-    gpregeOptions = list(indexRange=(1:2), explore=FALSE, 
+    gpregeOptions <- list(indexRange=(1:2), explore=FALSE, 
                          exhaustPlotRes=30, exhaustPlotLevels=10, 
                          exhaustPlotMaxWidth=100, iters=100, 
                          labels=rep(FALSE,2), display=FALSE)
-    MA=as.matrix(ratio[,c(2:dim(ratio)[2])])
-    MA<-t(MA)
-    vt=unique(colnames(MA))
-    ntimes=length(vt)
-    stdv=NULL
-    varv=NULL
+    MA <- as.matrix(ratio[,c(2:dim(ratio)[2])])
+    MA <- t(MA)
+    vt <- unique(colnames(MA))
+    ntimes <- length(vt)
+    stdv <- NULL
+    varv <- NULL
     for (i in c(1:ntimes)){    #ntime number of percentuage of rewire
-        ind=which(colnames(MA)==vt[i])
-        stdv[i]=sd(MA[1,ind])
-        varv[i]=var(MA[1,ind])
+        ind <- which(colnames(MA)==vt[i])
+        stdv[i] <- sd(MA[1,ind])
+        varv[i] <- var(MA[1,ind])
     }
     #sigmaest=mean(stdv)Order of the B-spline basis expansion.
-    GlobalVar=var(MA[1,])
-    SigNoise=mean(varv)/GlobalVar
+    GlobalVar <- var(MA[1,])
+    SigNoise <- mean(varv)/GlobalVar
     if (SigNoise>1)SigNoise=1
-    #
-    
     #SigNoise=1-var(MA[2,])
-    sigmaest=1-SigNoise
+    sigmaest <- 1-SigNoise
     #mod='08'
     #ntimes=50
-    
     gpregeOptions$inithypers <- matrix( c(
         1/1000,	0,	1
         ,1/ntimes,	sigmaest, SigNoise
@@ -1131,16 +1208,15 @@ robinGPTest <- function(ratio)
     # 1/1000,  0,	1
     #,1/ntimes,	0.8,0.2
     #), ncol=3, byrow=TRUE)
-    
-    dvet=data.matrix(as.numeric(colnames(ratio)[-1]))
-    dd=t(data.matrix(as.numeric((ratio)[-1])))
-    rownames(dd)='VI'
-    colnames(dd)=dvet
-    datadum=rbind(dd,dd)
-    gpregeOutput <-gprege::gprege(data=datadum, inputs=dvet,
+    dvet <- data.matrix(as.numeric(colnames(ratio)[-1]))
+    dd <- t(data.matrix(as.numeric((ratio)[-1])))
+    rownames(dd) <- 'VI'
+    colnames(dd) <- dvet
+    datadum <- rbind(dd,dd)
+    gpregeOutput <- gprege::gprege(data=datadum, inputs=dvet,
                                   gpregeOptions=gpregeOptions)
+    bf <- gpregeOutput$rankingScores[1]
     
-    bf=gpregeOutput$rankingScores[1]
     return(Bayes_Factor=bf)
  }
 
@@ -1184,7 +1260,7 @@ robinFDATest <- function(graph,
    
     perc<-rep((seq(0,60,5)/100))
     ITPresult <- createITPSplineResult(graph, model1, model2)
-    plot2<-plot(ITPresult, main='VI', xrange=c(0,0.6), xlab='perturbation', 
+    plot2 <- plot(ITPresult, main='VI', xrange=c(0,0.6), xlab='perturbation', 
                 ylab="VI")
     lines(perc, rep(0.05, 13), type="l", col="red")
     
@@ -1209,9 +1285,9 @@ robinAUCTest <- function(graph,
     N <- igraph::vcount(graph)
     mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)))
     mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)))
-    area1<-DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel1, 
+    area1 <- DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel1, 
                           method ="spline")
-    area2<-DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel2, 
+    area2 <- DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel2, 
                           method ="spline")
     output <- list(area1=area1,area2=area2)
 return(output)
