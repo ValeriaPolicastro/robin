@@ -14,6 +14,7 @@ file<-"Dati/email-Eu-core.txt"
 
 ##CREATE GRAPHS
 graph <- prepGraph(file,file.format="edgelist",numbers=TRUE) 
+graph <- prepGraph(file=football,file.format="igraph") 
 graph
 
 #Graph Random

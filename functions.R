@@ -1,14 +1,12 @@
-
 ######PREPARATION GRAPH########## 
 
 #' prepGraph
 #' 
 #' @description The prepGraph function is able to read graphs from a file and 
 #' to prepare them for the analysis.
-#'
 #' @param file The file to read from.
 #' @param file.format Character constant giving the file format. Right now
-#' as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs and graphdb are 
+#' as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are 
 #' supported.
 #' @param directed Logical scalar, whether to create a directed graph. 
 #' The default value is FALSE.
@@ -20,14 +18,19 @@
 #' @examples graph <- prepGraph(file=my_file, file.format="edgelist")
 prepGraph <- function(file,
                     file.format=c("edgelist", "pajek", "ncol", "lgl", "graphml",
-                                    "dimacs", "graphdb", "gml", "dl"),
+                                    "dimacs", "graphdb", "gml", "dl","igraph"),
                     numbers= FALSE,
                     directed=FALSE,
                     header=FALSE)
 { 
-    if((file.format == "edgelist") & (numbers == TRUE))
+    if (file.format =="igraph")
     {
-        edge <- read.table(file,colClasses = "character", quote="\"", header=header)
+        graph <- igraph::simplify(file) 
+     }
+    else if((file.format == "edgelist") & (numbers == TRUE))
+    {
+        edge <- read.table(file,colClasses = "character", quote="\"",
+                           header=header)
         edge <- as.matrix(edge)
         graph<-graph_from_edgelist(edge,direct=directed)
         graph <- igraph::simplify(graph)
