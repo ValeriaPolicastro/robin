@@ -90,11 +90,9 @@ plotRobinCompare(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2,
 #cofronto tra modello e modello nullo
 robinGPTest(ratio=Proc$ratios)
 
-robinFDATest(graph=graph, model1=Proc$viMean,model2=Proc$viMeanRandom, 
-           legend=c("real data", "null model"))
+robinFDATest(graph=graph, model1=Proc$viMean,model2=Proc$viMeanRandom)
 
 robinAUCTest(graph=graph,model1=Proc$viMean,model2=Proc$viMeanRandom)
-
 
 
 #confronto tra due metodi

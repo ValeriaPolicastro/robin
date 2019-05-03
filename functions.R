@@ -366,7 +366,7 @@ rewireCompl <- function(data, number, community, method,
                             e.weights=e.weights, 
                             v.weights=v.weights, 
                             nb.trials=nb.trials)
-    VI <- compare(community, comR, method="vi")
+    VI <- igraph::compare(community, comR, method="vi")
     output <- list(VI=VI, graphRewire=graphRewire)
     return(output)#non serve per tutti
 }
@@ -570,7 +570,7 @@ robinProc <- function(graph, graphRandom, method,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                vector[k] <- compare(comReal, comr, method="vi")
+                vector[k] <- igraph::compare(comReal, comr, method="vi")
                 vi1[count2] <- vector[k]
                 diff <-igraph::difference(graph, graphRewire)
                 
@@ -586,7 +586,7 @@ robinProc <- function(graph, graphRandom, method,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                vectRandom[k] <- compare(comRandom, comr, method="vi")
+                vectRandom[k] <- igraph::compare(comRandom, comr, method="vi")
                 viRandom1[count2] <- vectRandom[k]
                 diffR <- igraph::difference(graphRandom, graphRewireRandom)
                 
@@ -683,6 +683,7 @@ plotRobin <- function(graph,
                       modelR=Proc$viMeanRandom, 
                       legend=c("real data", "null model"))
 {   
+    
     N <- igraph::vcount(graph)
     mvimodel1 <- cbind(as.vector((apply(model, 2, mean))/log2(N)),legend[1])
     mvimodel2 <- cbind(as.vector((apply(modelR, 2, mean))/log2(N)),legend[2])
@@ -699,7 +700,7 @@ plotRobin <- function(graph,
         xlab("Percentage of perturbation") +
         ylab("Variation of Information (VI)")+
         ggtitle("Robin plot")
-    plot+ scale_y_continuous(limits=c(0,0.6))
+    plot+ scale_y_continuous(limits=c(0,0.6)) #only for VI
 }
 
 ############### COMPARISON DIFFERENT METHODS ##########
@@ -829,8 +830,8 @@ comparison <- function(graph,graphRandom,
                                          e.weights=e.weights, 
                                          v.weights=v.weights, 
                                          nb.trials=nb.trials)
-                vector1[k] <- compare(comr1, comReal1, method="vi")
-                vector2[k] <- compare(comr2, comReal2, method="vi")
+                vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
+                vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
                 vi1[count2, count] <- vector1[k]
                 vi2[count2, count] <- vector2[k]
                 Random <- rewireOnl(data=graphRandom, number=z)
@@ -850,8 +851,8 @@ comparison <- function(graph,graphRandom,
                                          e.weights=e.weights, 
                                          v.weights=v.weights, 
                                          nb.trials=nb.trials)
-                vectorR1[k] <- compare(comrR1, comRandom1, method="vi")
-                vectorR2[k] <- compare(comrR2, comRandom2, method="vi")
+                vectorR1[k] <- igraph::compare(comrR1, comRandom1, method="vi")
+                vectorR2[k] <- igraph::compare(comrR2, comRandom2, method="vi")
                 viR1[count2, count] <- vectorR1[k]
                 viR2[count2, count] <- vectorR2[k]
                 for(k in c(2:nrep))
@@ -875,8 +876,8 @@ comparison <- function(graph,graphRandom,
                                              e.weights=e.weights, 
                                              v.weights=v.weights, 
                                              nb.trials=nb.trials)
-                    vector1[k] <- compare(comr1, comReal1, method="vi")
-                    vector2[k] <- compare(comr2, comReal2, method="vi")
+                    vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
+                    vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
                     vi1[count2, count] <- vector1[k]
                     vi2[count2, count] <- vector2[k]
                     
@@ -898,8 +899,8 @@ comparison <- function(graph,graphRandom,
                                              e.weights=e.weights, 
                                              v.weights=v.weights, 
                                              nb.trials=nb.trials)
-                    vectorR1[k] <- compare(comrR1, comRandom1, method="vi")
-                    vectorR2[k] <- compare(comrR2, comRandom2, method="vi")
+                    vectorR1[k] <- igraph::compare(comrR1, comRandom1, method="vi")
+                    vectorR2[k] <- igraph::compare(comrR2, comRandom2, method="vi")
                     viR1[count2, count] <- vectorR1[k]
                     viR2[count2, count] <- vectorR2[k]
                    
@@ -957,8 +958,8 @@ comparison <- function(graph,graphRandom,
                                          e.weights=e.weights, 
                                          v.weights=v.weights, 
                                          nb.trials=nb.trials)
-                vector1[k] <- compare(comr1, comReal1, method="vi")
-                vector2[k] <- compare(comr2, comReal2, method="vi")
+                vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
+                vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
                 vi11[count2] <- vector1[k]
                 vi22[count2] <- vector2[k]
                 diff <- igraph::difference(graph, graphRewire)
@@ -982,8 +983,8 @@ comparison <- function(graph,graphRandom,
                                          e.weights=e.weights, 
                                          v.weights=v.weights, 
                                          nb.trials=nb.trials)
-                vectorR1[k] <- compare(comrR1, comRandom1, method="vi")
-                vectorR2[k] <- compare(comrR2, comRandom2, method="vi")
+                vectorR1[k] <- igraph::compare(comrR1, comRandom1, method="vi")
+                vectorR2[k] <- igraph::compare(comrR2, comRandom2, method="vi")
                 viR11[count2] <- vectorR1[k]
                 viR22[count2] <- vectorR2[k]
                 diffR <- igraph::difference(graphRandom, Random)
@@ -1008,8 +1009,8 @@ comparison <- function(graph,graphRandom,
                                              e.weights=e.weights, 
                                              v.weights=v.weights, 
                                              nb.trials=nb.trials)
-                    vector1[k] <- compare(comr1, comReal1, method="vi")
-                    vector2[k] <- compare(comr2, comReal2, method="vi")
+                    vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
+                    vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
                     vi11[count2] <- vector1[k]
                     vi22[count2] <- vector2[k]
                     #Random
@@ -1031,8 +1032,8 @@ comparison <- function(graph,graphRandom,
                                              e.weights=e.weights, 
                                              v.weights=v.weights, 
                                              nb.trials=nb.trials)
-                    vectorR1[k] <- compare(comrR1, comRandom1, method="vi")
-                    vectorR2[k] <- compare(comrR2, comRandom2, method="vi")
+                    vectorR1[k] <- igraph::compare(comrR1, comRandom1, method="vi")
+                    vectorR2[k] <- igraph::compare(comrR2, comRandom2, method="vi")
                     viR11[count2] <- vectorR1[k]
                     viR22[count2] <- vectorR2[k]
                 }
@@ -1101,7 +1102,7 @@ comparison <- function(graph,graphRandom,
 #' Method2".
 #'
 #' @return A plot.
-#' @import gridExtra grid.arrange
+#' @import gridExtra::grid.arrange
 #' @export
 #'
 #' @examples plotRobinCompare(graph=graph, model1=Comp$viMean1, 
@@ -1165,7 +1166,7 @@ createITPSplineResult <- function(graph, model1, model2,
 
 #' robinGPTest
 #'
-#' @description This function makes a test between the curves calculating the 
+#' @description This function makes a test between the curves, calculating the 
 #' Bayes factor.
 #' @param ratio The ratios output of the robinProc function (or the ratios1vs2 
 #' output of the comparison function). 
@@ -1225,21 +1226,24 @@ robinGPTest <- function(ratio)
 
 #' robinFDATest
 #'
+#'@description The function implements the Interval Testing Procedure for 
+#'testing the difference between the two curves.
+#'
 #' @param graph The output of prepGraph.
 #' @param model1 The viMean output of the robinProc function (or the viMean1 
 #' output of the comparison function).
 #' @param model2 The viMeanRandom output of the robinProc function (or the 
 #' viMean2 output of the comparison function).
-#' @param legend 
+#' @param legend The legend for the graph. The default is c("real data", 
+#' "null model").
 #'
-#' @return
+#' @return Two plots.
+#' @import igraph ggplot2 fdatest::ITP2bspline
 #' @export
 #'
-#' @examples
-robinFDATest <- function(graph,
-                        model1=model1,
-                        model2=model2, 
-                        legend=legend)
+#' @examples robinFDATest(graph=graph, model1=Proc$viMean,model2=Proc$viMeanRandom)
+robinFDATest <- function(graph,model1,model2, 
+                        legend=c("real data", "null model"))
 {
      N <- igraph::vcount(graph)
     mvimodel1 <- cbind(as.vector((model1)/log2(N)), legend[1], 
@@ -1268,19 +1272,22 @@ robinFDATest <- function(graph,
 }  
 
 ########### AREA UNDER THE CURVE    ##############
-#' Title
+#' robinAUCTest
 #'
-#' @param graph The input graph created with prepGraph
-#' @param model1 
-#' @param model2 
+#' @description Calculate the area under the two curves with a spline approach. 
+#' @param graph The output of prepGraph.
+#' @param model1 The viMean output of the robinProc function (or the viMean1 
+#' output of the comparison function).
+#' @param model2 The viMeanRandom output of the robinProc function (or the 
+#' viMean2 output of the comparison function).
 #'
-#' @return
+#' @return A list
+#' @import DescTools::AUC,igraph::vcount
 #' @export
 #'
-#' @examples
-robinAUCTest <- function(graph,
-                         model1=model1,
-                         model2=model2)
+#' @examples robinAUCTest(graph=graph,model1=Proc$viMean,
+#' model2=Proc$viMeanRandom)
+robinAUCTest <- function(graph,model1,model2)
 {
     N <- igraph::vcount(graph)
     mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)))
