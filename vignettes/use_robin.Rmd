@@ -1,12 +1,16 @@
 ---
 title: "Vignette"
-author: "Valeria Policastro"
-date: "27 marzo 2019"
+author: "Valeria Policastro - Dario Righelli"
+date: "`r Sys.Date()`"
 output:
-  html_document: default
-  pdf_document: default
-  word_document: default
+  html_document: 
+    toc: true
+  pdf_document: 
+    toc: true
+editor_options: 
+  chunk_output_type: console
 ---
+
 #Abstract
 In network analysis, many community detection algorithms have been developed. 
 However,their applications leave unaddressed one important question: 
@@ -14,7 +18,7 @@ the statistical validation of the results.
 Are the detected communities significant or are they a result of chance only 
 due to the positions of edges in the network?
 
-ROBIN (Robustness In Network)gives a statistical answer to the validation of 
+ROBIN (Robustness In Network) gives a statistical answer to the validation of 
 the community structure by looking at the robustness of the network.
 
 The package implements a methodology that detects if the community structure 
@@ -34,127 +38,148 @@ network to discover which fits better
 
 ### Install packages
 ```{r}
-
+# install.packages("devtools")
+library(devtools)
+install_github("ValeriaPolicastro/robin")
+library("robin")
+library("cowplot")
+library("gprege")
 ```
 
 
 # Preparation of the Graph 
-As input, the ROBIN package expects a network that can be read from different 
+As input, the **ROBIN** package expects a network that can be read from different 
 format: edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph 
 graphs.
 
-With the prepGraph command we will create from the input file the graph needed 
-for the Robin procedure.
+With the **prepGraph** function we create an *igraph* object, from the selected 
+input file, needed for the ROBIN execution.
+
 ```{r}
-my_file <- "Dati/data/football.gml" 
-#downloaded from: http://www-personal.umich.edu/~mejn/netdata/
-graph <- prepGraph(file=my_file,file.format="gml")
+my_file <- system.file("example/football.gml", package="robin")
+# downloaded from: http://www-personal.umich.edu/~mejn/netdata/
+graph <- prepGraph(file=my_file, file.format="gml")
 graph
 ```
 
 # Random Graph 
-So we will create the Random graph (null model) that has to be used for the 
-package, the graph argument must be the output of the prepGraph function.
+In such a way, we can create the Random graph (null model) that has to be used 
+for the package, the graph argument must be of the same type returned by the 
+**prepGraph** function.
+
 ```{r}
-graphRandom <- random(graph=graph) 
+graphRandom <- random(graph=graph)
 ```
 
 # Plot graph
-To have a plot of the network 
+To have a graphical representation of the network we use the **plotGraph** 
+function implemented with aid of *networkD3* package.
+
 ```{r}
-plotGraph (graph)
+plotGraph(graph)
 ```
 
 # Create Community 
 To create the communities, in the package are implemented all the igraph 
-algorithms. 
+algorithms.
+
 ```{r}
-methodCommunity (graph=graph, method="fastGreedy") #as community 
+methodCommunity(graph=graph, method="fastGreedy") #as community 
 membershipCommunities(graph=graph, method="fastGreedy") #as membership
 ```
 
 #Community Plot
-It gives an interactive 3D plot of the communites for the algorithm chosen
+
+It gives an interactive 3D plot of the communites for the chosen algorithm.
+
 ```{r}
-plotCommu(graph=graph, method="fastGreedy") 
+plotCommu(graph=graph, method="fastGreedy")
 ```
 
 # Procedure to validate the robustness
-It creates the Robin procedure to validate the robustness of your network.
-To make things easier we will save the output lists in Proc because we will need 
-them after.
+It creates the ROBIN procedure to validate the robustness of your network.
+To make things easier we save the output list in the *proc* variable because 
+to use it later.
+
 ```{r}
-Proc<- robinProc(graph=graph,graphRandom=graphRandom, method="louvain",
+proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
                  type="independent")
 ```
 
 # Robin Plots
-We will create a Plot to compare the curves obtained from the Procedure.
-Plotting the average of the VI measure versus the percentuage of perturbation
-of the real data and the null model.
-The model argument must be the viMean output of the robinProc function and
-the modelR argument must be the viMeanRandom output of the robinProc function.
+Now in order to compare the obtained curves from the Procedure we can make a 
+plot with the **plotRobin** function.
+It shows on the y-axis the average of the Variation of Information (VI) measure 
+while on the x-axis the percentuage of perturbation of the real data and 
+the null model.
+
+The *model* and *modelR* arguments are, respectively, the *viMean* and the 
+*viMeanRandom* contained inside the *robinProc* output list.
+
 ```{r}
-plotRobin(graph= graph, model=Proc$viMean,modelR=Proc$viMeanRandom)
+plotRobin(graph=graph, model=proc$viMean, modelR=proc$viMeanRandom)
 ```
 
-# Statistical Tests Real data Null model 
-We will then test the differeces between this two curves with:
--Functional data analysis
--Gaussian Process
--AUC
-The argument of model1 must be the viMean output of the function robinProc and 
-the argument of model2 must be the viMeanRandom output of the function 
-robinProc.
+# Statistical Tests between Real data and Null model 
+Now we test the differeces between this two curves with:
+- Functional data analysis
+- Gaussian Process
+- Area Under the Curve (AUC)
+The *model1* and *model2* arguments are, respectively, the *viMean* and the 
+*viMeanRandom* contained inside the *robinProc* output list.
+
 ```{r}
-robinFDATest(graph=graph, model1=Proc$viMean,model2=Proc$viMeanRandom)
-
-robinGPTest(ratio=Proc$ratios)
-
-robinAUCTest(graph=graph,model1=Proc$viMean,model2=Proc$viMeanRandom)
+robinFDATest(graph=graph, model1=proc$viMean, model2=proc$viMeanRandom)
+robinGPTest(ratio=proc$ratios)
+robinAUCTest(graph=graph, model1=proc$viMean, model2=proc$viMeanRandom)
 ```
+
 # Comparison Two different Methods
-Now we want yo see if we have two different algoritms which of them is the best?
-Taking for example the Fast Greedy and the Louvain algorithm, we want to check 
-which of this two algorithms fits better our network.
-We will firstly plot them with their different communities to have an idea of 
+Now we want to see which algorithm (between two of them) better detects the 
+communities.
+For example if we take the *Fast Greedy* and *Louvain* algorithms, 
+we want to check which one better fits our network.
+We firstly plot them with their different communities to have an idea of 
 the network of interest.
+
 ```{r}
 plotCommu(graph=graph, method="fastGreedy")
 plotCommu(graph=graph, method="louvain")
 ```
-Secondly we will run the comparison function to calculate the comparison Robin 
-procedure that is different from the previous one, but as before we will save 
-the output in a name Comp, because we will use it later.
+
+Secondly, we run the **comparison** function to compare the two algorithms, 
+which, as before, we store the output in the *comp* variable to use it later.
+
 ```{r}
-Comp <- comparison(graph=graph, graphRandom=graphRandom, method1="fastGreedy",
+comp <- comparison(graph=graph, graphRandom=graphRandom, method1="fastGreedy",
                 method2="louvain",type="independent")
 ```
-Thirdly we will plot the curves of the null model and the real data for both
+
+Thirdly, we plot the curves of the null model and the real data for both
 methods and the two curves of the two methods in comparison.
 The model1 argument must be the viMean1 output of the comparison function, the 
 modelR1 argument must be the viMeanRandom1,the model2 argument must be the 
 viMean2 and the modelR2 argument must be the viMeanRandom2 all outputs of the
 comparison function.
+
 ```{r}
-plotRobinCompare(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2,
-                 modelR1=Comp$viMeanRandom1, modelR2=Comp$viMeanRandom2,
+plotRobinCompare(graph=graph, model1=comp$viMean1, model2=comp$viMean2,
+                 modelR1=comp$viMeanRandom1, modelR2=comp$viMeanRandom2,
                  legend=c("real data", "null model"),
                  legend1vs2=c("Fast Greedy","Louvain"),
-                 title1="Fast Greedy",title2="Louvain",
+                 title1="Fast Greedy", title2="Louvain",
                  title1vs2="Fast Greedy vs Louvain")
 ```
 
 # Statistical Tests between two methods 
-We will then test them as we did it before but for the comparison the model1 
+
+We then test them, as we did it, before but for the comparison the model1 
 argument must be the viMean1 output of the function comparison and the model2 
 argument must be the viMean2 output of the function comparison.
+
 ```{r}
-robinFDATest(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2)
-
-robinGPTest(ratio=Comp$ratios1vs2)
-
-robinAUCTest(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2)
-
+robinFDATest(graph=graph, model1=comp$viMean1, model2=comp$viMean2)
+robinGPTest(ratio=comp$ratios1vs2)
+robinAUCTest(graph=graph, model1=comp$viMean1, model2=comp$viMean2)
 ```
 

@@ -26,5 +26,6 @@ Imports:
     gridExtra
 VignetteBuilder: knitr
 Suggests: 
+    cowplot,
     knitr,
     rmarkdown

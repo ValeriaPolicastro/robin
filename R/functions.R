@@ -15,7 +15,7 @@
 #' @param header A logical value indicating whether the file contains 
 #' the names of the variables as its first line.This argument is settable 
 #' for the edgelist format.The default is FALSE.
-#' @return A simple graph.
+#' @return A simplified graph as returned from the igraph::simplify.
 #' @import igraph
 #' @export
 #'
@@ -310,7 +310,8 @@ return(members)
 plotGraph <- function(graph)
 {
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph)
-    plot <- networkD3::simpleNetwork(graph_d3$links)
+    plot <- networkD3::simpleNetwork(graph_d3$links, opacity=0.8, zoom=TRUE,
+                                     fontSize=12)
     return(plot)
 }   
 
@@ -339,11 +340,15 @@ plotCommu <- function(graph, method=c("walktrap", "edgeBetweenness",
     # Convert to object suitable for networkD3
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group = members)
     # Create force directed network plot
-    plot <- networkD3 ::forceNetwork(Links = graph_d3$links, 
-                                        Nodes = graph_d3$nodes,
-                                        Source ='source', 
-                                        Target ='target', 
-                                        NodeID ='name',Group ='group')
+    plot <- networkD3 ::forceNetwork(Links=graph_d3$links, 
+                                        Nodes=graph_d3$nodes,
+                                        Source='source', 
+                                        Target='target', 
+                                        NodeID='name', 
+                                        Group='group',
+                                        opacity=0.8,
+                                        fontSize=12,
+                                        legend=TRUE)
     return(plot)
 }
 
@@ -1246,7 +1251,7 @@ robinGPTest <- function(ratio)
     #sigmaest=mean(stdv)Order of the B-spline basis expansion.
     GlobalVar <- var(MA[1,])
     SigNoise <- mean(varv)/GlobalVar
-    if (SigNoise>1)SigNoise=1
+    if (SigNoise>1) SigNoise <- 1
     #SigNoise=1-var(MA[2,])
     sigmaest <- 1-SigNoise
     #mod='08'
@@ -1263,7 +1268,7 @@ robinGPTest <- function(ratio)
     dd <- t(data.matrix(as.numeric((ratio)[-1])))
     rownames(dd) <- 'VI'
     colnames(dd) <- dvet
-    datadum <- rbind(dd,dd)
+    datadum <- rbind(dd, dd)
     gpregeOutput <- gprege::gprege(data=datadum, inputs=dvet,
                                   gpregeOptions=gpregeOptions)
     bf <- gpregeOutput$rankingScores[1]
