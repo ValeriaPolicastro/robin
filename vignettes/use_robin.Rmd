@@ -34,14 +34,7 @@ network to discover which fits better
 
 ### Install packages
 ```{r}
-source("functions.R")
-library(igraph)
-library(ggplot2)
-library(gridExtra)
-library(fdatest)
-library('gprege')
-library("networkD3")
-library(DescTools)
+
 ```
 
 

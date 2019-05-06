@@ -19,7 +19,8 @@
 #' @import igraph
 #' @export
 #'
-#' @examples graph <- prepGraph(file=my_file, file.format="edgelist")
+#' @examples 
+#' graph <- prepGraph(file=my_file, file.format="edgelist")
 prepGraph <- function(file,
                         file.format=c("edgelist", "pajek", "ncol", "lgl", 
                                       "graphml", "dimacs", "graphdb", "gml", 
@@ -28,6 +29,7 @@ prepGraph <- function(file,
                         directed=FALSE,
                         header=FALSE)
 { 
+    file.format <- match.arg(file.format)
     if (file.format =="igraph")
     {
         graph <- igraph::simplify(file) 
@@ -42,8 +44,7 @@ prepGraph <- function(file,
         edge <- read.table(file,colClasses = "character", quote="\"",
                            header=header)
         edge <- as.matrix(edge)
-        graph <- igraph::graph_from_edgelist(edge ,direct=directed
-                                   )
+        graph <- igraph::graph_from_edgelist(edge, directed=directed)
         graph <- igraph::simplify(graph)
     }else
     {
@@ -103,7 +104,8 @@ prepGraph <- function(file,
 #' @import igraph
 #' @export
 #'
-#' @examples graphRandom <- random(graph=graph)
+#' @examples 
+#' graphRandom <- random(graph=graph)
 random <- function(graph)
 {
     z <- igraph::gsize(graph) ## number of edges
@@ -158,10 +160,14 @@ random <- function(graph)
 #' @import igraph
 #' @export
 #'
-#' @examples methodCommunity (graph=graph, method="louvain")
-#' with all the method implemented in igraph
+#' @examples 
+#' methodCommunity (graph=graph, method="louvain")
+# with all the method implemented in igraph
 methodCommunity <- function(graph, 
-                            method,
+                            method=c("walktrap", "edgeBetweenness", 
+                                    "fastGreedy", "louvain", "spinglass", 
+                                    "leadingEigen", "labelProp", "infomap",
+                                    "optimal"),
                             directed=FALSE,
                             weights=NULL, 
                             steps=4, 
@@ -170,6 +176,7 @@ methodCommunity <- function(graph,
                             v.weights=NULL, 
                             nb.trials=10)
 {
+    method <- match.arg(method)
     if(is.null(weights) &
        (sum(method %in% c("walktrap", "edgeBetweenness", "fastGreedy") == 1 )))
     {
@@ -260,10 +267,13 @@ methodCommunity <- function(graph,
 #' @export
 #'
 #' @examples membershipCommunities (graph=graph, method="louvain")
-#' with all the method implemented in igraph
+# with all the method implemented in igraph
 
 membershipCommunities<- function(graph,
-                                 method,
+                                 method=c("walktrap", "edgeBetweenness", 
+                                        "fastGreedy", "louvain", "spinglass", 
+                                        "leadingEigen", "labelProp", "infomap",
+                                        "optimal"),
                                  directed=FALSE,
                                  weights=NULL, 
                                  steps=4, 
@@ -272,6 +282,7 @@ membershipCommunities<- function(graph,
                                  v.weights=NULL, 
                                  nb.trials=10)
 {
+    method <- match.arg(method)
     members<-membership (methodCommunity (graph=graph, method=method,
                                             directed=directed,
                                             weights=weights, 
@@ -318,8 +329,12 @@ plotGraph <- function(graph)
 #' @export
 #'
 #' @examples plotCommu(graph=graph, method="louvain")
-plotCommu <- function(graph, method)
+plotCommu <- function(graph, method=c("walktrap", "edgeBetweenness", 
+                                        "fastGreedy", "louvain", "spinglass", 
+                                        "leadingEigen", "labelProp", "infomap",
+                                        "optimal"))
 {
+    method <- match.arg(method)
     members <- membershipCommunities(graph=graph,method=method)
     # Convert to object suitable for networkD3
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group = members)
@@ -349,10 +364,13 @@ plotCommu <- function(graph, method)
 #' @param v.weights This argument is settable only for "infomap" method
 #' @param nb.trials This argument is settable only for "infomap" method
 #' @param directed This argument is settable only for "edgeBetweenness" method
-#'
+#' @keyword internal
 #' @return A list object
-
-rewireCompl <- function(data, number, community, method,
+rewireCompl <- function(data, number, community, 
+                        method=c("walktrap", "edgeBetweenness", 
+                                 "fastGreedy", "louvain", "spinglass", 
+                                 "leadingEigen", "labelProp", "infomap",
+                                 "optimal"),
                         directed=FALSE,
                         weights=NULL, 
                         steps=4, 
@@ -361,6 +379,7 @@ rewireCompl <- function(data, number, community, method,
                         v.weights=NULL, 
                         nb.trials=10)
 {
+    method <- match.arg(method)
     graphRewire <- igraph::rewire(data,
                                   with=keeping_degseq(loops=FALSE,niter=number))
     comR <- membershipCommunities(graph=graphRewire, method=method,
@@ -376,16 +395,16 @@ rewireCompl <- function(data, number, community, method,
     return(output)#non serve per tutti
 }
 #perturba il grafo e ricalcola le community
-#compare the community through VI
+# compare the community through VI
 
 
-#########REWIRE ONLY ###########
+######### REWIRE ONLY ###########
 #' rewireOnl
-#'
+#' @description makes the rewire function of igraph
 #' @param data The output of prepGraph
 #' @param number Number of rewiring trials to perform.
-#'
-#' @return A graph object
+#' @keyword internal
+#' @return An igraph object
 rewireOnl <- function(data, number)
 {
     graphRewire <- igraph::rewire(data,
@@ -421,7 +440,11 @@ rewireOnl <- function(data, number)
 #'
 #' @examples Proc<- robinProc(graph=graph,graphRandom=graphRandom, 
 #' method="louvain",type="independent")
-robinProc <- function(graph, graphRandom, method,
+robinProc <- function(graph, graphRandom, 
+                method=c("walktrap", "edgeBetweenness", 
+                         "fastGreedy", "louvain", "spinglass", 
+                         "leadingEigen", "labelProp", "infomap",
+                         "optimal"),
                 type=c("dependent", "independent"),
                 directed=FALSE,
                 weights=NULL, 
@@ -431,6 +454,7 @@ robinProc <- function(graph, graphRandom, method,
                 v.weights=NULL, 
                 nb.trials=10) 
 {
+    method <- match.arg(method)
     type <- match.arg(type)
     nrep <- 10
     comReal <- membershipCommunities(graph=graph, method=method, 
@@ -679,18 +703,18 @@ robinProc <- function(graph, graphRandom, method,
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model").
 #'
-#' @return A plot.
+#' @return A ggplot object.
 #' @import ggplot2 igraph
 #' @export
 #'
-#' @examples plotRobin(graph=graph,model=Proc$viMean,modelR=Proc$viMeanRandom, 
+#' @examples 
+#' plotRobin(graph=graph,model=Proc$viMean,modelR=Proc$viMeanRandom, 
 #' legend=c("real data", "null model"))
 plotRobin <- function(graph,
-                      model=Proc$viMean,
-                      modelR=Proc$viMeanRandom, 
+                      model,
+                      modelR,
                       legend=c("real data", "null model"))
 {   
-    
     N <- igraph::vcount(graph)
     mvimodel1 <- cbind(as.vector((apply(model, 2, mean))/log2(N)),legend[1])
     mvimodel2 <- cbind(as.vector((apply(modelR, 2, mean))/log2(N)),legend[2])
@@ -737,10 +761,9 @@ plotRobin <- function(graph,
 #' @import igraph
 #' @export
 #'
-#' @examples Comp <- comparison(graph=graph, graphRandom=graphRandom, 
+#' @examples 
+#' Comp <- comparison(graph=graph, graphRandom=graphRandom, 
 #' method1="louvain", method2="fastGreedy",type="independent")
-
-
 comparison <- function(graph,graphRandom, 
                        method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                  "leadingEigen","louvain","spinglass",
@@ -757,6 +780,8 @@ comparison <- function(graph,graphRandom,
                        v.weights=NULL, 
                        nb.trials=10)
 {
+    method1 <- match.arg(method1)
+    method2 <- match.arg(method2)
     type <- match.arg(type)
     nrep <- 10
     comReal1 <- membershipCommunities(graph=graph, method=method1,
@@ -1107,7 +1132,7 @@ comparison <- function(graph,graphRandom,
 }
 
 
- ################### PLOT COMPARISON ##################
+################### PLOT COMPARISON ##################
 #' plotRobinCompare
 #'
 #' @param graph The output of prepGraph.
@@ -1126,11 +1151,12 @@ comparison <- function(graph,graphRandom,
 #' @param title1vs2 The title for the plot combined. The default is "Method1 vs
 #' Method2".
 #'
-#' @return A plot.
-#' @import gridExtra::grid.arrange
+#' @return A ggplot object in a grid format.
+#' @importFrom gridExtra grid.arrange
 #' @export
 #'
-#' @examples plotRobinCompare(graph=graph, model1=Comp$viMean1, 
+#' @examples 
+#' plotRobinCompare(graph=graph, model1=Comp$viMean1, 
 #' model2=Comp$viMean2,modelR1=Comp$viMeanRandom1, modelR2=Comp$viMeanRandom2,
 #' legend=c("real data", "null model"),legend1vs2=c("Louvain", "Fast Greedy"),
 #' title1="Louvain",title2="Fast Greedy",
@@ -1172,7 +1198,6 @@ plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
 #' @param isPaired the paired parameter for ITP2bspline (default TRUE).
 #'
 #' @return an ITP2 object
-
 createITPSplineResult <- function(graph, model1, model2,
                                 muParam=0, orderParam=4, nKnots=7, 
                                 BParam=10000, isPaired=TRUE) 
@@ -1263,7 +1288,8 @@ robinGPTest <- function(ratio)
 #' "null model").
 #'
 #' @return Two plots.
-#' @import igraph ggplot2 fdatest::ITP2bspline
+#' @import igraph ggplot2 
+#' @importFrom fdatest ITP2bspline
 #' @export
 #'
 #' @examples robinFDATest(graph=graph, model1=Proc$viMean,
@@ -1308,7 +1334,8 @@ robinFDATest <- function(graph,model1,model2,
 #' viMean2 output of the comparison function).
 #'
 #' @return A list
-#' @import DescTools::AUC,igraph::vcount
+#' @importFrom DescTools AUC
+#' @importFrom igraph vcount
 #' @export
 #'
 #' @examples robinAUCTest(graph=graph,model1=Proc$viMean,
@@ -1325,9 +1352,3 @@ robinAUCTest <- function(graph,model1,model2)
     output <- list(area1=area1,area2=area2)
 return(output)
 }
-
-
-
-
-
-    
