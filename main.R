@@ -147,7 +147,7 @@ List <- iter(graph=graph,graphRandom=graphRandom, method="edgeBetweenness",
 graph <- prepNet(net,file.format="edgelist",method="igraph",is.directed = TRUE)
 cluster_edge_betweenness(graph=graph, directed=TRUE, modularity=TRUE)
 
-
+.nz/
 ###3
 ###
 data(Koenigsberg)
