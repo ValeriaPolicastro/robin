@@ -283,7 +283,7 @@ membershipCommunities<- function(graph,
                                  nb.trials=10)
 {
     method <- match.arg(method)
-    members<-membership (methodCommunity (graph=graph, method=method,
+    members <- membership(methodCommunity(graph=graph, method=method,
                                             directed=directed,
                                             weights=weights, 
                                             steps=steps, 
@@ -292,7 +292,7 @@ membershipCommunities<- function(graph,
                                             v.weights=v.weights, 
                                             nb.trials=nb.trials))
     
-return(members)
+    return(members)
 }
 
 
@@ -336,9 +336,9 @@ plotCommu <- function(graph, method=c("walktrap", "edgeBetweenness",
                                         "optimal"))
 {
     method <- match.arg(method)
-    members <- membershipCommunities(graph=graph,method=method)
+    members <- membershipCommunities(graph=graph, method=method)
     # Convert to object suitable for networkD3
-    graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group = members)
+    graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group=members)
     # Create force directed network plot
     plot <- networkD3 ::forceNetwork(Links=graph_d3$links, 
                                         Nodes=graph_d3$nodes,
