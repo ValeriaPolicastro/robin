@@ -126,7 +126,7 @@ Now we test the differeces between this two curves with:
 - Gaussian Process
 - Area Under the Curve (AUC)
 The *model1* and *model2* arguments are, respectively, the *viMean* and the 
-*viMeanRandom* contained inside the *robinProc* output list.
+*viMeanRandom* contained inside the **robinProc** output list.
 
 ```{r}
 robinFDATest(graph=graph, model1=proc$viMean, model2=proc$viMeanRandom)
@@ -155,12 +155,11 @@ comp <- comparison(graph=graph, graphRandom=graphRandom, method1="fastGreedy",
                 method2="louvain",type="independent")
 ```
 
-Thirdly, we plot the curves of the null model and the real data for both
+Thirdly, we plot the curves of each null model and real data for both
 methods and the two curves of the two methods in comparison.
-The model1 argument must be the viMean1 output of the comparison function, the 
-modelR1 argument must be the viMeanRandom1,the model2 argument must be the 
-viMean2 and the modelR2 argument must be the viMeanRandom2 all outputs of the
-comparison function.
+The *model1*, *model2*, *modelR1* and *modelR2* arguments are, respectively, 
+the *viMean1*, *viMean2*, *viMeanRandom1* and *viMeanRandom2* contained inside 
+the **comparison** output list.
 
 ```{r}
 plotRobinCompare(graph=graph, model1=comp$viMean1, model2=comp$viMean2,
@@ -171,11 +170,11 @@ plotRobinCompare(graph=graph, model1=comp$viMean1, model2=comp$viMean2,
                  title1vs2="Fast Greedy vs Louvain")
 ```
 
-# Statistical Tests between two methods 
-
-We then test them, as we did it, before but for the comparison the model1 
-argument must be the viMean1 output of the function comparison and the model2 
-argument must be the viMean2 output of the function comparison.
+# Statistical Tests between two community detection algorithms
+Now we test the differeces between the two curves, as we did before but for the
+comparison of the two different methods the *model1* argument must be the 
+*viMean1* and the *model2* argument must be the *viMean2* both contained inside 
+the **comparison** output list.
 
 ```{r}
 robinFDATest(graph=graph, model1=comp$viMean1, model2=comp$viMean2)

@@ -787,12 +787,11 @@ plotRobin <- function(graph,
 comparison <- function(graph,graphRandom, 
                        method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                 "leadingEigen","louvain","spinglass",
-                                "labelProp","infomap","optimal", other),
+                                "labelProp","infomap","optimal", "other"),
                        method2=c("walktrap", "edgeBetweenness", "fastGreedy",
                                 "leadingEigen","louvain","spinglass",
                                 "labelProp","infomap","optimal", "other"),
-                       
-                       FUN1=NULL,
+                        FUN1=NULL,
                        FUN2=NULL,
                        type=c("dependent", "independent"),
                        directed=FALSE,
@@ -1394,3 +1393,46 @@ robinAUCTest <- function(graph,model1,model2)
     output <- list(area1=area1,area2=area2)
 return(output)
 }
+
+########  ALL CURVES TOGETHER ######
+# allCurves <- function(graph,graphRandom,
+#                       FUN1=NULL,
+#                       FUN2=NULL,
+#                       type=c("dependent", "independent"),
+#                       directed=FALSE,
+#                       weights=NULL, 
+#                       steps=4, 
+#                       spins=25, 
+#                       e.weights=NULL, 
+#                       v.weights=NULL, 
+#                       nb.trials=10)
+# {
+#     seq <- c("walktrap", "edgeBetweenness", 
+#              "fastGreedy", "louvain", "spinglass", 
+#              "leadingEigen", "labelProp", "infomap",
+#              "optimal", "other")
+#     for(i in 1:9) {
+#         comp <- comparison(graph,graphRandom, 
+#                                   method1=seq[i],
+#                                   method2=seq[i+1],
+#                                   FUN1=NULL,
+#                                   FUN2=NULL,
+#                                   type=c("dependent", "independent"),
+#                                   directed=FALSE,
+#                                   weights=NULL, 
+#                                   steps=4, 
+#                                   spins=25, 
+#                                   e.weights=NULL, 
+#                                   v.weights=NULL, 
+#                                   nb.trials=10)
+#         plotRobinCompare(graph=graph, model1=comp$viMean1, model2=comp$viMean2,
+#                          modelR1=comp$viMeanRandom1, modelR2=comp$viMeanRandom2,
+#                          legend=c("real data", "null model"),
+#                          legend1vs2=c(seq[i],seq[i+1]),
+#                          title1=seq[i], title2=seq[i+1],
+#                          title1vs2=c(seq[i],seq[i+1]))
+#                          }
+#         
+# }   
+
+
