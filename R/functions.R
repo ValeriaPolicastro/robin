@@ -317,9 +317,9 @@ plotGraph <- function(graph)
 
 
 ######################## PLOT COMMUNITIES ##############
-#' plotCommu
+#' plotMethodCommunities
 #'
-#' @description An interactive 3D plot of the communities.
+#' @description It computes the communities and runs plotCommu function.
 #' @param graph The output of prepGraph.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
@@ -330,31 +330,49 @@ plotGraph <- function(graph)
 #' @export
 #'
 #' @examples plotCommu(graph=graph, method="louvain")
-plotCommu <- function(graph, method=c("walktrap", "edgeBetweenness", 
+plotMethodCommunities <- function(graph, method=c("walktrap", "edgeBetweenness", 
                                         "fastGreedy", "louvain", "spinglass", 
                                         "leadingEigen", "labelProp", "infomap",
                                         "optimal"))
 {
     method <- match.arg(method)
     members <- membershipCommunities(graph=graph, method=method)
-    # Convert to object suitable for networkD3
+    plot <- plotCommu(graph, members)
+    return(plot)
+}
+
+#' plotCommu
+#' @description 
+#' @param graph 
+#' @param members 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plotCommu <- function(graph, members) 
+{
+    stopifnot(is(graph, "igraph"))
+    stopifnot(is(members, "membership"))
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group=members)
     # Create force directed network plot
     plot <- networkD3 ::forceNetwork(Links=graph_d3$links, 
-                                        Nodes=graph_d3$nodes,
-                                        Source='source', 
-                                        Target='target', 
-                                        NodeID='name', 
-                                        Group='group',
-                                        opacity=0.8,
-                                        fontSize=12,
-                                        legend=TRUE)
+                                     Nodes=graph_d3$nodes,
+                                     Source='source', 
+                                     Target='target', 
+                                     NodeID='name', 
+                                     Group='group',
+                                     opacity=0.8,
+                                     fontSize=12,
+                                     legend=TRUE)
     return(plot)
 }
 
 
 ######### REWIRE COMPLETE ########
 #' rewireCompl
+#' 
+#' @description 
 #' 
 #' @param data The output of prepGraph
 #' @param number Number of rewiring trials to perform.
@@ -727,16 +745,17 @@ plotRobin <- function(graph,
     mvi <- rbind(mvimodel1,mvimodel2)
     colnames(mvi) <- c("mvi","model")
     dataFrame <- data.frame(percPert,mvi)
-    plot <- ggplot2::  ggplot(dataFrame, aes(x=percPert, 
-                                             y=as.numeric(as.character(mvi)), 
-                                             colour=model,
-                                             group=factor(model)))+ 
+    plot <- ggplot2::ggplot(dataFrame, aes(x=percPert, 
+                                            y=as.numeric(as.character(mvi)), 
+                                            colour=model,
+                                            group=factor(model)))+ 
         geom_line()+
         geom_point()+ 
         xlab("Percentage of perturbation") +
-        ylab("Variation of Information (VI)")+
-        ggtitle("Robin plot")
-    plot+ scale_y_continuous(limits=c(0,0.6)) #only for VI
+        ylab("Variation of Information (VI)") +
+        ggtitle("Robin plot") +
+        scale_y_continuous(limits=c(0,0.6)) #only for VI
+    return(plot)
 }
 
 ############### COMPARISON DIFFERENT METHODS ##########
@@ -771,11 +790,11 @@ plotRobin <- function(graph,
 #' method1="louvain", method2="fastGreedy",type="independent")
 comparison <- function(graph,graphRandom, 
                        method1=c("walktrap", "edgeBetweenness", "fastGreedy",
-                                 "leadingEigen","louvain","spinglass",
-                                 "labelProp","infomap","optimal"),
+                                "leadingEigen","louvain","spinglass",
+                                "labelProp","infomap","optimal"),
                        method2=c("walktrap", "edgeBetweenness", "fastGreedy",
-                                 "leadingEigen","louvain","spinglass",
-                                 "labelProp","infomap","optimal"),
+                                "leadingEigen","louvain","spinglass",
+                                "labelProp","infomap","optimal"),
                        type=c("dependent", "independent"),
                        directed=FALSE,
                        weights=NULL, 
@@ -790,21 +809,21 @@ comparison <- function(graph,graphRandom,
     type <- match.arg(type)
     nrep <- 10
     comReal1 <- membershipCommunities(graph=graph, method=method1,
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps, 
-                                      spins=spins, 
-                                      e.weights=e.weights, 
-                                      v.weights=v.weights, 
-                                      nb.trials=nb.trials) 
+                                    directed=directed,
+                                    weights=weights,
+                                    steps=steps, 
+                                    spins=spins, 
+                                    e.weights=e.weights, 
+                                    v.weights=v.weights, 
+                                    nb.trials=nb.trials) 
     comReal2 <- membershipCommunities(graph=graph, method=method2,
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps, 
-                                      spins=spins, 
-                                      e.weights=e.weights, 
-                                      v.weights=v.weights, 
-                                      nb.trials=nb.trials)
+                                    directed=directed,
+                                    weights=weights,
+                                    steps=steps, 
+                                    spins=spins, 
+                                    e.weights=e.weights, 
+                                    v.weights=v.weights, 
+                                    nb.trials=nb.trials)
     comRandom1 <- membershipCommunities(graph=graphRandom, method=method1, 
                                         directed=directed,
                                         weights=weights,
@@ -854,23 +873,23 @@ comparison <- function(graph,graphRandom,
                 k <- 1
                 graphRewire <- rewireOnl(data=graph, number=z)
                 comr1 <- membershipCommunities(graph=graphRewire, 
-                                               method=method1,
-                                               directed=directed,
-                                               weights=weights,
-                                               steps=steps, 
-                                               spins=spins, 
-                                               e.weights=e.weights, 
-                                               v.weights=v.weights, 
-                                               nb.trials=nb.trials)
+                                                method=method1,
+                                                directed=directed,
+                                                weights=weights,
+                                                steps=steps, 
+                                                spins=spins, 
+                                                e.weights=e.weights, 
+                                                v.weights=v.weights, 
+                                                nb.trials=nb.trials)
                 comr2 <- membershipCommunities(graph=graphRewire, 
-                                               method=method2, 
-                                               directed=directed,
-                                               weights=weights,
-                                               steps=steps, 
-                                               spins=spins, 
-                                               e.weights=e.weights, 
-                                               v.weights=v.weights, 
-                                               nb.trials=nb.trials)
+                                                method=method2, 
+                                                directed=directed,
+                                                weights=weights,
+                                                steps=steps, 
+                                                spins=spins, 
+                                                e.weights=e.weights, 
+                                                v.weights=v.weights, 
+                                                nb.trials=nb.trials)
                 vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
                 vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
                 vi1[count2, count] <- vector1[k]
@@ -902,30 +921,30 @@ comparison <- function(graph,graphRandom,
                     graphRewire <- rewireOnl(data=graphRewire,
                                              number=round(0.01*z))
                     comr1 <- membershipCommunities(graph=graphRewire,
-                                                   method=method1,
-                                                   directed=directed,
-                                                   weights=weights,
-                                                   steps=steps, 
-                                                   spins=spins, 
-                                                   e.weights=e.weights, 
-                                                   v.weights=v.weights, 
-                                                   nb.trials=nb.trials)
+                                                    method=method1,
+                                                    directed=directed,
+                                                    weights=weights,
+                                                    steps=steps, 
+                                                    spins=spins, 
+                                                    e.weights=e.weights, 
+                                                    v.weights=v.weights, 
+                                                    nb.trials=nb.trials)
                     comr2 <- membershipCommunities(graph=graphRewire, 
-                                                   method=method2,
-                                                   directed=directed,
-                                                   weights=weights,
-                                                   steps=steps, 
-                                                   spins=spins, 
-                                                   e.weights=e.weights, 
-                                                   v.weights=v.weights, 
-                                                   nb.trials=nb.trials)
+                                                    method=method2,
+                                                    directed=directed,
+                                                    weights=weights,
+                                                    steps=steps, 
+                                                    spins=spins, 
+                                                    e.weights=e.weights, 
+                                                    v.weights=v.weights, 
+                                                    nb.trials=nb.trials)
                     vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
                     vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
                     vi1[count2, count] <- vector1[k]
                     vi2[count2, count] <- vector2[k]
                     
                     graphRewireRandom <- rewireOnl(data=Random,
-                                                   number=round(0.01*z))
+                                                    number=round(0.01*z))
                     comrR1 <- membershipCommunities(graph=Random, 
                                                     method=method1,
                                                     directed=directed,
@@ -945,12 +964,11 @@ comparison <- function(graph,graphRandom,
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
                     vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
-                                                   method="vi")
+                                                    method="vi")
                     vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
-                                                   method="vi")
+                                                    method="vi")
                     viR1[count2, count] <- vectorR1[k]
                     viR2[count2, count] <- vectorR2[k]
-                    
                 }
                 viMean1[s, count] <- mean(vector1)
                 viMean2[s, count] <- mean(vector2)
@@ -990,23 +1008,23 @@ comparison <- function(graph,graphRandom,
                 graphRewire <- rewireOnl(data=graph, number=z)
                 graphRewire <- igraph::union(graphRewire, diff)
                 comr1 <- membershipCommunities(graph=graphRewire, 
-                                               method=method1,
-                                               directed=directed,
-                                               weights=weights,
-                                               steps=steps, 
-                                               spins=spins, 
-                                               e.weights=e.weights, 
-                                               v.weights=v.weights, 
-                                               nb.trials=nb.trials)
+                                                method=method1,
+                                                directed=directed,
+                                                weights=weights,
+                                                steps=steps, 
+                                                spins=spins, 
+                                                e.weights=e.weights, 
+                                                v.weights=v.weights, 
+                                                nb.trials=nb.trials)
                 comr2 <- membershipCommunities(graph=graphRewire, 
-                                               method=method2,
-                                               directed=directed,
-                                               weights=weights,
-                                               steps=steps, 
-                                               spins=spins, 
-                                               e.weights=e.weights, 
-                                               v.weights=v.weights, 
-                                               nb.trials=nb.trials)
+                                                method=method2,
+                                                directed=directed,
+                                                weights=weights,
+                                                steps=steps, 
+                                                spins=spins, 
+                                                e.weights=e.weights, 
+                                                v.weights=v.weights, 
+                                                nb.trials=nb.trials)
                 vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
                 vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
                 vi11[count2] <- vector1[k]
@@ -1041,32 +1059,32 @@ comparison <- function(graph,graphRandom,
                 {
                     count2 <- count2+1
                     graphRewire <- rewireOnl(data=graphRewire,
-                                             number=round(0.01*z))
+                                            number=round(0.01*z))
                     comr1 <- membershipCommunities(graph=graphRewire,
-                                                   method=method1,
-                                                   directed=directed,
-                                                   weights=weights,
-                                                   steps=steps, 
-                                                   spins=spins, 
-                                                   e.weights=e.weights, 
-                                                   v.weights=v.weights, 
-                                                   nb.trials=nb.trials)
+                                                    method=method1,
+                                                    directed=directed,
+                                                    weights=weights,
+                                                    steps=steps, 
+                                                    spins=spins, 
+                                                    e.weights=e.weights, 
+                                                    v.weights=v.weights, 
+                                                    nb.trials=nb.trials)
                     comr2 <- membershipCommunities(graph=graphRewire,
-                                                   method=method2,
-                                                   directed=directed,
-                                                   weights=weights,
-                                                   steps=steps, 
-                                                   spins=spins, 
-                                                   e.weights=e.weights, 
-                                                   v.weights=v.weights, 
-                                                   nb.trials=nb.trials)
+                                                    method=method2,
+                                                    directed=directed,
+                                                    weights=weights,
+                                                    steps=steps, 
+                                                    spins=spins, 
+                                                    e.weights=e.weights, 
+                                                    v.weights=v.weights, 
+                                                    nb.trials=nb.trials)
                     vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
                     vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
                     vi11[count2] <- vector1[k]
                     vi22[count2] <- vector2[k]
                     #Random
                     graphRewireRandom <- rewireOnl(data=Random,
-                                                   number=round(0.01*z))
+                                                    number=round(0.01*z))
                     comrR1 <- membershipCommunities(graph=Random, 
                                                     method=method1,
                                                     directed=directed,
@@ -1086,9 +1104,9 @@ comparison <- function(graph,graphRandom,
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
                     vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
-                                                   method="vi")
+                                                    method="vi")
                     vectorR2[k] <- igraph::compare(comrR2, comRandom2,
-                                                   method="vi")
+                                                    method="vi")
                     viR11[count2] <- vectorR1[k]
                     viR22[count2] <- vectorR2[k]
                 }
