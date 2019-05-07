@@ -4,9 +4,11 @@
 \alias{rewireCompl}
 \title{rewireCompl}
 \usage{
-rewireCompl(data, number, community, method, directed = FALSE,
-  weights = NULL, steps = 4, spins = 25, e.weights = NULL,
-  v.weights = NULL, nb.trials = 10)
+rewireCompl(data, number, community, method = c("walktrap",
+  "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
+  "labelProp", "infomap", "optimal", "other"), FUN = NULL,
+  directed = FALSE, weights = NULL, steps = 4, spins = 25,
+  e.weights = NULL, v.weights = NULL, nb.trials = 10)
 }
 \arguments{
 \item{data}{The output of prepGraph}
@@ -16,7 +18,9 @@ rewireCompl(data, number, community, method, directed = FALSE,
 \item{community}{Community to compare with.}
 
 \item{method}{The clustering method, one of "walktrap", "edgeBetweenness", 
-"fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap"}
+"fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap".}
+
+\item{FUN}{see \code{\link{methodCommunity}}.}
 
 \item{directed}{This argument is settable only for "edgeBetweenness" method}
 
@@ -37,5 +41,5 @@ method}
 A list object
 }
 \description{
-rewireCompl
+
 }

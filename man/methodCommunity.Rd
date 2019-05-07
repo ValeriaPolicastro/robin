@@ -4,16 +4,20 @@
 \alias{methodCommunity}
 \title{methodCommunity}
 \usage{
-methodCommunity(graph, method, directed = FALSE, weights = NULL,
-  steps = 4, spins = 25, e.weights = NULL, v.weights = NULL,
-  nb.trials = 10)
+methodCommunity(graph, method = c("walktrap", "edgeBetweenness",
+  "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp",
+  "infomap", "optimal", "other"), FUN = NULL, directed = FALSE,
+  weights = NULL, steps = 4, spins = 25, e.weights = NULL,
+  v.weights = NULL, nb.trials = 10)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
 
 \item{method}{The clustering method, one of "walktrap", "edgeBetweenness", 
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-"optimal".}
+"optimal", "other".}
+
+\item{FUN}{see \code{\link{methodCommunity}}.}
 
 \item{directed}{Logical constant, whether to calculate directed edge 
 betweenness for directed graphs. This argument is settable only for 
@@ -51,9 +55,14 @@ argument is settable only for "infomap" method.}
 \item{nb.trials}{The number of attempts to partition the network (can be any
 integer value equal or larger than 1). This argument is settable only for
 "infomap" method.}
+
+\item{FUN}{in case the @method parameter is "other" there is the possibility 
+to use a personal function passing its name through this parameter.
+The personal parameter has to take as input the @graph and the @weights 
+(that can be NULL), moreover it has to return a communities object.}
 }
 \value{
-Communities.
+a Communities object.
 }
 \description{
 This function detects the community structure of a graph.
@@ -61,5 +70,4 @@ The community structure are found by all functions implemented in igraph.
 }
 \examples{
 methodCommunity (graph=graph, method="louvain")
-with all the method implemented in igraph
 }

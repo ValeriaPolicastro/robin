@@ -12,8 +12,8 @@ rewireOnl(data, number)
 \item{number}{Number of rewiring trials to perform.}
 }
 \value{
-A graph object
+An igraph object
 }
 \description{
-rewireOnl
+makes the rewire function of igraph
 }

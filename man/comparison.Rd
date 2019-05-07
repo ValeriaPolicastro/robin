@@ -6,9 +6,10 @@
 \usage{
 comparison(graph, graphRandom, method1 = c("walktrap", "edgeBetweenness",
   "fastGreedy", "leadingEigen", "louvain", "spinglass", "labelProp",
-  "infomap", "optimal"), method2 = c("walktrap", "edgeBetweenness",
-  "fastGreedy", "leadingEigen", "louvain", "spinglass", "labelProp",
-  "infomap", "optimal"), type = c("dependent", "independent"),
+  "infomap", "optimal", other), method2 = c("walktrap",
+  "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain", "spinglass",
+  "labelProp", "infomap", "optimal", "other"), FUN1 = NULL,
+  FUN2 = NULL, type = c("dependent", "independent"),
   directed = FALSE, weights = NULL, steps = 4, spins = 25,
   e.weights = NULL, v.weights = NULL, nb.trials = 10)
 }
@@ -24,6 +25,12 @@ comparison(graph, graphRandom, method1 = c("walktrap", "edgeBetweenness",
 \item{method2}{The second custering method one of "walktrap",
 "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
 "labelProp", "infomap","optimal".}
+
+\item{FUN1}{its a personal designed function when method1 is "others". 
+see \code{\link{methodCommunity}}.}
+
+\item{FUN2}{its a personal designed function when method2 is "others". 
+see \code{\link{methodCommunity}}.}
 
 \item{type}{The type of robin costruction dependent or independent.}
 

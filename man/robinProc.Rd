@@ -4,7 +4,9 @@
 \alias{robinProc}
 \title{robinProc}
 \usage{
-robinProc(graph, graphRandom, method, type = c("dependent",
+robinProc(graph, graphRandom, method = c("walktrap", "edgeBetweenness",
+  "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp",
+  "infomap", "optimal", "other"), FUN = NULL, type = c("dependent",
   "independent"), directed = FALSE, weights = NULL, steps = 4,
   spins = 25, e.weights = NULL, v.weights = NULL, nb.trials = 10)
 }
@@ -16,6 +18,8 @@ robinProc(graph, graphRandom, method, type = c("dependent",
 \item{method}{The clustering method, one of "walktrap", "edgeBetweenness", 
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "optimal".}
+
+\item{FUN}{see \code{\link{methodCommunity}}.}
 
 \item{type}{The type of robin costruction dependent or independent data}
 

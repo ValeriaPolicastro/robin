@@ -24,7 +24,7 @@ the names of the variables as its first line.This argument is settable
 for the edgelist format.The default is FALSE.}
 }
 \value{
-A simple graph.
+A simplified graph as returned from the igraph::simplify.
 }
 \description{
 The prepGraph function is able to read graphs from a file and 

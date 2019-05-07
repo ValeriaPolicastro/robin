@@ -36,7 +36,7 @@ The default is "Method2".}
 Method2".}
 }
 \value{
-A plot.
+A ggplot object in a grid format.
 }
 \description{
 plotRobinCompare

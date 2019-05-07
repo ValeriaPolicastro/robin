@@ -4,21 +4,13 @@
 \alias{plotCommu}
 \title{plotCommu}
 \usage{
-plotCommu(graph, method)
+plotCommu(graph, members)
 }
 \arguments{
-\item{graph}{The output of prepGraph.}
+\item{graph}{}
 
-\item{method}{The clustering method, one of "walktrap", "edgeBetweenness", 
-"fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-"optimal".}
-}
-\value{
-An interactive plot.
+\item{members}{}
 }
 \description{
-An interactive 3D plot of the communities.
-}
-\examples{
-plotCommu(graph=graph, method="louvain")
+plotCommu
 }

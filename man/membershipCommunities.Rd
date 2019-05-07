@@ -4,9 +4,11 @@
 \alias{membershipCommunities}
 \title{membershipCommunities}
 \usage{
-membershipCommunities(graph, method, directed = FALSE, weights = NULL,
-  steps = 4, spins = 25, e.weights = NULL, v.weights = NULL,
-  nb.trials = 10)
+membershipCommunities(graph, method = c("walktrap", "edgeBetweenness",
+  "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp",
+  "infomap", "optimal", "other"), FUN = NULL, directed = FALSE,
+  weights = NULL, steps = 4, spins = 25, e.weights = NULL,
+  v.weights = NULL, nb.trials = 10)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
@@ -14,6 +16,8 @@ membershipCommunities(graph, method, directed = FALSE, weights = NULL,
 \item{method}{The clustering method, one of "walktrap", "edgeBetweenness", 
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "optimal".}
+
+\item{FUN}{see \code{\link{methodCommunity}}.}
 
 \item{directed}{Logical constant, whether to calculate directed edge 
 betweenness for directed graphs. This argument is settable only for 
@@ -62,5 +66,4 @@ in igraph.
 }
 \examples{
 membershipCommunities (graph=graph, method="louvain")
-with all the method implemented in igraph
 }

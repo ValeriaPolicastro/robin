@@ -4,8 +4,7 @@
 \alias{plotRobin}
 \title{plotRobin}
 \usage{
-plotRobin(graph, model = Proc$viMean, modelR = Proc$viMeanRandom,
-  legend = c("real data", "null model"))
+plotRobin(graph, model, modelR, legend = c("real data", "null model"))
 }
 \arguments{
 \item{graph}{The output of prepGraph}
@@ -18,7 +17,7 @@ plotRobin(graph, model = Proc$viMean, modelR = Proc$viMeanRandom,
 "null model").}
 }
 \value{
-A plot.
+A ggplot object.
 }
 \description{
 The plot of the two VI curves, the VI of the null model and 

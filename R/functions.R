@@ -22,8 +22,8 @@
 #' @examples 
 #' graph <- prepGraph(file=my_file, file.format="edgelist")
 prepGraph <- function(file,
-                        file.format=c("edgelist", "pajek", "ncol", "lgl", 
-                                      "graphml", "dimacs", "graphdb", "gml", 
+                        file.format=c("edgelist", "pajek", "ncol", "lgl",
+                                      "graphml", "dimacs", "graphdb", "gml",
                                       "dl","igraph"),
                         numbers= FALSE,
                         directed=FALSE,
@@ -122,7 +122,12 @@ random <- function(graph)
 #' @param graph The output of prepGraph.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-#' "optimal".
+#' "optimal", "other".
+#' @param FUN see \code{\link{methodCommunity}}.
+#' @param FUN in case the @method parameter is "other" there is the possibility 
+#' to use a personal function passing its name through this parameter.
+#' The personal parameter has to take as input the @graph and the @weights 
+#' (that can be NULL), moreover it has to return a communities object.
 #' @param weights  Optional positive weight vector. If the graph has a weight 
 #' edge attribute, then this is used by default. Supply NA here if the graph 
 #' has a weight edge attribute, but you want to ignore it. Larger edge weights
@@ -154,7 +159,7 @@ random <- function(graph)
 #' betweenness for directed graphs. This argument is settable only for 
 #' "edgeBetweenness" method.
 #'
-#' @return Communities.
+#' @return a Communities object.
 #' @import igraph
 #' @export
 #'
@@ -165,7 +170,8 @@ methodCommunity <- function(graph,
                             method=c("walktrap", "edgeBetweenness", 
                                     "fastGreedy", "louvain", "spinglass", 
                                     "leadingEigen", "labelProp", "infomap",
-                                    "optimal"),
+                                    "optimal", "other"),
+                            FUN=NULL,
                             directed=FALSE,
                             weights=NULL, 
                             steps=4, 
@@ -214,7 +220,8 @@ methodCommunity <- function(graph,
             labelProp=igraph::cluster_label_prop(graph=graph, weights=weights), 
            
             infomap=igraph::cluster_infomap(graph=graph, e.weights=e.weights, 
-                                v.weights=v.weights, nb.trials=nb.trials)
+                                v.weights=v.weights, nb.trials=nb.trials),
+            other=FUN(graph, weights)
     )
     return(communities)
 }
@@ -229,6 +236,7 @@ methodCommunity <- function(graph,
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "optimal".
+#' @param FUN see \code{\link{methodCommunity}}.
 #' @param weights  Optional positive weight vector. If the graph has a weight 
 #' edge attribute, then this is used by default. Supply NA here if the graph 
 #' has a weight edge attribute, but you want to ignore it. Larger edge weights
@@ -271,7 +279,8 @@ membershipCommunities<- function(graph,
                                  method=c("walktrap", "edgeBetweenness", 
                                         "fastGreedy", "louvain", "spinglass", 
                                         "leadingEigen", "labelProp", "infomap",
-                                        "optimal"),
+                                        "optimal", "other"),
+                                 FUN=NULL,
                                  directed=FALSE,
                                  weights=NULL, 
                                  steps=4, 
@@ -282,6 +291,7 @@ membershipCommunities<- function(graph,
 {
     method <- match.arg(method)
     members <- membership(methodCommunity(graph=graph, method=method,
+                                            FUN=FUN,
                                             directed=directed,
                                             weights=weights, 
                                             steps=steps, 
@@ -315,30 +325,6 @@ plotGraph <- function(graph)
 
 
 ######################## PLOT COMMUNITIES ##############
-#' plotMethodCommunities
-#'
-#' @description It computes the communities and runs plotCommu function.
-#' @param graph The output of prepGraph.
-#' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
-#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-#' "optimal".
-#'
-#' @return An interactive plot.
-#' @import networkD3
-#' @export
-#'
-#' @examples plotCommu(graph=graph, method="louvain")
-plotMethodCommunities <- function(graph, method=c("walktrap", "edgeBetweenness", 
-                                        "fastGreedy", "louvain", "spinglass", 
-                                        "leadingEigen", "labelProp", "infomap",
-                                        "optimal"))
-{
-    method <- match.arg(method)
-    members <- membershipCommunities(graph=graph, method=method)
-    plot <- plotCommu(graph, members)
-    return(plot)
-}
-
 #' plotCommu
 #' @description 
 #' @param graph 
@@ -376,7 +362,8 @@ plotCommu <- function(graph, members)
 #' @param number Number of rewiring trials to perform.
 #' @param community Community to compare with.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
-#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap"
+#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap".
+#' @param FUN see \code{\link{methodCommunity}}.
 #' @param weights this argument is not settable for "infomap" method
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
 #' method
@@ -391,7 +378,8 @@ rewireCompl <- function(data, number, community,
                         method=c("walktrap", "edgeBetweenness", 
                                  "fastGreedy", "louvain", "spinglass", 
                                  "leadingEigen", "labelProp", "infomap",
-                                 "optimal"),
+                                 "optimal", "other"),
+                        FUN=NULL,
                         directed=FALSE,
                         weights=NULL, 
                         steps=4, 
@@ -403,7 +391,7 @@ rewireCompl <- function(data, number, community,
     method <- match.arg(method)
     graphRewire <- igraph::rewire(data,
                                   with=keeping_degseq(loops=FALSE,niter=number))
-    comR <- membershipCommunities(graph=graphRewire, method=method,
+    comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
                             directed=directed,
                             weights=weights,
                             steps=steps, 
@@ -446,6 +434,7 @@ rewireOnl <- function(data, number)
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "optimal".
+#' @param FUN see \code{\link{methodCommunity}}.
 #' @param weights this argument is not settable for "infomap" method.
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
 #' method.
@@ -465,7 +454,8 @@ robinProc <- function(graph, graphRandom,
                 method=c("walktrap", "edgeBetweenness", 
                          "fastGreedy", "louvain", "spinglass", 
                          "leadingEigen", "labelProp", "infomap",
-                         "optimal"),
+                         "optimal", "other"),
+                FUN=NULL,
                 type=c("dependent", "independent"),
                 directed=FALSE,
                 weights=NULL, 
@@ -479,6 +469,7 @@ robinProc <- function(graph, graphRandom,
     type <- match.arg(type)
     nrep <- 10
     comReal <- membershipCommunities(graph=graph, method=method, 
+                                    FUN=FUN,
                                     directed=directed,
                                     weights=weights, 
                                     steps=steps, 
@@ -488,13 +479,14 @@ robinProc <- function(graph, graphRandom,
                                     nb.trials=nb.trials) # real network
 
     comRandom <- membershipCommunities(graph=graphRandom, method=method,
-                                       directed=directed,
-                                       weights=weights,
-                                       steps=steps, 
-                                       spins=spins, 
-                                       e.weights=e.weights, 
-                                       v.weights=v.weights, 
-                                       nb.trials=nb.trials) # random network
+                                        FUN=FUN,
+                                        directed=directed,
+                                        weights=weights,
+                                        steps=steps, 
+                                        spins=spins, 
+                                        e.weights=e.weights, 
+                                        v.weights=v.weights, 
+                                        nb.trials=nb.trials) # random network
     de <- igraph::gsize(graph)
     VI <- NULL
     vector <- NULL
@@ -623,7 +615,8 @@ robinProc <- function(graph, graphRandom,
                                         spins=spins, 
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
-                                        nb.trials=nb.trials)
+                                        nb.trials=nb.trials,
+                                        FUN=FUN)
                 vector[k] <- igraph::compare(comReal, comr, method="vi")
                 vi1[count2] <- vector[k]
                 diff <- igraph::difference(graph, graphRewire)
@@ -639,7 +632,8 @@ robinProc <- function(graph, graphRandom,
                                         spins=spins, 
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
-                                        nb.trials=nb.trials)
+                                        nb.trials=nb.trials,
+                                        FUN=FUN)
                 vectRandom[k] <- igraph::compare(comRandom, comr, method="vi")
                 viRandom1[count2] <- vectRandom[k]
                 diffR <- igraph::difference(graphRandom, graphRewireRandom)
@@ -769,6 +763,10 @@ plotRobin <- function(graph,
 #' @param method2 The second custering method one of "walktrap",
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal".
+#' @param FUN1 its a personal designed function when method1 is "others". 
+#' see \code{\link{methodCommunity}}.
+#' @param FUN2 its a personal designed function when method2 is "others". 
+#' see \code{\link{methodCommunity}}.
 #' @param type The type of robin costruction dependent or independent.
 #' @param weights This argument is not settable for "infomap" method.
 #' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
@@ -789,10 +787,13 @@ plotRobin <- function(graph,
 comparison <- function(graph,graphRandom, 
                        method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                 "leadingEigen","louvain","spinglass",
-                                "labelProp","infomap","optimal"),
+                                "labelProp","infomap","optimal", other),
                        method2=c("walktrap", "edgeBetweenness", "fastGreedy",
                                 "leadingEigen","louvain","spinglass",
-                                "labelProp","infomap","optimal"),
+                                "labelProp","infomap","optimal", "other"),
+                       
+                       FUN1=NULL,
+                       FUN2=NULL,
                        type=c("dependent", "independent"),
                        directed=FALSE,
                        weights=NULL, 
@@ -807,6 +808,7 @@ comparison <- function(graph,graphRandom,
     type <- match.arg(type)
     nrep <- 10
     comReal1 <- membershipCommunities(graph=graph, method=method1,
+                                    FUN=FUN1,
                                     directed=directed,
                                     weights=weights,
                                     steps=steps, 
@@ -815,6 +817,7 @@ comparison <- function(graph,graphRandom,
                                     v.weights=v.weights, 
                                     nb.trials=nb.trials) 
     comReal2 <- membershipCommunities(graph=graph, method=method2,
+                                    FUN=FUN2,
                                     directed=directed,
                                     weights=weights,
                                     steps=steps, 
@@ -823,6 +826,7 @@ comparison <- function(graph,graphRandom,
                                     v.weights=v.weights, 
                                     nb.trials=nb.trials)
     comRandom1 <- membershipCommunities(graph=graphRandom, method=method1, 
+                                        FUN=FUN1,
                                         directed=directed,
                                         weights=weights,
                                         steps=steps, 
@@ -831,6 +835,7 @@ comparison <- function(graph,graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials) 
     comRandom2 <- membershipCommunities(graph=graphRandom, method=method2, 
+                                        FUN=FUN2,
                                         directed=directed,
                                         weights=weights,
                                         steps=steps, 
@@ -872,6 +877,7 @@ comparison <- function(graph,graphRandom,
                 graphRewire <- rewireOnl(data=graph, number=z)
                 comr1 <- membershipCommunities(graph=graphRewire, 
                                                 method=method1,
+                                                FUN=FUN1,
                                                 directed=directed,
                                                 weights=weights,
                                                 steps=steps, 
@@ -881,6 +887,7 @@ comparison <- function(graph,graphRandom,
                                                 nb.trials=nb.trials)
                 comr2 <- membershipCommunities(graph=graphRewire, 
                                                 method=method2, 
+                                                FUN=FUN2,
                                                 directed=directed,
                                                 weights=weights,
                                                 steps=steps, 
@@ -894,6 +901,7 @@ comparison <- function(graph,graphRandom,
                 vi2[count2, count] <- vector2[k]
                 Random <- rewireOnl(data=graphRandom, number=z)
                 comrR1 <- membershipCommunities(graph=Random, method=method1,
+                                                FUN=FUN1,
                                                 directed=directed,
                                                 weights=weights,
                                                 steps=steps, 
@@ -901,7 +909,8 @@ comparison <- function(graph,graphRandom,
                                                 e.weights=e.weights, 
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
-                comrR2 <- membershipCommunities(graph=Random, method=method2, 
+                comrR2 <- membershipCommunities(graph=Random, method=method2,
+                                                FUN=FUN2,
                                                 directed=directed,
                                                 weights=weights,
                                                 steps=steps, 
@@ -920,6 +929,7 @@ comparison <- function(graph,graphRandom,
                                              number=round(0.01*z))
                     comr1 <- membershipCommunities(graph=graphRewire,
                                                     method=method1,
+                                                    FUN=FUN1,
                                                     directed=directed,
                                                     weights=weights,
                                                     steps=steps, 
@@ -928,6 +938,7 @@ comparison <- function(graph,graphRandom,
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
                     comr2 <- membershipCommunities(graph=graphRewire, 
+                                                    FUN=FUN2,
                                                     method=method2,
                                                     directed=directed,
                                                     weights=weights,
@@ -945,6 +956,7 @@ comparison <- function(graph,graphRandom,
                                                     number=round(0.01*z))
                     comrR1 <- membershipCommunities(graph=Random, 
                                                     method=method1,
+                                                    FUN=FUN1,
                                                     directed=directed,
                                                     weights=weights,
                                                     steps=steps, 
@@ -954,6 +966,7 @@ comparison <- function(graph,graphRandom,
                                                     nb.trials=nb.trials)
                     comrR2 <- membershipCommunities(graph=Random, 
                                                     method=method2,
+                                                    FUN=FUN2,
                                                     directed=directed,
                                                     weights=weights,
                                                     steps=steps, 
@@ -1007,6 +1020,7 @@ comparison <- function(graph,graphRandom,
                 graphRewire <- igraph::union(graphRewire, diff)
                 comr1 <- membershipCommunities(graph=graphRewire, 
                                                 method=method1,
+                                                FUN=FUN1,
                                                 directed=directed,
                                                 weights=weights,
                                                 steps=steps, 
@@ -1016,6 +1030,7 @@ comparison <- function(graph,graphRandom,
                                                 nb.trials=nb.trials)
                 comr2 <- membershipCommunities(graph=graphRewire, 
                                                 method=method2,
+                                                FUN=FUN2,
                                                 directed=directed,
                                                 weights=weights,
                                                 steps=steps, 
@@ -1033,6 +1048,7 @@ comparison <- function(graph,graphRandom,
                 Random <- rewireOnl(data=graphRandom, number=z)
                 Random <- igraph::union(Random, diffR)
                 comrR1 <- membershipCommunities(graph=Random, method=method1,
+                                                FUN=FUN1,
                                                 directed=directed,
                                                 weights=weights,
                                                 steps=steps, 
@@ -1041,6 +1057,7 @@ comparison <- function(graph,graphRandom,
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
                 comrR2 <- membershipCommunities(graph=Random, method=method2,
+                                                FUN=FUN2,
                                                 directed=directed,
                                                 weights=weights,
                                                 steps=steps, 
@@ -1060,6 +1077,7 @@ comparison <- function(graph,graphRandom,
                                             number=round(0.01*z))
                     comr1 <- membershipCommunities(graph=graphRewire,
                                                     method=method1,
+                                                    FUN=FUN1,
                                                     directed=directed,
                                                     weights=weights,
                                                     steps=steps, 
@@ -1069,6 +1087,7 @@ comparison <- function(graph,graphRandom,
                                                     nb.trials=nb.trials)
                     comr2 <- membershipCommunities(graph=graphRewire,
                                                     method=method2,
+                                                    FUN=FUN2,
                                                     directed=directed,
                                                     weights=weights,
                                                     steps=steps, 
@@ -1085,6 +1104,7 @@ comparison <- function(graph,graphRandom,
                                                     number=round(0.01*z))
                     comrR1 <- membershipCommunities(graph=Random, 
                                                     method=method1,
+                                                    FUN=FUN1,
                                                     directed=directed,
                                                     weights=weights,
                                                     steps=steps, 
@@ -1094,6 +1114,7 @@ comparison <- function(graph,graphRandom,
                                                     nb.trials=nb.trials)
                     comrR2 <- membershipCommunities(graph=Random, 
                                                     method=method2,
+                                                    FUN=FUN2,
                                                     directed=directed,
                                                     weights=weights,
                                                     steps=steps, 
