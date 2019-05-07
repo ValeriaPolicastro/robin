@@ -33,8 +33,7 @@ prepGraph <- function(file,
     if (file.format =="igraph")
     {
         graph <- igraph::simplify(file) 
-    }else if (file.format == "gml")
-    {
+    }else if (file.format == "gml") {
         net <- igraph::read_graph(file=file, format=file.format)
         ind <- igraph::V(net)[degree(net) == 0] #isolate node
         graph <- igraph::delete.vertices(net, ind)
@@ -56,7 +55,6 @@ prepGraph <- function(file,
         graph <- igraph::simplify(graph)
     }
     
-    ##METODO ANNAMARIA
     # method <- match.arg(method)
     # if(method == "igraph")
     # {
