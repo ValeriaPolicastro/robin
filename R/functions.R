@@ -7,7 +7,7 @@
 #'
 #' @param file The file to read from.
 #' @param file.format Character constant giving the file format. Right now
-#' as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are 
+#' as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are
 #' supported
 #' @param numbers A logical value indicating if the names of the nodes are 
 #' values.This argument is settable for the edgelist format. 
@@ -15,12 +15,12 @@
 #' @param header A logical value indicating whether the file contains 
 #' the names of the variables as its first line.This argument is settable 
 #' for the edgelist format.The default is FALSE.
-#' @return A simplified graph as returned from the igraph::simplify.
+#' @return A graph which do not contain loop and multiple edges.
 #' @import igraph
 #' @export
 #'
 #' @examples 
-#' graph <- prepGraph(file=my_file, file.format="edgelist")
+#' graph <- prepGraph(file=my_file, file.format="gml")
 prepGraph <- function(file,
                         file.format=c("edgelist", "pajek", "ncol", "lgl",
                                       "graphml", "dimacs", "graphdb", "gml",
@@ -54,7 +54,7 @@ prepGraph <- function(file,
         graph <- igraph::delete.vertices(net, ind)
         graph <- igraph::simplify(graph)
     }
-    
+    ##Other method:
     # method <- match.arg(method)
     # if(method == "igraph")
     # {
@@ -86,7 +86,6 @@ prepGraph <- function(file,
     #     }
     # }
     # graph <- igraph::simplify(graph) 
-    #graphs which do not contain loop and multiple edges.
     return(graph)
 }
 
@@ -103,6 +102,7 @@ prepGraph <- function(file,
 #' @export
 #'
 #' @examples 
+#' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 random <- function(graph)
 {
@@ -164,8 +164,8 @@ random <- function(graph)
 #' @export
 #'
 #' @examples 
-#' methodCommunity (graph=graph, method="louvain")
-# with all the method implemented in igraph
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' methodCommunity (graph=graph, method="louvain") 
 methodCommunity <- function(graph, 
                             method=c("walktrap", "edgeBetweenness", 
                                     "fastGreedy", "louvain", "spinglass", 
@@ -272,8 +272,9 @@ methodCommunity <- function(graph,
 #' @import igraph
 #' @export
 #'
-#' @examples membershipCommunities (graph=graph, method="louvain")
-# with all the method implemented in igraph
+#' @examples 
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' membershipCommunities (graph=graph, method="louvain")
 
 membershipCommunities<- function(graph,
                                  method=c("walktrap", "edgeBetweenness", 
@@ -314,7 +315,9 @@ membershipCommunities<- function(graph,
 #' @import networkD3
 #' @export
 #'
-#' @examples plotGraph (graph)
+#' @examples 
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' plotGraph (graph)
 plotGraph <- function(graph)
 {
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph)
@@ -326,14 +329,22 @@ plotGraph <- function(graph)
 
 ######################## PLOT COMMUNITIES ##############
 #' plotCommu
-#' @description 
-#' @param graph 
-#' @param members 
+#' 
+#' @description Graphical interactive representation of the network and its 
+#' communities
+#' 
+#' @param graph The output of prepGraph.
+#' @param members A membership vector of the community structure, the output of
+#' membershipCommunities. 
 #'
-#' @return
+#' @return An interactive plot.
+#' @import networkD3
 #' @export
 #'
 #' @examples
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' members <- membershipCommunities (graph=graph, method="louvain")
+#' plotCommu(graph, members)
 plotCommu <- function(graph, members) 
 {
     stopifnot(is(graph, "igraph"))
@@ -356,7 +367,8 @@ plotCommu <- function(graph, members)
 ######### REWIRE COMPLETE ########
 #' rewireCompl
 #' 
-#' @description 
+#' @description rewires the graph, creates the communities and 
+#' compares the communities through different measures.
 #' 
 #' @param data The output of prepGraph
 #' @param number Number of rewiring trials to perform.
@@ -364,6 +376,8 @@ plotCommu <- function(graph, members)
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap".
 #' @param FUN see \code{\link{methodCommunity}}.
+#' @param measure The measure for the comparison of the communities "vi", "nmi",
+#' "split.join", "adjusted.rand"
 #' @param weights this argument is not settable for "infomap" method
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
 #' method
@@ -380,6 +394,7 @@ rewireCompl <- function(data, number, community,
                                  "leadingEigen", "labelProp", "infomap",
                                  "optimal", "other"),
                         FUN=NULL,
+                        measure= c("vi", "nmi","split.join", "adjusted.rand"),
                         directed=FALSE,
                         weights=NULL, 
                         steps=4, 
@@ -389,6 +404,7 @@ rewireCompl <- function(data, number, community,
                         nb.trials=10)
 {
     method <- match.arg(method)
+    measure <- match.arg (measure)
     graphRewire <- igraph::rewire(data,
                                   with=keeping_degseq(loops=FALSE,niter=number))
     comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
@@ -399,13 +415,10 @@ rewireCompl <- function(data, number, community,
                             e.weights=e.weights, 
                             v.weights=v.weights, 
                             nb.trials=nb.trials)
-    VI <- igraph::compare(community, comR, method="vi")
-    output <- list(VI=VI, graphRewire=graphRewire)
-    return(output)#non serve per tutti
+    Measure <- igraph::compare(community, comR, method=measure)
+    output <- list(Measure=Measure, graphRewire=graphRewire)
+    return(output)
 }
-#perturba il grafo e ricalcola le community
-# compare the community through VI
-
 
 ######### REWIRE ONLY ###########
 #' rewireOnl
@@ -430,11 +443,13 @@ rewireOnl <- function(data, number)
 #' against random perturbations of the original graph structure.
 #' @param graph The output of prepGraph.
 #' @param graphRandom The output of random function.
-#' @param type The type of robin costruction dependent or independent data
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "optimal".
 #' @param FUN see \code{\link{methodCommunity}}.
+#' @param measure The measure for the comparison of the communities "vi", "nmi",
+#' "split.join", "adjusted.rand"
+#' @param type The type of robin costruction dependent or independent data
 #' @param weights this argument is not settable for "infomap" method.
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
 #' method.
@@ -448,14 +463,18 @@ rewireOnl <- function(data, number)
 #' @import igraph
 #' @export
 #'
-#' @examples Proc<- robinProc(graph=graph,graphRandom=graphRandom, 
-#' method="louvain",type="independent")
+#' @examples 
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' measure="vi",type="independent")
 robinProc <- function(graph, graphRandom, 
                 method=c("walktrap", "edgeBetweenness", 
                          "fastGreedy", "louvain", "spinglass", 
                          "leadingEigen", "labelProp", "infomap",
                          "optimal", "other"),
                 FUN=NULL,
+                measure= c("vi", "nmi","split.join", "adjusted.rand"),
                 type=c("dependent", "independent"),
                 directed=FALSE,
                 weights=NULL, 
@@ -465,6 +484,7 @@ robinProc <- function(graph, graphRandom,
                 v.weights=NULL, 
                 nb.trials=10) 
 {
+    measure <- match.arg (measure)
     method <- match.arg(method)
     type <- match.arg(type)
     nrep <- 10
@@ -488,7 +508,7 @@ robinProc <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials) # random network
     de <- igraph::gsize(graph)
-    VI <- NULL
+    Measure <- NULL
     vector <- NULL
     vectRandom <- NULL
     graphRewireRandom <- NULL
@@ -499,10 +519,10 @@ robinProc <- function(graph, graphRandom,
     if(type == "independent") 
     {
         #OUTPUT MATRIX
-        vi <- matrix(0, nrep^2, length(nRewire))
-        viRandom <- matrix(0, nrep^2, length(nRewire))
-        viMeanRandom <- matrix(0, nrep, length(nRewire))
-        viMean <- matrix(0, nrep, length(nRewire))
+        measure <- matrix(0, nrep^2, length(nRewire))
+        Random <- matrix(0, nrep^2, length(nRewire))
+        MeanRandom <- matrix(0, nrep, length(nRewire))
+        Mean <- matrix(0, nrep, length(nRewire))
         vet1 <- seq(5, 60, 5) #each step 
         vet <- round(vet1*de/100, 0) #the numbers of edges to rewire
         #arrotonda a 0 cifre decimali
@@ -527,8 +547,8 @@ robinProc <- function(graph, graphRandom,
                                     e.weights=e.weights, 
                                     v.weights=v.weights, 
                                     nb.trials=nb.trials)
-                vector[k] <- Real$VI
-                vi[count2, count] <- vector[k]
+                vector[k] <- Real$Meaure
+                measure[count2, count] <- vector[k]
                 graphRewire <- Real$graphRewire
                 
                 #RANDOM
@@ -543,8 +563,8 @@ robinProc <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                vectRandom[k] <- Random$VI
-                viRandom[count2, count] <- vectRandom[k]
+                vectRandom[k] <- Random$Measure
+                Random[count2, count] <- vectRandom[k]
                 graphRewireRandom <- Random$graphRewire
                 for(k in c(2:nrep))
                 {
@@ -560,8 +580,8 @@ robinProc <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                    vector[k] <- Real$VI
-                    vi[count2, count] <- vector[k]
+                    vector[k] <- Real$Measure
+                    measure[count2, count] <- vector[k]
                     Random <- rewireCompl(data=graphRewireRandom, 
                                           number=round(0.01*z),
                                           community=comRandom,
@@ -573,25 +593,25 @@ robinProc <- function(graph, graphRandom,
                                           e.weights=e.weights, 
                                           v.weights=v.weights, 
                                           nb.trials=nb.trials)
-                    vectRandom[k] <- Random$VI
-                    viRandom[count2, count] <- vectRandom[k]
+                    vectRandom[k] <- Random$Mearure
+                    Random[count2, count] <- vectRandom[k]
                 }
-                viMeanRandom[s, count] <- mean(vectRandom)
-                viMean[s, count] <- mean(vector)
+                MeanRandom[s, count] <- mean(vectRandom)
+                Mean[s, count] <- mean(vector)
             }
             print(z) 
         }
   #DEPENDENT 
     }else{
         z <- round((5*de)/100, 0) #the 5% of the edges
-        vi <- rep(0, nrep^2)
-        vi1 <- NULL
-        viRandom <- rep(0, nrep^2)
-        viRandom1 <- NULL
-        viMeanRandom <- rep(0, nrep)
-        viMean <- rep(0, nrep)
-        viMeanRandom1 <- NULL
-        viMean1 <- NULL
+        measure <- rep(0, nrep^2)
+        measure1 <- NULL
+        Random <- rep(0, nrep^2)
+        Random1 <- NULL
+        MeanRandom <- rep(0, nrep)
+        Mean <- rep(0, nrep)
+        MeanRandom1 <- NULL
+        Mean1 <- NULL
         diff <- NULL
         diffR <- NULL
         vet <- rep(z,(length(nRewire)-1))
@@ -617,8 +637,8 @@ robinProc <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
                                         FUN=FUN)
-                vector[k] <- igraph::compare(comReal, comr, method="vi")
-                vi1[count2] <- vector[k]
+                vector[k] <- igraph::compare(comReal, comr, method=measure)
+                measure1[count2] <- vector[k]
                 diff <- igraph::difference(graph, graphRewire)
                 
                 ###RANDOM
@@ -634,8 +654,8 @@ robinProc <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
                                         FUN=FUN)
-                vectRandom[k] <- igraph::compare(comRandom, comr, method="vi")
-                viRandom1[count2] <- vectRandom[k]
+                vectRandom[k] <- igraph::compare(comRandom, comr, method=measure)
+                Random1[count2] <- vectRandom[k]
                 diffR <- igraph::difference(graphRandom, graphRewireRandom)
                 
                 for(k in c(2:nrep)) 
@@ -652,8 +672,8 @@ robinProc <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                    vector[k] <- Real$VI
-                    vi1[count2] <- vector[k]
+                    vector[k] <- Real$Measure
+                    measure1[count2] <- vector[k]
                     
                     ## RANDOM
                     Random <- rewireCompl(data=graphRewireRandom,
@@ -667,39 +687,39 @@ robinProc <- function(graph, graphRandom,
                                             e.weights=e.weights, 
                                             v.weights=v.weights, 
                                             nb.trials=nb.trials)
-                    vectRandom[k] <- Random$VI
-                    viRandom1[count2] <- vectRandom[k]
+                    vectRandom[k] <- Random$Measure
+                    Random1[count2] <- vectRandom[k]
                 }
-                viMean1[s] <- mean(vi1)
-                viMeanRandom1[s] <- mean(viRandom1)  
+                Mean1[s] <- mean(measure1)
+                MeanRandom1[s] <- mean(Random1)  
             }
             graph <- igraph::intersection(graph, graphRewire)
             graphRandom <- igraph::intersection(graphRandom, graphRewireRandom)
-            viRandom <- cbind(viRandom,viRandom1)
-            vi <- cbind(vi,vi1)
-            viMean <- cbind(viMean,viMean1)
-            viMeanRandom <- cbind(viMeanRandom,viMeanRandom1)
+            Random <- cbind(Random,Random1)
+            measure <- cbind(measure,measure1)
+            Mean <- cbind(Mean,Mean1)
+            MeanRandom <- cbind(MeanRandom,MeanRandom1)
             z1 <- igraph::gsize(graph)
             print(z1)
             }
     }
-    colnames(viRandom) <- nRewire
-    colnames(vi) <- nRewire
-    colnames(viMeanRandom) <- nRewire
-    colnames(viMean) <- nRewire
+    colnames(Random) <- nRewire
+    colnames(measure) <- nRewire
+    colnames(MeanRandom) <- nRewire
+    colnames(Mean) <- nRewire
     nn <- rep(nRewire, each=nrep) 
-    ratios <- log2((viMean+0.001)/(viMeanRandom+0.001))
-    #rapporto tra la media delle distanze VI tra il modello reale e quello
-    ##perturbato e la media delle distanze tra il random e la sua perturbazione
+    ratios <- log2((Mean+0.001)/(MeanRandom+0.001))
+    #rapporto tra la media delle misure tra il modello reale e quello perturbato 
+    #e la media delle distanze tra il random e la sua perturbazione
     bats <- as.vector(ratios)
     names(bats) <- nn
-    resBats <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
+    res <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
     
-    output <- list(vi=vi,
-                    viRandom=viRandom,
-                    viMean=viMean,
-                    viMeanRandom=viMeanRandom,
-                    ratios=resBats
+    output <- list(measure=measure,
+                    Random=Random,
+                    Mean=Mean,
+                    MeanRandom=MeanRandom,
+                    ratios=res
                     )
       return(output)
 
@@ -723,7 +743,11 @@ robinProc <- function(graph, graphRandom,
 #' @export
 #'
 #' @examples 
-#' plotRobin(graph=graph,model=Proc$viMean,modelR=Proc$viMeanRandom, 
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' type="independent")
+#' plotRobin(graph=graph, model=Proc$Mean, modelR=Proc$MeanRandom, 
 #' legend=c("real data", "null model"))
 plotRobin <- function(graph,
                       model,
@@ -744,9 +768,9 @@ plotRobin <- function(graph,
         geom_line()+
         geom_point()+ 
         xlab("Percentage of perturbation") +
-        ylab("Variation of Information (VI)") +
-        ggtitle("Robin plot") +
-        scale_y_continuous(limits=c(0,0.6)) #only for VI
+        ylab("Measure") +
+        ggtitle("Robin plot")
+        #scale_y_continuous(limits=c(0,0.6)) #only for VI
     return(plot)
 }
 
@@ -767,6 +791,8 @@ plotRobin <- function(graph,
 #' see \code{\link{methodCommunity}}.
 #' @param FUN2 its a personal designed function when method2 is "others". 
 #' see \code{\link{methodCommunity}}.
+#' @param measure The measure for the comparison of the communities "vi", "nmi",
+#' "split.join", "adjusted.rand"
 #' @param type The type of robin costruction dependent or independent.
 #' @param weights This argument is not settable for "infomap" method.
 #' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
@@ -792,19 +818,21 @@ comparison <- function(graph,graphRandom,
                                 "leadingEigen","louvain","spinglass",
                                 "labelProp","infomap","optimal", "other"),
                         FUN1=NULL,
-                       FUN2=NULL,
-                       type=c("dependent", "independent"),
-                       directed=FALSE,
-                       weights=NULL, 
-                       steps=4, 
-                       spins=25, 
-                       e.weights=NULL, 
-                       v.weights=NULL, 
-                       nb.trials=10)
+                        FUN2=NULL,
+                        measure= c("vi", "nmi","split.join", "adjusted.rand"),
+                        type=c("dependent", "independent"),
+                        directed=FALSE,
+                        weights=NULL, 
+                        steps=4, 
+                        spins=25, 
+                        e.weights=NULL, 
+                        v.weights=NULL, 
+                        nb.trials=10)
 {
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
     type <- match.arg(type)
+    measure <-match.arg(measure)
     nrep <- 10
     comReal1 <- membershipCommunities(graph=graph, method=method1,
                                     FUN=FUN1,
@@ -843,7 +871,7 @@ comparison <- function(graph,graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials) 
     de <- igraph::gsize(graph)
-    VI <- NULL
+    Measure <- NULL
     vector1 <- NULL
     vector2 <- NULL
     vectorR1 <- NULL
@@ -854,14 +882,14 @@ comparison <- function(graph,graphRandom,
     nRewire <- seq(0,60,5)
     if(type == "independent") 
     {
-        vi1 <- matrix(0, nrep^2, length(nRewire))
-        vi2 <- matrix(0, nrep^2, length(nRewire))
-        viR1 <- matrix(0, nrep^2, length(nRewire))
-        viR2 <- matrix(0, nrep^2, length(nRewire))
-        viMean1 <- matrix(0, nrep, length(nRewire))
-        viMean2 <- matrix(0, nrep, length(nRewire))
-        viMeanRandom1 <- matrix(0, nrep, length(nRewire))
-        viMeanRandom2 <- matrix(0, nrep, length(nRewire))
+        measure1 <- matrix(0, nrep^2, length(nRewire))
+        measure2 <- matrix(0, nrep^2, length(nRewire))
+        R1 <- matrix(0, nrep^2, length(nRewire))
+        R2 <- matrix(0, nrep^2, length(nRewire))
+        Mean1 <- matrix(0, nrep, length(nRewire))
+        Mean2 <- matrix(0, nrep, length(nRewire))
+        MeanRandom1 <- matrix(0, nrep, length(nRewire))
+        MeanRandom2 <- matrix(0, nrep, length(nRewire))
         vet1 <- seq(5, 60, 5) 
         vet <- round(vet1*de/100, 0)
         
@@ -894,10 +922,10 @@ comparison <- function(graph,graphRandom,
                                                 e.weights=e.weights, 
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
-                vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
-                vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
-                vi1[count2, count] <- vector1[k]
-                vi2[count2, count] <- vector2[k]
+                vector1[k] <- igraph::compare(comr1, comReal1, method=measure)
+                vector2[k] <- igraph::compare(comr2, comReal2, method=measure)
+                measure1[count2, count] <- vector1[k]
+                measure2[count2, count] <- vector2[k]
                 Random <- rewireOnl(data=graphRandom, number=z)
                 comrR1 <- membershipCommunities(graph=Random, method=method1,
                                                 FUN=FUN1,
@@ -917,10 +945,12 @@ comparison <- function(graph,graphRandom,
                                                 e.weights=e.weights, 
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
-                vectorR1[k] <- igraph::compare(comrR1, comRandom1, method="vi")
-                vectorR2[k] <- igraph::compare(comrR2, comRandom2, method="vi")
-                viR1[count2, count] <- vectorR1[k]
-                viR2[count2, count] <- vectorR2[k]
+                vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
+                                               method=measure)
+                vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
+                                               method=measure)
+                R1[count2, count] <- vectorR1[k]
+                R2[count2, count] <- vectorR2[k]
                 for(k in c(2:nrep))
                 {
                     count2 <- count2+1
@@ -946,10 +976,12 @@ comparison <- function(graph,graphRandom,
                                                     e.weights=e.weights, 
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
-                    vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
-                    vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
-                    vi1[count2, count] <- vector1[k]
-                    vi2[count2, count] <- vector2[k]
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method=measure)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method=measure)
+                    measure1[count2, count] <- vector1[k]
+                    measure2[count2, count] <- vector2[k]
                     
                     graphRewireRandom <- rewireOnl(data=Random,
                                                     number=round(0.01*z))
@@ -974,36 +1006,36 @@ comparison <- function(graph,graphRandom,
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
                     vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
-                                                    method="vi")
+                                                    method=measure)
                     vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
-                                                    method="vi")
-                    viR1[count2, count] <- vectorR1[k]
-                    viR2[count2, count] <- vectorR2[k]
+                                                    method=measure)
+                    R1[count2, count] <- vectorR1[k]
+                    R2[count2, count] <- vectorR2[k]
                 }
-                viMean1[s, count] <- mean(vector1)
-                viMean2[s, count] <- mean(vector2)
-                viMeanRandom1[s, count] <- mean(vectorR1)
-                viMeanRandom2[s, count] <- mean(vectorR2)
+                Mean1[s, count] <- mean(vector1)
+                Mean2[s, count] <- mean(vector2)
+                MeanRandom1[s, count] <- mean(vectorR1)
+                MeanRandom2[s, count] <- mean(vectorR2)
             }
             print(z)
         }
         
     }else{
         z <- round((5*de)/100, 0)
-        vi1 <- rep(0, nrep^2)
-        vi11 <- NULL
-        viR11<-NULL
-        vi2 <- rep(0, nrep^2)
-        vi22 <- NULL
-        viR22 <- NULL
-        viMean1 <- rep(0, nrep)
-        viMean2 <-rep(0, nrep)
-        viMean11 <- NULL
-        viMean22 <- NULL
-        viMeanRandom1 <- rep(0, nrep)
-        viMeanRandom2 <-rep(0, nrep)
-        viMeanRandom11 <- NULL
-        viMeanRandom22 <- NULL
+        measure1 <- rep(0, nrep^2)
+        measure11 <- NULL
+        R11<-NULL
+        measure2 <- rep(0, nrep^2)
+        measure22 <- NULL
+        R22 <- NULL
+        Mean1 <- rep(0, nrep)
+        Mean2 <-rep(0, nrep)
+        Mean11 <- NULL
+        Mean22 <- NULL
+        MeanRandom1 <- rep(0, nrep)
+        MeanRandom2 <-rep(0, nrep)
+        MeanRandom11 <- NULL
+        MeanRandom22 <- NULL
         diff <- NULL
         diffR <- NULL
         vet<-rep(z,(length(nRewire)-1))
@@ -1037,10 +1069,10 @@ comparison <- function(graph,graphRandom,
                                                 e.weights=e.weights, 
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
-                vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
-                vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
-                vi11[count2] <- vector1[k]
-                vi22[count2] <- vector2[k]
+                vector1[k] <- igraph::compare(comr1, comReal1, method= measure)
+                vector2[k] <- igraph::compare(comr2, comReal2, method= measure)
+                measure11[count2] <- vector1[k]
+                measure22[count2] <- vector2[k]
                 diff <- igraph::difference(graph, graphRewire)
                 
                 #Random
@@ -1064,10 +1096,12 @@ comparison <- function(graph,graphRandom,
                                                 e.weights=e.weights, 
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
-                vectorR1[k] <- igraph::compare(comrR1, comRandom1, method="vi")
-                vectorR2[k] <- igraph::compare(comrR2, comRandom2, method="vi")
-                viR11[count2] <- vectorR1[k]
-                viR22[count2] <- vectorR2[k]
+                vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
+                                               method=measure)
+                vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
+                                               method=measure)
+                R11[count2] <- vectorR1[k]
+                R22[count2] <- vectorR2[k]
                 diffR <- igraph::difference(graphRandom, Random)
                 for(k in c(2:nrep)) 
                 {
@@ -1094,10 +1128,12 @@ comparison <- function(graph,graphRandom,
                                                     e.weights=e.weights, 
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
-                    vector1[k] <- igraph::compare(comr1, comReal1, method="vi")
-                    vector2[k] <- igraph::compare(comr2, comReal2, method="vi")
-                    vi11[count2] <- vector1[k]
-                    vi22[count2] <- vector2[k]
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method=measure)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method=measure)
+                    measure11[count2] <- vector1[k]
+                    measure22[count2] <- vector2[k]
                     #Random
                     graphRewireRandom <- rewireOnl(data=Random,
                                                     number=round(0.01*z))
@@ -1122,53 +1158,53 @@ comparison <- function(graph,graphRandom,
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
                     vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
-                                                    method="vi")
+                                                    method=measure)
                     vectorR2[k] <- igraph::compare(comrR2, comRandom2,
-                                                    method="vi")
-                    viR11[count2] <- vectorR1[k]
-                    viR22[count2] <- vectorR2[k]
+                                                    method=measure)
+                    R11[count2] <- vectorR1[k]
+                    R22[count2] <- vectorR2[k]
                 }
-                viMean11[s] <- mean(vi11)
-                viMean22[s] <- mean(vi22)
-                viMeanRandom11[s] <- mean(viR11)
-                viMeanRandom22[s] <- mean(viR22)
+                Mean11[s] <- mean(measure11)
+                Mean22[s] <- mean(measure22)
+                MeanRandom11[s] <- mean(R11)
+                MeanRandom22[s] <- mean(R22)
             }
             graph <- igraph::intersection(graph, graphRewire)
-            viMean1 <-cbind(viMean1,viMean11)
-            viMean2 <-cbind(viMean2,viMean22)
+            Mean1 <-cbind(Mean1,Mean11)
+            Mean2 <-cbind(Mean2,Mean22)
             graphRandom <- igraph::intersection(graphRandom, Random)
-            viMeanRandom1 <-cbind(viMeanRandom1,viMeanRandom11)
-            viMeanRandom2 <-cbind(viMeanRandom2,viMeanRandom22)
+            MeanRandom1 <-cbind(MeanRandom1,MeanRandom11)
+            MeanRandom2 <-cbind(MeanRandom2,MeanRandom22)
             z1 <- igraph::gsize(graph)
             print(z1)
         }
     }
-    colnames(viMean1) <- nRewire 
-    colnames(viMean2) <- nRewire 
-    colnames(viMeanRandom1) <- nRewire
-    colnames(viMeanRandom2) <- nRewire
+    colnames(Mean1) <- nRewire 
+    colnames(Mean2) <- nRewire 
+    colnames(MeanRandom1) <- nRewire
+    colnames(MeanRandom2) <- nRewire
     nn <- rep(nRewire, each=nrep) 
     
-    ratios1 <- log2((viMean1+0.001)/(viMeanRandom1+0.001))
-    ratios2 <- log2((viMean2+0.001)/(viMeanRandom2+0.001))
-    ratios1vs2 <- log2((viMean1+0.001)/(viMean2+0.001))
+    ratios1 <- log2((Mean1+0.001)/(MeanRandom1+0.001))
+    ratios2 <- log2((Mean2+0.001)/(MeanRandom2+0.001))
+    ratios1vs2 <- log2((Mean1+0.001)/(Mean2+0.001))
     bats1 <- as.vector(ratios1)
     bats2 <- as.vector(ratios2)
     bats1vs2 <- as.vector(ratios1vs2)
     names(bats1) <- nn
     names(bats2) <- nn
     names(bats1vs2) <- nn
-    resBats1 <- cbind(ID="ratios", t(bats1))
-    resBats2 <- cbind(ID="ratios", t(bats2))
-    resBats1vs2 <- cbind(ID="ratios", t(bats1vs2))
+    res1 <- cbind(ID="ratios", t(bats1))
+    res2 <- cbind(ID="ratios", t(bats2))
+    res1vs2 <- cbind(ID="ratios", t(bats1vs2))
     
     output <- list(viMean1=viMean1,
                    viMean2=viMean2,
                    viMeanRandom1=viMeanRandom1,
                    viMeanRandom2=viMeanRandom2,
-                   ratios1=resBats1,
-                   ratios2=resBats2,
-                   ratios1vs2=resBats1vs2)
+                   ratios1=res1,
+                   ratios2=res2,
+                   ratios1vs2=res1vs2)
     return(output)
 }
 
@@ -1177,10 +1213,10 @@ comparison <- function(graph,graphRandom,
 #' plotRobinCompare
 #'
 #' @param graph The output of prepGraph.
-#' @param model1 The viMean1 output of the comparison function.
-#' @param modelR1 The viMeanRandom1 output of the comparison function.
-#' @param model2 The viMean2 output of the comparison function.
-#' @param modelR2 The viMeanRandom2 output of the comparison function.
+#' @param model1 The Mean1 output of the comparison function.
+#' @param modelR1 The MeanRandom1 output of the comparison function.
+#' @param model2 The Mean2 output of the comparison function.
+#' @param modelR2 The MeanRandom2 output of the comparison function.
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model").
 #' @param legend1vs2 The legend for the two methods.
@@ -1197,8 +1233,8 @@ comparison <- function(graph,graphRandom,
 #' @export
 #'
 #' @examples 
-#' plotRobinCompare(graph=graph, model1=Comp$viMean1, 
-#' model2=Comp$viMean2,modelR1=Comp$viMeanRandom1, modelR2=Comp$viMeanRandom2,
+#' plotRobinCompare(graph=graph, model1=Comp$Mean1, 
+#' model2=Comp$Mean2,modelR1=Comp$MeanRandom1, modelR2=Comp$MeanRandom2,
 #' legend=c("real data", "null model"),legend1vs2=c("Louvain", "Fast Greedy"),
 #' title1="Louvain",title2="Fast Greedy",
 #' title1vs2="Louvain vs Fast Greedy")
@@ -1228,10 +1264,10 @@ plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
 #' @description creates an fdatest::ITP2 class object 
 #' 
 #' @param graph The output of prepGraph.
-#' @param model1 The viMean output of the robinProc function (or the viMean1 
+#' @param model1 The Mean output of the robinProc function (or the Mean1 
 #' output of the comparison function).
-#' @param model2 The viMeanRandom output of the robinProc function (or the 
-#' viMean2 output of the comparison function).
+#' @param model2 The MeanRandom output of the robinProc function (or the 
+#' Mean2 output of the comparison function).
 #' @param muParam the mu parameter for ITP2bspline (default 0).
 #' @param orderParam the order parameter for ITP2bspline (default 4).
 #' @param nKnots the nknots parameter for ITP2bspline (default 7).
@@ -1302,7 +1338,7 @@ robinGPTest <- function(ratio)
     #), ncol=3, byrow=TRUE)
     dvet <- data.matrix(as.numeric(colnames(ratio)[-1]))
     dd <- t(data.matrix(as.numeric((ratio)[-1])))
-    rownames(dd) <- 'VI'
+    rownames(dd) <- 'Measure'
     colnames(dd) <- dvet
     datadum <- rbind(dd, dd)
     gpregeOutput <- gprege::gprege(data=datadum, inputs=dvet,
@@ -1321,10 +1357,10 @@ robinGPTest <- function(ratio)
 #'testing the difference between the two curves.
 #'
 #' @param graph The output of prepGraph.
-#' @param model1 The viMean output of the robinProc function (or the viMean1 
+#' @param model1 The Mean output of the robinProc function (or the Mean1 
 #' output of the comparison function).
-#' @param model2 The viMeanRandom output of the robinProc function (or the 
-#' viMean2 output of the comparison function).
+#' @param model2 The MeanRandom output of the robinProc function (or the 
+#' Mean2 output of the comparison function).
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model").
 #'
@@ -1333,8 +1369,8 @@ robinGPTest <- function(ratio)
 #' @importFrom fdatest ITP2bspline
 #' @export
 #'
-#' @examples robinFDATest(graph=graph, model1=Proc$viMean,
-#' model2=Proc$viMeanRandom)
+#' @examples robinFDATest(graph=graph, model1=Proc$Mean,
+#' model2=Proc$MeanRandom)
 robinFDATest <- function(graph,model1,model2, 
                         legend=c("real data", "null model"))
 {
@@ -1350,15 +1386,15 @@ robinFDATest <- function(graph,model1,model2,
                 y=as.numeric(as.character(mvi)), color= model, group=s)) + 
         ggplot2::geom_line() + 
         ggplot2::xlab("Percentage of perturbation") +
-        ggplot2::ylab("Variation of Information (VI)")+
+        ggplot2::ylab("Measure")+
         ggplot2::ggtitle("Robin plot")
     plot1
     print(plot1)
    
     perc <- rep((seq(0,60,5)/100))
     ITPresult <- createITPSplineResult(graph, model1, model2)
-    plot2 <- plot(ITPresult, main='VI', xrange=c(0,0.6), xlab='perturbation', 
-                ylab="VI")
+    plot2 <- plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='perturbation', 
+                ylab="Measure")
     lines(perc, rep(0.05, 13), type="l", col="red")
     
     print(plot2)
@@ -1369,18 +1405,18 @@ robinFDATest <- function(graph,model1,model2,
 #'
 #' @description Calculate the area under the two curves with a spline approach. 
 #' @param graph The output of prepGraph.
-#' @param model1 The viMean output of the robinProc function (or the viMean1 
+#' @param model1 The Mean output of the robinProc function (or the Mean1 
 #' output of the comparison function).
-#' @param model2 The viMeanRandom output of the robinProc function (or the 
-#' viMean2 output of the comparison function).
+#' @param model2 The MeanRandom output of the robinProc function (or the 
+#' Mean2 output of the comparison function).
 #'
 #' @return A list
 #' @importFrom DescTools AUC
 #' @importFrom igraph vcount
 #' @export
 #'
-#' @examples robinAUCTest(graph=graph,model1=Proc$viMean,
-#' model2=Proc$viMeanRandom)
+#' @examples robinAUCTest(graph=graph,model1=Proc$Mean,
+#' model2=Proc$MeanRandom)
 robinAUCTest <- function(graph,model1,model2)
 {
     N <- igraph::vcount(graph)
