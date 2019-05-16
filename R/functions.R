@@ -448,7 +448,7 @@ rewireOnl <- function(data, number)
 #' "optimal".
 #' @param FUN see \code{\link{methodCommunity}}.
 #' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand"
+#' "split.join", "adjusted.rand".
 #' @param type The type of robin costruction dependent or independent data
 #' @param weights this argument is not settable for "infomap" method.
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
@@ -780,7 +780,7 @@ robinProc <- function(graph, graphRandom,
 #' @param model The viMean output of the robinProc function.
 #' @param modelR The viMeanRandom output of the robinProc function.
 #' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand"
+#' "split.join", "adjusted.rand".
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model").
 #'
@@ -793,8 +793,8 @@ robinProc <- function(graph, graphRandom,
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
 #' type="independent")
-#' plotRobin(graph=graph, model=Proc$Mean, modelR=Proc$MeanRandom, 
-#' legend=c("real data", "null model"))
+#' plotRobin(graph=graph, model=Proc$Mean, modelR=Proc$MeanRandom,
+#' measure="vi", legend=c("real data", "null model"))
 plotRobin <- function(graph,
                       model,
                       modelR,
@@ -853,7 +853,7 @@ plotRobin <- function(graph,
 #' @param FUN2 its a personal designed function when method2 is "others". 
 #' see \code{\link{methodCommunity}}.
 #' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand"
+#' "split.join", "adjusted.rand".
 #' @param type The type of robin costruction dependent or independent.
 #' @param weights This argument is not settable for "infomap" method.
 #' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
@@ -869,8 +869,10 @@ plotRobin <- function(graph,
 #' @export
 #'
 #' @examples 
-#' Comp <- comparison(graph=graph, graphRandom=graphRandom, 
-#' method1="louvain", method2="fastGreedy",type="independent")
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' comparison(graph=graph, graphRandom=graphRandom, method1="louvain", 
+#' method2="fastGreedy", measure="vi", type="independent")
 comparison <- function(graph,graphRandom, 
                        method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                 "leadingEigen","louvain","spinglass",
@@ -1351,6 +1353,8 @@ comparison <- function(graph,graphRandom,
 #' @param modelR1 The MeanRandom1 output of the comparison function.
 #' @param model2 The Mean2 output of the comparison function.
 #' @param modelR2 The MeanRandom2 output of the comparison function.
+#' @param measure The measure for the comparison of the communities "vi", "nmi",
+#' "split.join", "adjusted.rand".
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model").
 #' @param legend1vs2 The legend for the two methods.
@@ -1367,11 +1371,15 @@ comparison <- function(graph,graphRandom,
 #' @export
 #'
 #' @examples 
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' Comp <- comparison(graph=graph, graphRandom=graphRandom, method1="louvain", 
+#' method2="fastGreedy", measure="vi", type="independent") 
 #' plotRobinCompare(graph=graph, model1=Comp$Mean1, 
 #' model2=Comp$Mean2,modelR1=Comp$MeanRandom1, modelR2=Comp$MeanRandom2,
-#' legend=c("real data", "null model"),legend1vs2=c("Louvain", "Fast Greedy"),
-#' title1="Louvain",title2="Fast Greedy",
-#' title1vs2="Louvain vs Fast Greedy")
+#' measure="vi", legend=c("real data", "null model"),
+#' legend1vs2=c("Louvain", "Fast Greedy"), title1="Louvain",
+#' title2="Fast Greedy", title1vs2="Louvain vs Fast Greedy")
 #' 
 plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
                             measure= c("vi", "nmi","split.join",
@@ -1381,6 +1389,7 @@ plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
                             title1="Method1",title2="Method2",
                             title1vs2="Method1 vs Method2")
 {
+    measure <- match.arg (measure)
     plot1 <- plotRobin(graph=graph, model=model1, 
                     modelR=modelR1, measure=measure, legend=legend)+
                     ggtitle(title1)
@@ -1404,6 +1413,8 @@ plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
 #' output of the comparison function).
 #' @param model2 The MeanRandom output of the robinProc function (or the 
 #' Mean2 output of the comparison function).
+#' @param measure The measure for the comparison of the communities "vi", "nmi",
+#' "split.join", "adjusted.rand".
 #' @param muParam the mu parameter for ITP2bspline (default 0).
 #' @param orderParam the order parameter for ITP2bspline (default 4).
 #' @param nKnots the nknots parameter for ITP2bspline (default 7).
@@ -1412,12 +1423,27 @@ plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
 #'
 #' @return an ITP2 object
 createITPSplineResult <- function(graph, model1, model2,
+                                measure= c("vi", "nmi","split.join", 
+                                           "adjusted.rand"),
                                 muParam=0, orderParam=4, nKnots=7, 
                                 BParam=10000, isPaired=TRUE) 
 {
+    measure <- match.arg (measure)
+    if(measure=="vi")
+    {
     nOrder <- log2(igraph::gorder(graph))
     modeled1 <- as.matrix(model1)/nOrder
     modeled2 <- as.matrix(model2)/nOrder
+    }else if(measure=="split.join")
+    {N <- igraph::vcount(graph)
+     modeled1 <- as.matrix(model1)/(2*N)
+     modeled2 <- as.matrix(model2)/(2*N)
+    }else{
+    modeled1 <- as.matrix(model1)
+    modeled2 <- as.matrix(model2)   
+    }
+   
+    
     ## Two populations Interval Testing Procedure with B-spline basis
     ITPresult <- fdatest::ITP2bspline(modeled1, modeled2, mu=muParam, 
                                     order=orderParam, nknots=nKnots, 
@@ -1438,7 +1464,12 @@ createITPSplineResult <- function(graph, model1, model2,
 #' @import gprege
 #' @export
 #'
-#' @examples robinGPTest(ratio=Proc$ratios)
+#' @examples 
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' measure="vi",type="independent")
+#' robinGPTest(ratio=Proc$ratios)
 robinGPTest <- function(ratio)
 {
     gpregeOptions <- list(indexRange=(1:2), explore=FALSE, 
@@ -1505,27 +1536,32 @@ robinGPTest <- function(ratio)
 #' @importFrom fdatest ITP2bspline
 #' @export
 #'
-#' @examples robinFDATest(graph=graph, model1=Proc$Mean,
-#' model2=Proc$MeanRandom)
+#' @examples 
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' measure="vi",type="independent")
+#' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
 robinFDATest <- function(graph,model1,model2, 
                         legend=c("real data", "null model"))
 {
-     N <- igraph::vcount(graph)
-    mvimodel1 <- cbind(as.vector((model1)/log2(N)), legend[1], 
-                        seq(1,10), rep((seq(0,60,5)/100), each=10))
-    mvimodel2 <- cbind(as.vector((model2)/log2(N)), legend[2], 
-                        seq(11,20),rep((seq(0,60,5)/100),each=10))
-    mvi <- rbind(mvimodel1, mvimodel2)
-    colnames(mvi) <- c("mvi","model","s","percPert")
-    dataFrame <- data.frame(mvi)
-    plot1 <- ggplot2::ggplot(dataFrame, ggplot2::aes(x=percPert, 
-                y=as.numeric(as.character(mvi)), color= model, group=s)) + 
-        ggplot2::geom_line() + 
-        ggplot2::xlab("Percentage of perturbation") +
-        ggplot2::ylab("Measure")+
-        ggplot2::ggtitle("Robin plot")
-    plot1
-    print(plot1)
+    ##To do it with ggplot:
+    #  N <- igraph::vcount(graph)
+    # mvimodel1 <- cbind(as.vector((model1)/log2(N)), legend[1], 
+    #                     seq(1,10), rep((seq(0,60,5)/100), each=10))
+    # mvimodel2 <- cbind(as.vector((model2)/log2(N)), legend[2], 
+    #                     seq(11,20),rep((seq(0,60,5)/100),each=10))
+    # mvi <- rbind(mvimodel1, mvimodel2)
+    # colnames(mvi) <- c("mvi","model","s","percPert")
+    # dataFrame <- data.frame(mvi)
+    # plot1 <- ggplot2::ggplot(dataFrame, ggplot2::aes(x=percPert, 
+    #             y=as.numeric(as.character(mvi)), color= model, group=s)) + 
+    #     ggplot2::geom_line() + 
+    #     ggplot2::xlab("Percentage of perturbation") +
+    #     ggplot2::ylab("Measure")+
+    #     ggplot2::ggtitle("Robin plot")
+    # plot1
+    # print(plot1)
    
     perc <- rep((seq(0,60,5)/100))
     ITPresult <- createITPSplineResult(graph, model1, model2)
@@ -1545,19 +1581,38 @@ robinFDATest <- function(graph,model1,model2,
 #' output of the comparison function).
 #' @param model2 The MeanRandom output of the robinProc function (or the 
 #' Mean2 output of the comparison function).
-#'
+#' @param measure The measure for the comparison of the communities "vi", "nmi",
+#' "split.join", "adjusted.rand".
 #' @return A list
 #' @importFrom DescTools AUC
 #' @importFrom igraph vcount
 #' @export
 #'
 #' @examples 
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' measure="vi",type="independent")
 #' robinAUCTest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
-robinAUCTest <- function(graph,model1,model2)
+robinAUCTest <- function(graph, model1, model2, 
+                         measure= c("vi", "nmi","split.join", "adjusted.rand"))
 {
-    N <- igraph::vcount(graph)
-    mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)))
-    mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)))
+    measure <- match.arg (measure)
+    if(measure=="vi")
+    {
+        N <- igraph::vcount(graph)
+        mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)))
+        mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N))) 
+    }else if(measure=="split.join")
+    {
+        N <- igraph::vcount(graph)
+        mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))/(2*N)))
+        mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))/(2*N)))     
+    }else
+    {
+        mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))))
+        mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))))
+    }
     area1 <- DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel1, 
                           method ="spline")
     area2 <- DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel2, 
