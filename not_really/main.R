@@ -41,7 +41,8 @@ plotGraph (graph)
 
 
 ##PLOT COMMUNITIES
-plotCommu(graph,method="fastGreedy") #plot 3 D
+members <- membershipCommunities (graph=graph, method="fastGreedy")
+plotCommu(graph,members) #plot 3 D
 
 #plot non 3 D
 #fastgreedy
@@ -54,19 +55,19 @@ plot(graph, vertex.label.dist=1.5)
 
 ##REAL RANDOM
 Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="fastGreedy",
-           type="independent")
+                 measure = "vi",type="independent")
 
 Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="edgeBetweenness",
            type="dependent")
 
-write.csv(Proc$viMean,file="VIMeanindependent08.csv")
-write.csv(Proc$ratios,file="VIratiosindependent08.csv")
-write.csv(Proc$viMeanRandom,file="VIMeanRandomindependent08.csv")
-write.csv(Proc$vi,file="VIindependent08.csv")
-write.csv(Proc$viRandom,file="VIRandomindependent08.csv")
+write.csv(Proc$Mean,file="Mean.csv")
+write.csv(Proc$ratios,file="ratios.csv")
+write.csv(Proc$MeanRandom,file="MeanRandom.csv")
+write.csv(Proc$measureReal,file="MeasureReal.csv")
+write.csv(Proc$measureRandom,file="MeasureRandom.csv")
 
-plotRobin(graph=graph,model=Proc$viMean,
-          modelR=Proc$viMeanRandom, 
+plotRobin(graph=graph,model=Proc$Mean,
+          modelR=Proc$MeanRandom, 
           legend=c("real data", "null model"))
 
 

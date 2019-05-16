@@ -69,6 +69,7 @@ for the package, the graph argument must be of the same type returned by the
 
 ```{r}
 graphRandom <- random(graph=graph)
+graphRandom
 ```
 
 # Plot graph
@@ -93,7 +94,8 @@ membershipCommunities(graph=graph, method="fastGreedy") #as membership
 It gives an interactive 3D plot of the communites for the chosen algorithm.
 
 ```{r}
-plotCommu(graph=graph, method="fastGreedy")
+members <- membershipCommunities(graph=graph, method="fastGreedy")
+plotCommu(graph=graph, members=members)
 ```
 
 # Procedure to validate the robustness
@@ -102,8 +104,8 @@ To make things easier we save the output list in the *proc* variable because
 to use it later.
 
 ```{r}
-proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
-                 type="independent")
+proc <- robinProc(graph=graph, graphRandom=graphRandom, measure="vi", 
+                  method="louvain", type="independent")
 ```
 
 # Robin Plots
@@ -117,7 +119,7 @@ The *model* and *modelR* arguments are, respectively, the *viMean* and the
 *viMeanRandom* contained inside the *robinProc* output list.
 
 ```{r}
-plotRobin(graph=graph, model=proc$viMean, modelR=proc$viMeanRandom)
+plotRobin(graph=graph, model=proc$Mean, modelR=proc$MeanRandom, measure="vi")
 ```
 
 # Statistical Tests between Real data and Null model 
@@ -129,9 +131,11 @@ The *model1* and *model2* arguments are, respectively, the *viMean* and the
 *viMeanRandom* contained inside the **robinProc** output list.
 
 ```{r}
-robinFDATest(graph=graph, model1=proc$viMean, model2=proc$viMeanRandom)
+robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
+             measure="vi")
 robinGPTest(ratio=proc$ratios)
-robinAUCTest(graph=graph, model1=proc$viMean, model2=proc$viMeanRandom)
+robinAUCTest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
+             measure="vi")
 ```
 
 # Comparison Two different Methods
@@ -143,8 +147,10 @@ We firstly plot them with their different communities to have an idea of
 the network of interest.
 
 ```{r}
-plotCommu(graph=graph, method="fastGreedy")
-plotCommu(graph=graph, method="louvain")
+membersFast <- membershipCommunities(graph=graph, method="fastGreedy")
+membersLouv <- membershipCommunities(graph=graph, method="louvain")
+plotCommu(graph=graph, members=membersFast)
+plotCommu(graph=graph, members=membersLouv)
 ```
 
 Secondly, we run the **comparison** function to compare the two algorithms, 
@@ -152,7 +158,7 @@ which, as before, we store the output in the *comp* variable to use it later.
 
 ```{r}
 comp <- comparison(graph=graph, graphRandom=graphRandom, method1="fastGreedy",
-                method2="louvain",type="independent")
+                method2="louvain", measure="vi", type="independent")
 ```
 
 Thirdly, we plot the curves of each null model and real data for both
@@ -162,8 +168,9 @@ the *viMean1*, *viMean2*, *viMeanRandom1* and *viMeanRandom2* contained inside
 the **comparison** output list.
 
 ```{r}
-plotRobinCompare(graph=graph, model1=comp$viMean1, model2=comp$viMean2,
-                 modelR1=comp$viMeanRandom1, modelR2=comp$viMeanRandom2,
+plotRobinCompare(graph=graph, model1=comp$Mean1, model2=comp$Mean2,
+                 modelR1=comp$MeanRandom1, modelR2=comp$MeanRandom2,
+                 measure="vi",
                  legend=c("real data", "null model"),
                  legend1vs2=c("Fast Greedy","Louvain"),
                  title1="Fast Greedy", title2="Louvain",
@@ -177,8 +184,8 @@ comparison of the two different methods the *model1* argument must be the
 the **comparison** output list.
 
 ```{r}
-robinFDATest(graph=graph, model1=comp$viMean1, model2=comp$viMean2)
+robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 robinGPTest(ratio=comp$ratios1vs2)
-robinAUCTest(graph=graph, model1=comp$viMean1, model2=comp$viMean2)
+robinAUCTest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 ```
 

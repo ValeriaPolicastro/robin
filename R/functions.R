@@ -519,8 +519,8 @@ robinProc <- function(graph, graphRandom,
     if(type == "independent") 
     {
         #OUTPUT MATRIX
-        measReal <- matrix(0, nrep^2, length(nRewire))
-        Random <- matrix(0, nrep^2, length(nRewire))
+        measureReal <- matrix(0, nrep^2, length(nRewire))
+        measureRandom <- matrix(0, nrep^2, length(nRewire))
         MeanRandom <- matrix(0, nrep, length(nRewire))
         Mean <- matrix(0, nrep, length(nRewire))
         vet1 <- seq(5, 60, 5) #each step 
@@ -540,6 +540,7 @@ robinProc <- function(graph, graphRandom,
                                     number=z, 
                                     community=comReal, 
                                     method=method,
+                                    measure=measure,
                                     directed=directed,
                                     weights=weights,
                                     steps=steps, 
@@ -549,18 +550,20 @@ robinProc <- function(graph, graphRandom,
                                     nb.trials=nb.trials)
                 if((measure=="vi")|(measure=="split.join"))
                 {
-                    vector[k] <- Real$Meaure
-                } else {
-                    vector[k] <- 1-(Real$Meaure)
+                    vector[k] <- Real$Measure
+                } 
+                else {
+                    vector[k] <- 1-(Real$Measure)
                 }
-                measReal[count2, count] <- vector[k]
+                measureReal[count2, count] <- vector[k]
                 graphRewire <- Real$graphRewire
                 
                 #RANDOM
                 Random <- rewireCompl(data=graphRandom,
                                         number=z, 
                                         community=comRandom, 
-                                        method=method, 
+                                        method=method,
+                                        measure=measure,
                                         directed=directed,
                                         weights=weights,
                                         steps=steps, 
@@ -574,7 +577,7 @@ robinProc <- function(graph, graphRandom,
                 } else {
                     vectRandom[k] <- 1-(Random$Measure)
                 }
-                Random[count2, count] <- vectRandom[k]
+                measureRandom[count2, count] <- vectRandom[k]
                 graphRewireRandom <- Random$graphRewire
                 for(k in c(2:nrep))
                 {
@@ -583,6 +586,7 @@ robinProc <- function(graph, graphRandom,
                                         number=round(0.01*z), 
                                         community=comReal, 
                                         method=method,
+                                        measure=measure,
                                         directed=directed,
                                         weights=weights,
                                         steps=steps, 
@@ -592,15 +596,16 @@ robinProc <- function(graph, graphRandom,
                                         nb.trials=nb.trials)
                     if((measure=="vi")|(measure=="split.join"))
                     {
-                        vector[k] <- Real$Meaure
+                        vector[k] <- Real$Measure
                     } else {
-                        vector[k] <- 1-(Real$Meaure)
+                        vector[k] <- 1-(Real$Measure)
                     }
-                    measReal[count2, count] <- vector[k]
+                    measureReal[count2, count] <- vector[k]
                     Random <- rewireCompl(data=graphRewireRandom, 
                                           number=round(0.01*z),
                                           community=comRandom,
                                           method=method,
+                                          measure=measure,
                                           directed=directed,
                                           weights=weights,
                                           steps=steps, 
@@ -614,7 +619,7 @@ robinProc <- function(graph, graphRandom,
                     } else {
                         vectRandom[k] <- 1-(Random$Measure)
                     }
-                    Random[count2, count] <- vectRandom[k]
+                    measureRandom[count2, count] <- vectRandom[k]
                 }
                 MeanRandom[s, count] <- mean(vectRandom)
                 Mean[s, count] <- mean(vector)
@@ -624,10 +629,10 @@ robinProc <- function(graph, graphRandom,
   #DEPENDENT 
     }else{
         z <- round((5*de)/100, 0) #the 5% of the edges
-        measReal <- rep(0, nrep^2)
-        measReal1 <- NULL
-        Random <- rep(0, nrep^2)
-        Random1 <- NULL
+        measureReal <- rep(0, nrep^2)
+        measureReal1 <- NULL
+        measureRandom <- rep(0, nrep^2)
+        measureRandom1 <- NULL
         MeanRandom <- rep(0, nrep)
         Mean <- rep(0, nrep)
         MeanRandom1 <- NULL
@@ -664,7 +669,7 @@ robinProc <- function(graph, graphRandom,
                     vector[k] <- 1-(igraph::compare(comReal, comr, 
                                                     method=measure))
                 }
-                measReal1[count2] <- vector[k]
+                measureReal1[count2] <- vector[k]
                 diff <- igraph::difference(graph, graphRewire)
                 
                 ###RANDOM
@@ -689,7 +694,7 @@ robinProc <- function(graph, graphRandom,
                                                         method=measure))
                 }
                 
-                Random1[count2] <- vectRandom[k]
+                measureRandom1[count2] <- vectRandom[k]
                 diffR <- igraph::difference(graphRandom, graphRewireRandom)
                 
                 for(k in c(2:nrep)) 
@@ -698,6 +703,7 @@ robinProc <- function(graph, graphRandom,
                     ##REAL
                     Real <- rewireCompl(data=graphRewire, number=round(0.01*z),
                                         method=method,
+                                        measure=measure,
                                         community=comReal,
                                         directed=directed,
                                         weights=weights,
@@ -708,15 +714,16 @@ robinProc <- function(graph, graphRandom,
                                         nb.trials=nb.trials)
                     if((measure=="vi")|(measure=="split.join"))
                     {
-                        vector[k] <- Real$Meaure
+                        vector[k] <- Real$Measure
                     } else {
-                        vector[k] <- 1-(Real$Meaure)
+                        vector[k] <- 1-(Real$Measure)
                     }
-                    measReal1[count2] <- vector[k]
+                    measureReal1[count2] <- vector[k]
                     
                     ## RANDOM
                     Random <- rewireCompl(data=graphRewireRandom,
                                             method=method,
+                                            measure=measure,
                                             number=round(0.01*z),
                                             community=comRandom,
                                             directed=directed,
@@ -732,23 +739,23 @@ robinProc <- function(graph, graphRandom,
                     } else {
                         vectRandom[k] <- 1-(Random$Measure)
                     }
-                    Random1[count2] <- vectRandom[k]
+                    measureRandom1[count2] <- vectRandom[k]
                 }
-                Mean1[s] <- mean(measReal1)
-                MeanRandom1[s] <- mean(Random1)  
+                Mean1[s] <- mean(measureReal1)
+                MeanRandom1[s] <- mean(measureRandom1)  
             }
             graph <- igraph::intersection(graph, graphRewire)
             graphRandom <- igraph::intersection(graphRandom, graphRewireRandom)
-            Random <- cbind(Random,Random1)
-            measReal <- cbind(measReal,measReal1)
+            measureRandom <- cbind(measureRandom,measureRandom1)
+            measureReal <- cbind(measureReal,measureReal1)
             Mean <- cbind(Mean,Mean1)
             MeanRandom <- cbind(MeanRandom,MeanRandom1)
             z1 <- igraph::gsize(graph)
             print(z1)
             }
     }
-    colnames(Random) <- nRewire
-    colnames(measReal) <- nRewire
+    colnames(measureRandom) <- nRewire
+    colnames(measureReal) <- nRewire
     colnames(MeanRandom) <- nRewire
     colnames(Mean) <- nRewire
     nn <- rep(nRewire, each=nrep) 
@@ -759,8 +766,8 @@ robinProc <- function(graph, graphRandom,
     names(bats) <- nn
     res <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
     
-    output <- list( measure=measReal,
-                    Random=Random,
+    output <- list( measureReal=measureReal,
+                    measureRandom=measureRandom,
                     Mean=Mean,
                     MeanRandom=MeanRandom,
                     ratios=res
@@ -945,8 +952,8 @@ comparison <- function(graph,graphRandom,
     nRewire <- seq(0,60,5)
     if(type == "independent") 
     {
-        measReal1 <- matrix(0, nrep^2, length(nRewire))
-        measReal2 <- matrix(0, nrep^2, length(nRewire))
+        measureReal1 <- matrix(0, nrep^2, length(nRewire))
+        measureReal2 <- matrix(0, nrep^2, length(nRewire))
         R1 <- matrix(0, nrep^2, length(nRewire))
         R2 <- matrix(0, nrep^2, length(nRewire))
         Mean1 <- matrix(0, nrep, length(nRewire))
@@ -997,8 +1004,8 @@ comparison <- function(graph,graphRandom,
                     vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
                                                       method=measure))
                 }
-                measReal1[count2, count] <- vector1[k]
-                measReal2[count2, count] <- vector2[k]
+                measureReal1[count2, count] <- vector1[k]
+                measureReal2[count2, count] <- vector2[k]
                 Random <- rewireOnl(data=graphRandom, number=z)
                 comrR1 <- membershipCommunities(graph=Random, method=method1,
                                                 FUN=FUN1,
@@ -1071,8 +1078,8 @@ comparison <- function(graph,graphRandom,
                                                       method=measure))
                     }
                     
-                    measReal1[count2, count] <- vector1[k]
-                    measReal2[count2, count] <- vector2[k]
+                    measureReal1[count2, count] <- vector1[k]
+                    measureReal2[count2, count] <- vector2[k]
                     
                     graphRewireRandom <- rewireOnl(data=Random,
                                                     number=round(0.01*z))
@@ -1121,11 +1128,11 @@ comparison <- function(graph,graphRandom,
         
     }else{
         z <- round((5*de)/100, 0)
-        measReal1 <- rep(0, nrep^2)
-        measReal11 <- NULL
+        measureReal1 <- rep(0, nrep^2)
+        measureReal11 <- NULL
         R11<-NULL
-        measReal2 <- rep(0, nrep^2)
-        measReal22 <- NULL
+        measureReal2 <- rep(0, nrep^2)
+        measureReal22 <- NULL
         R22 <- NULL
         Mean1 <- rep(0, nrep)
         Mean2 <-rep(0, nrep)
@@ -1181,8 +1188,8 @@ comparison <- function(graph,graphRandom,
                                                      method= measure))
                 }
              
-                measReal11[count2] <- vector1[k]
-                measReal22[count2] <- vector2[k]
+                measureReal11[count2] <- vector1[k]
+                measureReal22[count2] <- vector2[k]
                 diff <- igraph::difference(graph, graphRewire)
                 
                 #Random
@@ -1259,8 +1266,8 @@ comparison <- function(graph,graphRandom,
                         vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
                                                       method=measure))
                     }
-                    measReal11[count2] <- vector1[k]
-                    measReal22[count2] <- vector2[k]
+                    measureReal11[count2] <- vector1[k]
+                    measureReal22[count2] <- vector2[k]
                     #Random
                     graphRewireRandom <- rewireOnl(data=Random,
                                                     number=round(0.01*z))
@@ -1300,8 +1307,8 @@ comparison <- function(graph,graphRandom,
                     R11[count2] <- vectorR1[k]
                     R22[count2] <- vectorR2[k]
                 }
-                Mean11[s] <- mean(measReal11)
-                Mean22[s] <- mean(measReal22)
+                Mean11[s] <- mean(measureReal11)
+                Mean22[s] <- mean(measureReal22)
                 MeanRandom11[s] <- mean(R11)
                 MeanRandom22[s] <- mean(R22)
             }
