@@ -547,7 +547,12 @@ robinProc <- function(graph, graphRandom,
                                     e.weights=e.weights, 
                                     v.weights=v.weights, 
                                     nb.trials=nb.trials)
-                vector[k] <- Real$Meaure
+                if((measure=="vi")|(measure=="split.join"))
+                {
+                    vector[k] <- Real$Meaure
+                } else {
+                    vector[k] <- 1-(Real$Meaure)
+                }
                 measReal[count2, count] <- vector[k]
                 graphRewire <- Real$graphRewire
                 
@@ -563,7 +568,12 @@ robinProc <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                vectRandom[k] <- Random$Measure
+                if((measure=="vi")|(measure=="split.join"))
+                {
+                    vectRandom[k] <- Random$Measure
+                } else {
+                    vectRandom[k] <- 1-(Random$Measure)
+                }
                 Random[count2, count] <- vectRandom[k]
                 graphRewireRandom <- Random$graphRewire
                 for(k in c(2:nrep))
@@ -580,7 +590,12 @@ robinProc <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                    vector[k] <- Real$Measure
+                    if((measure=="vi")|(measure=="split.join"))
+                    {
+                        vector[k] <- Real$Meaure
+                    } else {
+                        vector[k] <- 1-(Real$Meaure)
+                    }
                     measReal[count2, count] <- vector[k]
                     Random <- rewireCompl(data=graphRewireRandom, 
                                           number=round(0.01*z),
@@ -593,7 +608,12 @@ robinProc <- function(graph, graphRandom,
                                           e.weights=e.weights, 
                                           v.weights=v.weights, 
                                           nb.trials=nb.trials)
-                    vectRandom[k] <- Random$Mearure
+                    if((measure=="vi")|(measure=="split.join"))
+                    {
+                        vectRandom[k] <- Random$Measure
+                    } else {
+                        vectRandom[k] <- 1-(Random$Measure)
+                    }
                     Random[count2, count] <- vectRandom[k]
                 }
                 MeanRandom[s, count] <- mean(vectRandom)
@@ -637,7 +657,13 @@ robinProc <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
                                         FUN=FUN)
-                vector[k] <- igraph::compare(comReal, comr, method=measure)
+                if((measure=="vi")|(measure=="split.join"))
+                {
+                    vector[k] <- igraph::compare(comReal, comr, method=measure)
+                } else {
+                    vector[k] <- 1-(igraph::compare(comReal, comr, 
+                                                    method=measure))
+                }
                 measReal1[count2] <- vector[k]
                 diff <- igraph::difference(graph, graphRewire)
                 
@@ -654,7 +680,15 @@ robinProc <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
                                         FUN=FUN)
-                vectRandom[k] <- igraph::compare(comRandom, comr, method=measure)
+                if((measure=="vi")|(measure=="split.join"))
+                {
+                    vectRandom[k] <- igraph::compare(comRandom, comr, 
+                                                     method=measure)
+                } else {
+                    vectRandom[k] <- 1-(igraph::compare(comRandom, comr, 
+                                                        method=measure))
+                }
+                
                 Random1[count2] <- vectRandom[k]
                 diffR <- igraph::difference(graphRandom, graphRewireRandom)
                 
@@ -672,7 +706,12 @@ robinProc <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                    vector[k] <- Real$Measure
+                    if((measure=="vi")|(measure=="split.join"))
+                    {
+                        vector[k] <- Real$Meaure
+                    } else {
+                        vector[k] <- 1-(Real$Meaure)
+                    }
                     measReal1[count2] <- vector[k]
                     
                     ## RANDOM
@@ -687,7 +726,12 @@ robinProc <- function(graph, graphRandom,
                                             e.weights=e.weights, 
                                             v.weights=v.weights, 
                                             nb.trials=nb.trials)
-                    vectRandom[k] <- Random$Measure
+                    if((measure=="vi")|(measure=="split.join"))
+                    {
+                        vectRandom[k] <- Random$Measure
+                    } else {
+                        vectRandom[k] <- 1-(Random$Measure)
+                    }
                     Random1[count2] <- vectRandom[k]
                 }
                 Mean1[s] <- mean(measReal1)
@@ -735,6 +779,8 @@ robinProc <- function(graph, graphRandom,
 #' @param graph The output of prepGraph
 #' @param model The viMean output of the robinProc function.
 #' @param modelR The viMeanRandom output of the robinProc function.
+#' @param measure The measure for the comparison of the communities "vi", "nmi",
+#' "split.join", "adjusted.rand"
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model").
 #'
@@ -752,11 +798,26 @@ robinProc <- function(graph, graphRandom,
 plotRobin <- function(graph,
                       model,
                       modelR,
+                      measure= c("vi", "nmi","split.join", "adjusted.rand"),
                       legend=c("real data", "null model"))
 {   
+    measure <- match.arg (measure)
+    if(measure=="vi")
+   {
     N <- igraph::vcount(graph)
     mvimodel1 <- cbind(as.vector((apply(model, 2, mean))/log2(N)),legend[1])
-    mvimodel2 <- cbind(as.vector((apply(modelR, 2, mean))/log2(N)),legend[2])
+    mvimodel2 <- cbind(as.vector((apply(modelR, 2, mean))/log2(N)),legend[2]) 
+    }else if(measure=="split.join")
+    {
+    N <- igraph::vcount(graph)
+    mvimodel1 <- cbind(as.vector((apply(model, 2, mean))/(2*N)),legend[1])
+    mvimodel2 <- cbind(as.vector((apply(modelR, 2, mean))/(2*N)),legend[2])     
+    }else
+    {
+    mvimodel1 <- cbind(as.vector((apply(model, 2, mean))),legend[1])
+    mvimodel2 <- cbind(as.vector((apply(modelR, 2, mean))),legend[2])
+    }
+    
     percPert <- rep((seq(0,60,5)/100),2)
     mvi <- rbind(mvimodel1,mvimodel2)
     colnames(mvi) <- c("mvi","model")
@@ -922,8 +983,18 @@ comparison <- function(graph,graphRandom,
                                                 e.weights=e.weights, 
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
-                vector1[k] <- igraph::compare(comr1, comReal1, method=measure)
-                vector2[k] <- igraph::compare(comr2, comReal2, method=measure)
+                if((measure=="vi")|(measure=="split.join"))
+                {
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method=measure)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method=measure)
+                } else {
+                    vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
+                                                     method=measure))
+                    vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
+                                                      method=measure))
+                }
                 measReal1[count2, count] <- vector1[k]
                 measReal2[count2, count] <- vector2[k]
                 Random <- rewireOnl(data=graphRandom, number=z)
@@ -945,10 +1016,19 @@ comparison <- function(graph,graphRandom,
                                                 e.weights=e.weights, 
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
-                vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
-                                               method=measure)
-                vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
-                                               method=measure)
+                if((measure=="vi")|(measure=="split.join"))
+                {
+                    vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
+                                                   method=measure)
+                    vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
+                                                   method=measure)
+                } else {
+                    vectorR1[k] <- 1-(igraph::compare(comrR1, comRandom1, 
+                                                   method=measure))
+                    vectorR2[k] <- 1-(igraph::compare(comrR2, comRandom2, 
+                                                   method=measure))
+                }
+                
                 R1[count2, count] <- vectorR1[k]
                 R2[count2, count] <- vectorR2[k]
                 for(k in c(2:nrep))
@@ -976,10 +1056,19 @@ comparison <- function(graph,graphRandom,
                                                     e.weights=e.weights, 
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
-                    vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                  method=measure)
-                    vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                  method=measure)
+                    if((measure=="vi")|(measure=="split.join"))
+                    {
+                        vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                      method=measure)
+                        vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                      method=measure)
+                    } else {
+                        vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
+                                                      method=measure))
+                        vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
+                                                      method=measure))
+                    }
+                    
                     measReal1[count2, count] <- vector1[k]
                     measReal2[count2, count] <- vector2[k]
                     
@@ -1005,10 +1094,18 @@ comparison <- function(graph,graphRandom,
                                                     e.weights=e.weights, 
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
-                    vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
-                                                    method=measure)
-                    vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
-                                                    method=measure)
+                    if((measure=="vi")|(measure=="split.join"))
+                    {
+                        vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
+                                                       method=measure)
+                        vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
+                                                       method=measure)
+                    } else {
+                        vectorR1[k] <- 1-(igraph::compare(comrR1, comRandom1, 
+                                                       method=measure))
+                        vectorR2[k] <- 1-(igraph::compare(comrR2, comRandom2, 
+                                                       method=measure))
+                    }
                     R1[count2, count] <- vectorR1[k]
                     R2[count2, count] <- vectorR2[k]
                 }
@@ -1069,8 +1166,19 @@ comparison <- function(graph,graphRandom,
                                                 e.weights=e.weights, 
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
-                vector1[k] <- igraph::compare(comr1, comReal1, method= measure)
-                vector2[k] <- igraph::compare(comr2, comReal2, method= measure)
+                if((measure=="vi")|(measure=="split.join"))
+                {
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method= measure)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method= measure)
+                } else {
+                    vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
+                                                     method= measure))
+                    vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
+                                                     method= measure))
+                }
+             
                 measReal11[count2] <- vector1[k]
                 measReal22[count2] <- vector2[k]
                 diff <- igraph::difference(graph, graphRewire)
@@ -1096,10 +1204,19 @@ comparison <- function(graph,graphRandom,
                                                 e.weights=e.weights, 
                                                 v.weights=v.weights, 
                                                 nb.trials=nb.trials)
-                vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
-                                               method=measure)
-                vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
-                                               method=measure)
+                if((measure=="vi")|(measure=="split.join"))
+                {
+                    vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
+                                                   method=measure)
+                    vectorR2[k] <- igraph::compare(comrR2, comRandom2, 
+                                                   method=measure)
+                } else {
+                    vectorR1[k] <- 1-(igraph::compare(comrR1, comRandom1, 
+                                                   method=measure))
+                    vectorR2[k] <- 1-(igraph::compare(comrR2, comRandom2, 
+                                                   method=measure))
+                }
+                
                 R11[count2] <- vectorR1[k]
                 R22[count2] <- vectorR2[k]
                 diffR <- igraph::difference(graphRandom, Random)
@@ -1128,10 +1245,18 @@ comparison <- function(graph,graphRandom,
                                                     e.weights=e.weights, 
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
-                    vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                  method=measure)
-                    vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                  method=measure)
+                    if((measure=="vi")|(measure=="split.join"))
+                    {
+                        vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                      method=measure)
+                        vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                      method=measure)
+                    } else {
+                        vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
+                                                      method=measure))
+                        vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
+                                                      method=measure))
+                    }
                     measReal11[count2] <- vector1[k]
                     measReal22[count2] <- vector2[k]
                     #Random
@@ -1157,10 +1282,19 @@ comparison <- function(graph,graphRandom,
                                                     e.weights=e.weights, 
                                                     v.weights=v.weights, 
                                                     nb.trials=nb.trials)
-                    vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
-                                                    method=measure)
-                    vectorR2[k] <- igraph::compare(comrR2, comRandom2,
-                                                    method=measure)
+                    if((measure=="vi")|(measure=="split.join"))
+                    {
+                        vectorR1[k] <- igraph::compare(comrR1, comRandom1, 
+                                                       method=measure)
+                        vectorR2[k] <- igraph::compare(comrR2, comRandom2,
+                                                       method=measure)
+                    } else {
+                        vectorR1[k] <- 1-(igraph::compare(comrR1, comRandom1, 
+                                                       method=measure))
+                        vectorR2[k] <- 1-(igraph::compare(comrR2, comRandom2,
+                                                       method=measure))
+                    }
+                    
                     R11[count2] <- vectorR1[k]
                     R22[count2] <- vectorR2[k]
                 }
@@ -1239,19 +1373,21 @@ comparison <- function(graph,graphRandom,
 #' title1="Louvain",title2="Fast Greedy",
 #' title1vs2="Louvain vs Fast Greedy")
 #' 
-plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2, 
+plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
+                            measure= c("vi", "nmi","split.join",
+                                       "adjusted.rand"),
                             legend=c("real data", "null model"),
                             legend1vs2=c("method1", "method2"),
                             title1="Method1",title2="Method2",
                             title1vs2="Method1 vs Method2")
 {
     plot1 <- plotRobin(graph=graph, model=model1, 
-                    modelR=modelR1, legend=legend)+
+                    modelR=modelR1, measure=measure, legend=legend)+
                     ggtitle(title1)
-    plot2 <- plotRobin(graph=graph, model=model2, modelR=modelR2,
-              legend=legend)+ggtitle(title2)
-    plot3 <- plotRobin(graph=graph, model=model1, modelR=model2,
-              legend=legend1vs2)+ggtitle(title1vs2)
+    plot2 <- plotRobin(graph=graph, model=model2, modelR=modelR2, 
+                       measure=measure, legend=legend)+ggtitle(title2)
+    plot3 <- plotRobin(graph=graph, model=model1, modelR=model2, 
+                       measure=measure,legend=legend1vs2)+ggtitle(title1vs2)
     
     gridExtra::grid.arrange(plot1,plot2,plot3, nrow=2)
 }
@@ -1415,8 +1551,8 @@ robinFDATest <- function(graph,model1,model2,
 #' @importFrom igraph vcount
 #' @export
 #'
-#' @examples robinAUCTest(graph=graph,model1=Proc$Mean,
-#' model2=Proc$MeanRandom)
+#' @examples 
+#' robinAUCTest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
 robinAUCTest <- function(graph,model1,model2)
 {
     N <- igraph::vcount(graph)
