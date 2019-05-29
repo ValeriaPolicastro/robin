@@ -417,7 +417,8 @@ rewireCompl <- function(data, number, community,
                             nb.trials=nb.trials)
     Measure <- igraph::compare(community, comR, method=measure)
     output <- list(Measure=Measure, graphRewire=graphRewire)
-    return(output)
+    
+   return(output)
 }
 
 ######### REWIRE ONLY ###########
@@ -662,12 +663,12 @@ robinProc <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
                                         FUN=FUN)
+                Measure <- igraph::compare(comReal, comr, method=measure)
                 if((measure=="vi")|(measure=="split.join"))
                 {
-                    vector[k] <- igraph::compare(comReal, comr, method=measure)
+                    vector[k] <- Measure
                 } else {
-                    vector[k] <- 1-(igraph::compare(comReal, comr, 
-                                                    method=measure))
+                    vector[k] <- 1-Measure
                 }
                 measureReal1[count2] <- vector[k]
                 diff <- igraph::difference(graph, graphRewire)
@@ -685,13 +686,13 @@ robinProc <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
                                         FUN=FUN)
+                Measure <- igraph::compare(comRandom, comr,
+                                           method=measure)
                 if((measure=="vi")|(measure=="split.join"))
                 {
-                    vectRandom[k] <- igraph::compare(comRandom, comr, 
-                                                     method=measure)
+                    vectRandom[k] <- Measure
                 } else {
-                    vectRandom[k] <- 1-(igraph::compare(comRandom, comr, 
-                                                        method=measure))
+                    vectRandom[k] <- 1-Measure
                 }
                 
                 measureRandom1[count2] <- vectRandom[k]
@@ -768,7 +769,7 @@ robinProc <- function(graph, graphRandom,
     
     output <- list( measureReal=measureReal,
                     measureRandom=measureRandom,
-                    Mean=Mean,
+                    MeanReal=Mean,
                     MeanRandom=MeanRandom,
                     ratios=res
                     )

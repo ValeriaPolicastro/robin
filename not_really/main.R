@@ -11,7 +11,7 @@ library(DescTools)
 file <- "Dati/rip_348.edges.txt"
 file<-"Dati/email-Eu-core.txt" 
 #file <- "Dati/edgelistQ08.txt"
-file<-"Dati/data/football.gml"
+file<-"football.gml"
 
 ##CREATE GRAPHS
 graph <- prepGraph(file,file.format="edgelist",number=TRUE) 
@@ -55,10 +55,12 @@ plot(graph, vertex.label.dist=1.5)
 
 ##REAL RANDOM
 Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="fastGreedy",
-                 measure = "vi",type="independent")
+                 measure = "adjusted.rand",type="independent")
+#provato tutte le misure indipendenti 
 
-Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="edgeBetweenness",
-           type="dependent")
+
+Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="fastGreedy", 
+                 measure = "vi", type="dependent")
 
 write.csv(Proc$Mean,file="Mean.csv")
 write.csv(Proc$ratios,file="ratios.csv")
@@ -73,10 +75,10 @@ plotRobin(graph=graph,model=Proc$Mean,
 
 ##COMPARISON
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                method2="louvain",type="independent")
+                method2="louvain", measure="split.join", type="independent")
 
 Comp <- comparison(graph=graph,graphRandom=graphRandom,method1="fastGreedy",
-                   method2="louvain",type="dependent")
+                   measure="vi",method2="louvain",type="dependent")
 
 
 plotRobinCompare(graph=graph, model1=Comp$viMean1, model2=Comp$viMean2,
