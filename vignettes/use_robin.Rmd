@@ -119,7 +119,7 @@ The *model* and *modelR* arguments are, respectively, the *viMean* and the
 *viMeanRandom* contained inside the *robinProc* output list.
 
 ```{r}
-plotRobin(graph=graph, model=proc$Mean, modelR=proc$MeanRandom, measure="vi")
+plotRobin(graph=graph, model=proc$MeanReal, modelR=proc$MeanRandom, measure="vi")
 ```
 
 # Statistical Tests between Real data and Null model 
