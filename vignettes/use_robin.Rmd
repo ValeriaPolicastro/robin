@@ -100,6 +100,11 @@ plotCommu(graph=graph, members=members)
 
 # Procedure to validate the robustness
 It creates the ROBIN procedure to validate the robustness of your network.
+In this example we used the "vi" distance as a stability measure and the louvain 
+algorithm as a community detection algorithm, but users can choose different 
+measures ("nmi","split.join", "adjusted.rand") and algorithms (walktrap", 
+"edgeBetweenness", "fastGreedy", "spinglass", "leadingEigen", "labelProp", 
+"infomap", "optimal", "other") implemented in the package.
 To make things easier we save the output list in the *proc* variable because 
 to use it later.
 
@@ -111,12 +116,11 @@ proc <- robinProc(graph=graph, graphRandom=graphRandom, measure="vi",
 # Robin Plots
 Now in order to compare the obtained curves from the Procedure we can make a 
 plot with the **plotRobin** function.
-It shows on the y-axis the average of the Variation of Information (VI) measure 
-while on the x-axis the percentuage of perturbation of the real data and 
-the null model.
+It shows on the y-axis the average of the chosen measure while on the x-axis 
+the percentuage of perturbation of the real data and the null model.
 
-The *model* and *modelR* arguments are, respectively, the *viMean* and the 
-*viMeanRandom* contained inside the *robinProc* output list.
+The *model* and *modelR* arguments are, respectively, the *MeanReal* and the 
+*MeanRandom* contained inside the *robinProc* output list.
 
 ```{r}
 plotRobin(graph=graph, model=proc$MeanReal, modelR=proc$MeanRandom, measure="vi")
@@ -127,14 +131,14 @@ Now we test the differeces between this two curves with:
 - Functional data analysis
 - Gaussian Process
 - Area Under the Curve (AUC)
-The *model1* and *model2* arguments are, respectively, the *viMean* and the 
-*viMeanRandom* contained inside the **robinProc** output list.
+The *model1* and *model2* arguments are, respectively, the *MeanReal* and the 
+*MeanRandom* contained inside the **robinProc** output list.
 
 ```{r}
 robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
              measure="vi")
 robinGPTest(ratio=proc$ratios)
-robinAUCTest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
+robinAUC(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
              measure="vi")
 ```
 
@@ -164,7 +168,7 @@ comp <- comparison(graph=graph, graphRandom=graphRandom, method1="fastGreedy",
 Thirdly, we plot the curves of each null model and real data for both
 methods and the two curves of the two methods in comparison.
 The *model1*, *model2*, *modelR1* and *modelR2* arguments are, respectively, 
-the *viMean1*, *viMean2*, *viMeanRandom1* and *viMeanRandom2* contained inside 
+the *Mean1*, *Mean2*, *MeanRandom1* and *MeanRandom2* contained inside 
 the **comparison** output list.
 
 ```{r}
@@ -180,12 +184,12 @@ plotRobinCompare(graph=graph, model1=comp$Mean1, model2=comp$Mean2,
 # Statistical Tests between two community detection algorithms
 Now we test the differeces between the two curves, as we did before but for the
 comparison of the two different methods the *model1* argument must be the 
-*viMean1* and the *model2* argument must be the *viMean2* both contained inside 
+*Mean1* and the *model2* argument must be the *Mean2* both contained inside 
 the **comparison** output list.
 
 ```{r}
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 robinGPTest(ratio=comp$ratios1vs2)
-robinAUCTest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
+robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 ```
 
