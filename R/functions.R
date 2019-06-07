@@ -1602,7 +1602,7 @@ robinFDATest <- function(graph,model1,model2,
 #' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
 #' robinAUCTest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
-robinAUCTest <- function(graph, model1, model2, 
+robinAUC <- function(graph, model1, model2, 
                          measure= c("vi", "nmi","split.join", "adjusted.rand"))
 {
     measure <- match.arg (measure)
