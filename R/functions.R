@@ -789,7 +789,7 @@ robin <- function(graph, graphRandom,
 ############PLOT##############
 #' plotRobin
 #'
-#' @description The plot of the two VI curves, the VI of the null model and 
+#' @description The plot of the two curves, the measures of the null model and 
 #' of the real graph.
 #' @param graph The output of prepGraph
 #' @param model The viMean output of the robinProc function.
@@ -1365,6 +1365,7 @@ robinComp <- function(graph,graphRandom,
 ################### PLOT COMPARISON ##################
 #' plotRobinComp
 #'
+#' @description Plot to compare algorithms.
 #' @param graph The output of prepGraph.
 #' @param model1 The Mean1 output of the comparison function.
 #' @param modelR1 The MeanRandom1 output of the comparison function.
