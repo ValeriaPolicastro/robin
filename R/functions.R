@@ -20,6 +20,7 @@
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 prepGraph <- function(file,
                         file.format=c("edgelist", "pajek", "ncol", "lgl",
@@ -102,6 +103,7 @@ prepGraph <- function(file,
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 random <- function(graph)
@@ -164,6 +166,7 @@ random <- function(graph)
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' methodCommunity (graph=graph, method="louvain") 
 methodCommunity <- function(graph, 
@@ -273,6 +276,7 @@ methodCommunity <- function(graph,
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' membershipCommunities (graph=graph, method="louvain")
 
@@ -316,6 +320,7 @@ membershipCommunities<- function(graph,
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' plotGraph (graph)
 plotGraph <- function(graph)
@@ -342,6 +347,7 @@ plotGraph <- function(graph)
 #' @export
 #'
 #' @examples
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' members <- membershipCommunities (graph=graph, method="louvain")
 #' plotCommu(graph, members)
@@ -438,7 +444,7 @@ rewireOnl <- function(data, number)
 
 
 ########  ROBIN PROCEDURE #######
-#' robinProc
+#' robin
 #'
 #' @description A procedure to examine the stability of the partition recovered 
 #' against random perturbations of the original graph structure.
@@ -465,11 +471,12 @@ rewireOnl <- function(data, number)
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' robin(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
-robinProc <- function(graph, graphRandom, 
+robin <- function(graph, graphRandom, 
                 method=c("walktrap", "edgeBetweenness", 
                          "fastGreedy", "louvain", "spinglass", 
                          "leadingEigen", "labelProp", "infomap",
@@ -797,9 +804,10 @@ robinProc <- function(graph, graphRandom,
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' Proc <- robin(graph=graph, graphRandom=graphRandom, method="louvain",
 #' type="independent")
 #' plotRobin(graph=graph, model=Proc$Mean, modelR=Proc$MeanRandom,
 #' measure="vi", legend=c("real data", "null model"))
@@ -844,7 +852,7 @@ plotRobin <- function(graph,
 }
 
 ############### COMPARISON DIFFERENT METHODS ##########
-#' comparison
+#' robinComp
 #'
 #' @description  A procedure to compare two different methods of community 
 #' detection.
@@ -877,11 +885,12 @@ plotRobin <- function(graph,
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' comparison(graph=graph, graphRandom=graphRandom, method1="louvain", 
+#' robinComp(graph=graph, graphRandom=graphRandom, method1="louvain", 
 #' method2="fastGreedy", measure="vi", type="independent")
-comparison <- function(graph,graphRandom, 
+robinComp <- function(graph,graphRandom, 
                        method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                 "leadingEigen","louvain","spinglass",
                                 "labelProp","infomap","optimal", "other"),
@@ -1354,7 +1363,7 @@ comparison <- function(graph,graphRandom,
 
 
 ################### PLOT COMPARISON ##################
-#' plotRobinCompare
+#' plotRobinComp
 #'
 #' @param graph The output of prepGraph.
 #' @param model1 The Mean1 output of the comparison function.
@@ -1379,17 +1388,18 @@ comparison <- function(graph,graphRandom,
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' Comp <- comparison(graph=graph, graphRandom=graphRandom, method1="louvain", 
+#' Comp <- robinComp(graph=graph, graphRandom=graphRandom, method1="louvain", 
 #' method2="fastGreedy", measure="vi", type="independent") 
-#' plotRobinCompare(graph=graph, model1=Comp$Mean1, 
+#' plotRobinComp(graph=graph, model1=Comp$Mean1, 
 #' model2=Comp$Mean2,modelR1=Comp$MeanRandom1, modelR2=Comp$MeanRandom2,
 #' measure="vi", legend=c("real data", "null model"),
 #' legend1vs2=c("Louvain", "Fast Greedy"), title1="Louvain",
 #' title2="Fast Greedy", title1vs2="Louvain vs Fast Greedy")
 #' 
-plotRobinCompare <- function(graph, model1, modelR1, model2, modelR2,
+plotRobinComp <- function(graph, model1, modelR1, model2, modelR2,
                             measure= c("vi", "nmi","split.join",
                                        "adjusted.rand"),
                             legend=c("real data", "null model"),
@@ -1473,9 +1483,10 @@ createITPSplineResult <- function(graph, model1, model2,
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' Proc <- robin(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
 #' robinGPTest(ratio=Proc$ratios)
 robinGPTest <- function(ratio)
@@ -1545,9 +1556,10 @@ robinGPTest <- function(ratio)
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' Proc <- robin(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
 #' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
 robinFDATest <- function(graph,model1,model2, 
@@ -1597,9 +1609,10 @@ robinFDATest <- function(graph,model1,model2,
 #' @export
 #'
 #' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' Proc <- robinProc(graph=graph, graphRandom=graphRandom, method="louvain",
+#' Proc <- robin(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
 #' robinAUCTest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
 robinAUC <- function(graph, model1, model2, 

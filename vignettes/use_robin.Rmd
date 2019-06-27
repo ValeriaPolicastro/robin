@@ -3,11 +3,13 @@ title: "Vignette"
 author: "Valeria Policastro - Dario Righelli"
 date: "`r Sys.Date()`"
 output:
-  html_document: 
-    toc: true
-  pdf_document: 
-    toc: true
-editor_options: 
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+editor_options:
   chunk_output_type: console
 ---
 
@@ -109,7 +111,7 @@ To make things easier we save the output list in the *proc* variable because
 to use it later.
 
 ```{r}
-proc <- robinProc(graph=graph, graphRandom=graphRandom, measure="vi", 
+proc <- robin(graph=graph, graphRandom=graphRandom, measure="vi", 
                   method="louvain", type="independent")
 ```
 
@@ -120,7 +122,7 @@ It shows on the y-axis the average of the chosen measure while on the x-axis
 the percentuage of perturbation of the real data and the null model.
 
 The *model* and *modelR* arguments are, respectively, the *MeanReal* and the 
-*MeanRandom* contained inside the *robinProc* output list.
+*MeanRandom* contained inside the **robin** output list.
 
 ```{r}
 plotRobin(graph=graph, model=proc$MeanReal, modelR=proc$MeanRandom, measure="vi")
@@ -132,7 +134,7 @@ Now we test the differeces between this two curves with:
 - Gaussian Process
 - Area Under the Curve (AUC)
 The *model1* and *model2* arguments are, respectively, the *MeanReal* and the 
-*MeanRandom* contained inside the **robinProc** output list.
+*MeanRandom* contained inside the **robin** output list.
 
 ```{r}
 robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
@@ -157,11 +159,11 @@ plotCommu(graph=graph, members=membersFast)
 plotCommu(graph=graph, members=membersLouv)
 ```
 
-Secondly, we run the **comparison** function to compare the two algorithms, 
+Secondly, we run the **robinComp** function to compare the two algorithms, 
 which, as before, we store the output in the *comp* variable to use it later.
 
 ```{r}
-comp <- comparison(graph=graph, graphRandom=graphRandom, method1="fastGreedy",
+comp <- robinComp(graph=graph, graphRandom=graphRandom, method1="fastGreedy",
                 method2="louvain", measure="vi", type="independent")
 ```
 
@@ -169,10 +171,10 @@ Thirdly, we plot the curves of each null model and real data for both
 methods and the two curves of the two methods in comparison.
 The *model1*, *model2*, *modelR1* and *modelR2* arguments are, respectively, 
 the *Mean1*, *Mean2*, *MeanRandom1* and *MeanRandom2* contained inside 
-the **comparison** output list.
+the **robinComp** output list.
 
 ```{r}
-plotRobinCompare(graph=graph, model1=comp$Mean1, model2=comp$Mean2,
+plotRobinComp(graph=graph, model1=comp$Mean1, model2=comp$Mean2,
                  modelR1=comp$MeanRandom1, modelR2=comp$MeanRandom2,
                  measure="vi",
                  legend=c("real data", "null model"),
@@ -185,7 +187,7 @@ plotRobinCompare(graph=graph, model1=comp$Mean1, model2=comp$Mean2,
 Now we test the differeces between the two curves, as we did before but for the
 comparison of the two different methods the *model1* argument must be the 
 *Mean1* and the *model2* argument must be the *Mean2* both contained inside 
-the **comparison** output list.
+the **robinComp** output list.
 
 ```{r}
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
