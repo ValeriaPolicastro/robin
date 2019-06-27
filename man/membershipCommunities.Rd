@@ -65,5 +65,7 @@ structure. The community structure are found by all functions implemented
 in igraph.
 }
 \examples{
+my_file <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_file, file.format="gml")
 membershipCommunities (graph=graph, method="louvain")
 }

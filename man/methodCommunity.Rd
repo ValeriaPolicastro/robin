@@ -69,5 +69,7 @@ This function detects the community structure of a graph.
 The community structure are found by all functions implemented in igraph.
 }
 \examples{
-methodCommunity (graph=graph, method="louvain")
+my_file <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_file, file.format="gml")
+methodCommunity (graph=graph, method="louvain") 
 }

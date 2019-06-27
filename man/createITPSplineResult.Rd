@@ -4,17 +4,21 @@
 \alias{createITPSplineResult}
 \title{createITPSplineResult}
 \usage{
-createITPSplineResult(graph, model1, model2, muParam = 0,
-  orderParam = 4, nKnots = 7, BParam = 10000, isPaired = TRUE)
+createITPSplineResult(graph, model1, model2, measure = c("vi", "nmi",
+  "split.join", "adjusted.rand"), muParam = 0, orderParam = 4,
+  nKnots = 7, BParam = 10000, isPaired = TRUE)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
 
-\item{model1}{The viMean output of the robinProc function (or the viMean1 
+\item{model1}{The Mean output of the robinProc function (or the Mean1 
 output of the comparison function).}
 
-\item{model2}{The viMeanRandom output of the robinProc function (or the 
-viMean2 output of the comparison function).}
+\item{model2}{The MeanRandom output of the robinProc function (or the 
+Mean2 output of the comparison function).}
+
+\item{measure}{The measure for the comparison of the communities "vi", "nmi",
+"split.join", "adjusted.rand".}
 
 \item{muParam}{the mu parameter for ITP2bspline (default 0).}
 

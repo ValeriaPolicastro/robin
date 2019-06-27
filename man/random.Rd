@@ -17,5 +17,7 @@ Randomly rewire the edges while preserving the original graph's
 degree distribution.
 }
 \examples{
+my_file <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 }

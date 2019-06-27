@@ -7,6 +7,7 @@
 rewireCompl(data, number, community, method = c("walktrap",
   "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
   "labelProp", "infomap", "optimal", "other"), FUN = NULL,
+  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   directed = FALSE, weights = NULL, steps = 4, spins = 25,
   e.weights = NULL, v.weights = NULL, nb.trials = 10)
 }
@@ -21,6 +22,9 @@ rewireCompl(data, number, community, method = c("walktrap",
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap".}
 
 \item{FUN}{see \code{\link{methodCommunity}}.}
+
+\item{measure}{The measure for the comparison of the communities "vi", "nmi",
+"split.join", "adjusted.rand"}
 
 \item{directed}{This argument is settable only for "edgeBetweenness" method}
 
@@ -41,5 +45,6 @@ method}
 A list object
 }
 \description{
-
+rewires the graph, creates the communities and 
+compares the communities through different measures.
 }

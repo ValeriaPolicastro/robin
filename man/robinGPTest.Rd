@@ -18,5 +18,10 @@ This function makes a test between the curves, calculating the
 Bayes factor.
 }
 \examples{
+my_file <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_file, file.format="gml")
+graphRandom <- random(graph=graph)
+Proc <- robin(graph=graph, graphRandom=graphRandom, method="louvain",
+measure="vi",type="independent")
 robinGPTest(ratio=Proc$ratios)
 }

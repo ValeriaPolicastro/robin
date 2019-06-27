@@ -12,7 +12,7 @@ prepGraph(file, file.format = c("edgelist", "pajek", "ncol", "lgl",
 \item{file}{The file to read from.}
 
 \item{file.format}{Character constant giving the file format. Right now
-as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are 
+as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are
 supported}
 
 \item{numbers}{A logical value indicating if the names of the nodes are 
@@ -24,12 +24,13 @@ the names of the variables as its first line.This argument is settable
 for the edgelist format.The default is FALSE.}
 }
 \value{
-A simplified graph as returned from the igraph::simplify.
+A graph which do not contain loop and multiple edges.
 }
 \description{
 The prepGraph function is able to read graphs from a file and 
 to prepare them for the analysis.
 }
 \examples{
-graph <- prepGraph(file=my_file, file.format="edgelist")
+my_file <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_file, file.format="gml")
 }

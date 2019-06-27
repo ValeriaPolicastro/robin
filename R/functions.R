@@ -454,8 +454,8 @@ rewireOnl <- function(data, number)
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "optimal".
 #' @param FUN see \code{\link{methodCommunity}}.
-#' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand".
+#' @param measure The stability measure "vi", "nmi", "split.join", 
+#' "adjusted.rand".
 #' @param type The type of robin costruction dependent or independent data
 #' @param weights this argument is not settable for "infomap" method.
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
@@ -794,8 +794,8 @@ robin <- function(graph, graphRandom,
 #' @param graph The output of prepGraph
 #' @param model The viMean output of the robinProc function.
 #' @param modelR The viMeanRandom output of the robinProc function.
-#' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand".
+#' @param measure The stability measure "vi", "nmi", "split.join", 
+#' "adjusted.rand".
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model").
 #'
@@ -868,8 +868,8 @@ plotRobin <- function(graph,
 #' see \code{\link{methodCommunity}}.
 #' @param FUN2 its a personal designed function when method2 is "others". 
 #' see \code{\link{methodCommunity}}.
-#' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand".
+#' @param measure The stability measure "vi", "nmi", "split.join", 
+#' "adjusted.rand".
 #' @param type The type of robin costruction dependent or independent.
 #' @param weights This argument is not settable for "infomap" method.
 #' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
@@ -1370,8 +1370,8 @@ robinComp <- function(graph,graphRandom,
 #' @param modelR1 The MeanRandom1 output of the comparison function.
 #' @param model2 The Mean2 output of the comparison function.
 #' @param modelR2 The MeanRandom2 output of the comparison function.
-#' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand".
+#' @param measure The stability measure "vi", "nmi", "split.join", 
+#' "adjusted.rand".
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model").
 #' @param legend1vs2 The legend for the two methods.
@@ -1547,6 +1547,8 @@ robinGPTest <- function(ratio)
 #' output of the comparison function).
 #' @param model2 The MeanRandom output of the robinProc function (or the 
 #' Mean2 output of the comparison function).
+#' @param measure The stability measure "vi", "nmi", "split.join", 
+#' "adjusted.rand".
 #' @param legend The legend for the graph. The default is c("real data", 
 #' "null model").
 #'
@@ -1562,7 +1564,8 @@ robinGPTest <- function(ratio)
 #' Proc <- robin(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
 #' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
-robinFDATest <- function(graph,model1,model2, 
+robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
+                        "split.join", "adjusted.rand"),
                         legend=c("real data", "null model"))
 {
     ##To do it with ggplot:
@@ -1584,7 +1587,7 @@ robinFDATest <- function(graph,model1,model2,
     # print(plot1)
    
     perc <- rep((seq(0,60,5)/100))
-    ITPresult <- createITPSplineResult(graph, model1, model2)
+    ITPresult <- createITPSplineResult(graph, model1, model2, measure)
     plot2 <- plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='perturbation', 
                 ylab="Measure")
     lines(perc, rep(0.05, 13), type="l", col="red")
@@ -1601,8 +1604,8 @@ robinFDATest <- function(graph,model1,model2,
 #' output of the comparison function).
 #' @param model2 The MeanRandom output of the robinProc function (or the 
 #' Mean2 output of the comparison function).
-#' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand".
+#' @param measure The stability measure "vi", "nmi", "split.join", 
+#' "adjusted.rand".
 #' @return A list
 #' @importFrom DescTools AUC
 #' @importFrom igraph vcount

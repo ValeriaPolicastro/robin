@@ -4,7 +4,8 @@
 \alias{plotRobin}
 \title{plotRobin}
 \usage{
-plotRobin(graph, model, modelR, legend = c("real data", "null model"))
+plotRobin(graph, model, modelR, measure = c("vi", "nmi", "split.join",
+  "adjusted.rand"), legend = c("real data", "null model"))
 }
 \arguments{
 \item{graph}{The output of prepGraph}
@@ -12,6 +13,9 @@ plotRobin(graph, model, modelR, legend = c("real data", "null model"))
 \item{model}{The viMean output of the robinProc function.}
 
 \item{modelR}{The viMeanRandom output of the robinProc function.}
+
+\item{measure}{The stability measure "vi", "nmi", "split.join", 
+"adjusted.rand".}
 
 \item{legend}{The legend for the graph. The default is c("real data", 
 "null model").}
@@ -24,6 +28,11 @@ The plot of the two VI curves, the VI of the null model and
 of the real graph.
 }
 \examples{
-plotRobin(graph=graph,model=Proc$viMean,modelR=Proc$viMeanRandom, 
-legend=c("real data", "null model"))
+my_file <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_file, file.format="gml")
+graphRandom <- random(graph=graph)
+Proc <- robin(graph=graph, graphRandom=graphRandom, method="louvain",
+type="independent")
+plotRobin(graph=graph, model=Proc$Mean, modelR=Proc$MeanRandom,
+measure="vi", legend=c("real data", "null model"))
 }

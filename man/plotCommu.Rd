@@ -7,10 +7,21 @@
 plotCommu(graph, members)
 }
 \arguments{
-\item{graph}{}
+\item{graph}{The output of prepGraph.}
 
-\item{members}{}
+\item{members}{A membership vector of the community structure, the output of
+membershipCommunities.}
+}
+\value{
+An interactive plot.
 }
 \description{
-plotCommu
+Graphical interactive representation of the network and its 
+communities
+}
+\examples{
+my_file <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_file, file.format="gml")
+members <- membershipCommunities (graph=graph, method="louvain")
+plotCommu(graph, members)
 }

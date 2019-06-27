@@ -16,5 +16,7 @@ An interactive plot.
 Graphical interactive representation of the network.
 }
 \examples{
+my_file <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_file, file.format="gml")
 plotGraph (graph)
 }
