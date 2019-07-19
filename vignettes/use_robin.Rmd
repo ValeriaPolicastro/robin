@@ -20,8 +20,10 @@ the statistical validation of the results.
 Are the detected communities significant or are they a result of chance only 
 due to the positions of edges in the network?
 
-ROBIN (Robustness In Network) gives a statistical answer to the validation of 
-the community structure by looking at the robustness of the network.
+ROBIN (Robustness In Network) is an R package for the Validation of community 
+detection it has a double aim it studies the robustness of a community 
+detection algorithm and compares the robustness of two community detection 
+algorithms.
 
 The package implements a methodology that detects if the community structure 
 found by a detection algorithm is statistically significant or is a result 
