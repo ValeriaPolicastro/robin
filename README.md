@@ -15,3 +15,6 @@ from the null model
 3)A routine to compare different detection algorithms applied to the same 
 network to discover which fits better
 4)A graphical interactive representation 
+
+
+Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.
