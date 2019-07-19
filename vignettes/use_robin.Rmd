@@ -1,0 +1,198 @@
+---
+title: "Vignette"
+author: "Valeria Policastro - Dario Righelli"
+date: "`r Sys.Date()`"
+output:
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+editor_options:
+  chunk_output_type: console
+---
+
+#Abstract
+In network analysis, many community detection algorithms have been developed. 
+However,their applications leave unaddressed one important question: 
+the statistical validation of the results. 
+Are the detected communities significant or are they a result of chance only 
+due to the positions of edges in the network?
+
+ROBIN (Robustness In Network) is an R package for the Validation of community 
+detection it has a double aim it studies the robustness of a community 
+detection algorithm and compares the robustness of two community 
+detection algorithms. 
+
+The package implements a methodology that detects if the community structure 
+found by a detection algorithm is statistically significant or is a result 
+of chance, merely due to edge positions in the network. It performs a 
+perturbation strategy and runs a null model to build a set of procedures based 
+on different stability measures. 
+
+In particular, it provides:
+1)A procedure to examine the stability of the partition recovered against random 
+perturbations of the original graph structure
+2)Three tests to determine whether the obtained clustering departs significantly 
+from the null model
+3)A routine to compare different detection algorithms applied to the same 
+network to discover which fits better
+4)A graphical interactive representation 
+
+### Install packages
+```{r}
+#install.packages("devtools")
+library(devtools)
+install_github("ValeriaPolicastro/robin",force=TRUE)
+library("robin")
+library("gprege")
+```
+
+
+# Preparation of the Graph 
+As input, the **ROBIN** package expects a network that can be read from different 
+format: edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph 
+graphs.
+
+With the **prepGraph** function we create an *igraph* object, from the selected 
+input file, needed for the ROBIN execution.
+
+```{r}
+my_file <- system.file("example/football.gml", package="robin")
+# downloaded from: http://www-personal.umich.edu/~mejn/netdata/
+graph <- prepGraph(file=my_file, file.format="gml")
+graph
+```
+
+# Random Graph 
+In such a way, we can create the Random graph (null model) that has to be used 
+for the package, the graph argument must be of the same type returned by the 
+**prepGraph** function.
+
+```{r}
+graphRandom <- random(graph=graph)
+graphRandom
+```
+
+# Plot graph
+To have a graphical representation of the network we use the **plotGraph** 
+function implemented with aid of *networkD3* package.
+
+```{r}
+plotGraph(graph)
+```
+
+# Create Community 
+To create the communities, in the package are implemented all the igraph 
+algorithms.
+
+```{r}
+methodCommunity(graph=graph, method="fastGreedy") #as community 
+membershipCommunities(graph=graph, method="fastGreedy") #as membership
+```
+
+#Community Plot
+
+It gives an interactive 3D plot of the communites for the chosen algorithm.
+
+```{r}
+members <- membershipCommunities(graph=graph, method="fastGreedy")
+plotCommu(graph=graph, members=members)
+```
+
+# Procedure to validate the robustness
+It creates the ROBIN procedure to validate the robustness of your network.
+In this example we used the "vi" distance as a stability measure and the louvain 
+algorithm as a community detection algorithm, but users can choose different 
+measures ("nmi","split.join", "adjusted.rand") and algorithms (walktrap", 
+"edgeBetweenness", "fastGreedy", "spinglass", "leadingEigen", "labelProp", 
+"infomap", "optimal", "other") implemented in the package.
+To make things easier we save the output list in the *proc* variable because 
+to use it later.
+
+```{r}
+proc <- robin(graph=graph, graphRandom=graphRandom, measure="vi", 
+                  method="louvain", type="independent")
+```
+
+# Robin Plots
+Now in order to compare the obtained curves from the Procedure we can make a 
+plot with the **plotRobin** function.
+It shows on the y-axis the average of the chosen measure while on the x-axis 
+the percentuage of perturbation of the real data and the null model.
+
+The *model* and *modelR* arguments are, respectively, the *MeanReal* and the 
+*MeanRandom* contained inside the **robin** output list.
+
+```{r}
+plotRobin(graph=graph, model=proc$MeanReal, modelR=proc$MeanRandom, measure="vi")
+```
+
+# Statistical Tests between Real data and Null model 
+Now we test the differeces between this two curves with:
+- Functional data analysis
+- Gaussian Process
+- Area Under the Curve (AUC)
+The *model1* and *model2* arguments are, respectively, the *MeanReal* and the 
+*MeanRandom* contained inside the **robin** output list.
+
+```{r}
+robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
+             measure="vi")
+robinGPTest(ratio=proc$ratios)
+robinAUC(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
+             measure="vi")
+```
+
+# Comparison Two different Methods
+Now we want to see which algorithm (between two of them) better detects the 
+communities.
+For example if we take the *Fast Greedy* and *Louvain* algorithms, 
+we want to check which one better fits our network.
+We firstly plot them with their different communities to have an idea of 
+the network of interest.
+
+```{r}
+membersFast <- membershipCommunities(graph=graph, method="fastGreedy")
+membersLouv <- membershipCommunities(graph=graph, method="louvain")
+plotCommu(graph=graph, members=membersFast)
+plotCommu(graph=graph, members=membersLouv)
+```
+
+Secondly, we run the **robinComp** function to compare the two algorithms, 
+which, as before, we store the output in the *comp* variable to use it later.
+
+```{r}
+comp <- robinComp(graph=graph, graphRandom=graphRandom, method1="fastGreedy",
+                method2="louvain", measure="vi", type="independent")
+```
+
+Thirdly, we plot the curves of each null model and real data for both
+methods and the two curves of the two methods in comparison.
+The *model1*, *model2*, *modelR1* and *modelR2* arguments are, respectively, 
+the *Mean1*, *Mean2*, *MeanRandom1* and *MeanRandom2* contained inside 
+the **robinComp** output list.
+
+```{r}
+plotRobinComp(graph=graph, model1=comp$Mean1, model2=comp$Mean2,
+                 modelR1=comp$MeanRandom1, modelR2=comp$MeanRandom2,
+                 measure="vi",
+                 legend=c("real data", "null model"),
+                 legend1vs2=c("Fast Greedy","Louvain"),
+                 title1="Fast Greedy", title2="Louvain",
+                 title1vs2="Fast Greedy vs Louvain")
+```
+
+# Statistical Tests between two community detection algorithms
+Now we test the differeces between the two curves, as we did before but for the
+comparison of the two different methods the *model1* argument must be the 
+*Mean1* and the *model2* argument must be the *Mean2* both contained inside 
+the **robinComp** output list.
+
+```{r}
+robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
+robinGPTest(ratio=comp$ratios1vs2)
+robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
+```
+
