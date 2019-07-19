@@ -809,7 +809,7 @@ robin <- function(graph, graphRandom,
 #' graphRandom <- random(graph=graph)
 #' Proc <- robin(graph=graph, graphRandom=graphRandom, method="louvain",
 #' type="independent")
-#' plotRobin(graph=graph, model=Proc$Mean, modelR=Proc$MeanRandom,
+#' plotRobin(graph=graph, model=Proc$MeanReal, modelR=Proc$MeanRandom,
 #' measure="vi", legend=c("real data", "null model"))
 plotRobin <- function(graph,
                       model,

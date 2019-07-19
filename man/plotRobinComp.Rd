@@ -43,7 +43,7 @@ Method2".}
 A ggplot object in a grid format.
 }
 \description{
-plotRobinComp
+Plot to compare algorithms.
 }
 \examples{
 my_file <- system.file("example/football.gml", package="robin")

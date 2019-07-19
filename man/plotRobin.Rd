@@ -24,7 +24,7 @@ plotRobin(graph, model, modelR, measure = c("vi", "nmi", "split.join",
 A ggplot object.
 }
 \description{
-The plot of the two VI curves, the VI of the null model and 
+The plot of the two curves, the measures of the null model and 
 of the real graph.
 }
 \examples{
@@ -33,6 +33,6 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robin(graph=graph, graphRandom=graphRandom, method="louvain",
 type="independent")
-plotRobin(graph=graph, model=Proc$Mean, modelR=Proc$MeanRandom,
+plotRobin(graph=graph, model=Proc$MeanReal, modelR=Proc$MeanRandom,
 measure="vi", legend=c("real data", "null model"))
 }
