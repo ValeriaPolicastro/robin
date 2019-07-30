@@ -3,11 +3,11 @@ title: "Vignette"
 author: "Valeria Policastro - Dario Righelli"
 date: "`r Sys.Date()`"
 output:
+  word_document:
+    toc: yes
   html_document:
     toc: yes
   pdf_document:
-    toc: yes
-  word_document:
     toc: yes
 editor_options:
   chunk_output_type: console
@@ -107,8 +107,8 @@ type of procedure and the louvain algorithm as a community detection algorithm,
 but users can choose different measures ("nmi","split.join", "adjusted.rand") and 
 algorithms (walktrap", "edgeBetweenness", "fastGreedy", "spinglass", "leadingEigen",
 "labelProp", "infomap", "optimal", "other") implemented in the package.
-To make things easier we save the output list in the *proc* variable because 
-to use it later.
+To make things easier we save the output list in the *proc* variable to use it 
+later.
 
 ```{r}
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
