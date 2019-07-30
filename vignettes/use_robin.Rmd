@@ -22,8 +22,7 @@ due to the positions of edges in the network?
 
 ROBIN (Robustness In Network) is an R package for the Validation of community 
 detection it has a double aim it studies the robustness of a community 
-detection algorithm and compares the robustness of two community 
-detection algorithms. 
+detection algorithm and compares the robustness of two community algorithms. 
 
 The package implements a methodology that detects if the community structure 
 found by a detection algorithm is statistically significant or is a result 
@@ -98,7 +97,7 @@ It gives an interactive 3D plot of the communites for the chosen algorithm.
 
 ```{r}
 members <- membershipCommunities(graph=graph, method="fastGreedy")
-plotCommu(graph=graph, members=members)
+plotComm(graph=graph, members=members)
 ```
 
 # Procedure to validate the robustness
@@ -112,7 +111,7 @@ To make things easier we save the output list in the *proc* variable because
 to use it later.
 
 ```{r}
-proc <- robin(graph=graph, graphRandom=graphRandom, measure="vi", 
+proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
                   method="louvain", type="independent")
 ```
 
@@ -122,11 +121,12 @@ plot with the **plotRobin** function.
 It shows on the y-axis the average of the chosen measure while on the x-axis 
 the percentuage of perturbation of the real data and the null model.
 
-The *model* and *modelR* arguments are, respectively, the *MeanReal* and the 
-*MeanRandom* contained inside the **robin** output list.
+The *model1* and *model2* arguments are, respectively, the *MeanReal* and the 
+*MeanRandom* contained inside the **robinRobust** output list or the *Mean1* and the 
+*Mean2* contained inside the **robinCompare** output list.
 
 ```{r}
-plotRobin(graph=graph, model=proc$MeanReal, modelR=proc$MeanRandom, measure="vi")
+plotRobin(graph=graph, model1=proc$MeanReal, model2=proc$MeanRandom, legend=c("real data", "null model"), measure="vi")
 ```
 
 # Statistical Tests between Real data and Null model 
@@ -156,39 +156,31 @@ the network of interest.
 ```{r}
 membersFast <- membershipCommunities(graph=graph, method="fastGreedy")
 membersLouv <- membershipCommunities(graph=graph, method="louvain")
-plotCommu(graph=graph, members=membersFast)
-plotCommu(graph=graph, members=membersLouv)
+plotComm(graph=graph, members=membersFast)
+plotComm(graph=graph, members=membersLouv)
 ```
 
-Secondly, we run the **robinComp** function to compare the two algorithms, 
+Secondly, we run the **robinCompare** function to compare the two algorithms, 
 which, as before, we store the output in the *comp* variable to use it later.
 
 ```{r}
-comp <- robinComp(graph=graph, graphRandom=graphRandom, method1="fastGreedy",
+comp <- robinCompare(graph=graph, method1="fastGreedy",
                 method2="louvain", measure="vi", type="independent")
 ```
 
-Thirdly, we plot the curves of each null model and real data for both
-methods and the two curves of the two methods in comparison.
-The *model1*, *model2*, *modelR1* and *modelR2* arguments are, respectively, 
-the *Mean1*, *Mean2*, *MeanRandom1* and *MeanRandom2* contained inside 
-the **robinComp** output list.
+Thirdly, we plot the two curves of the two methods in comparison.
+The *model1*, *model2* arguments are, respectively, 
+the *Mean1*, *Mean2* contained inside the **robinCompare** output list.
 
 ```{r}
-plotRobinComp(graph=graph, model1=comp$Mean1, model2=comp$Mean2,
-                 modelR1=comp$MeanRandom1, modelR2=comp$MeanRandom2,
-                 measure="vi",
-                 legend=c("real data", "null model"),
-                 legend1vs2=c("Fast Greedy","Louvain"),
-                 title1="Fast Greedy", title2="Louvain",
-                 title1vs2="Fast Greedy vs Louvain")
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 ```
 
 # Statistical Tests between two community detection algorithms
 Now we test the differeces between the two curves, as we did before but for the
 comparison of the two different methods the *model1* argument must be the 
 *Mean1* and the *model2* argument must be the *Mean2* both contained inside 
-the **robinComp** output list.
+the **robinCompare** output list.
 
 ```{r}
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
