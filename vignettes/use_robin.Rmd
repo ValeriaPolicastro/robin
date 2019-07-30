@@ -3,11 +3,11 @@ title: "Vignette"
 author: "Valeria Policastro - Dario Righelli"
 date: "`r Sys.Date()`"
 output:
-  word_document:
+  html_document:
     toc: yes
   pdf_document:
     toc: yes
-  html_document:
+  word_document:
     toc: yes
 editor_options:
   chunk_output_type: console
