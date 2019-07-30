@@ -776,7 +776,7 @@ robinRobust <- function(graph, graphRandom,
     
     output <- list( measureReal=measureReal,
                     measureRandom=measureRandom,
-                    MeanReal=Mean,
+                    Mean=Mean,
                     MeanRandom=MeanRandom,
                     ratios=res
                     )
