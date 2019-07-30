@@ -121,11 +121,11 @@ plot with the **plotRobin** function.
 It shows on the y-axis the average of the chosen measure while on the x-axis 
 the percentuage of perturbation of the real data and the null model.
 
-The *model1* and *model2* arguments are, respectively, the *MeanReal* and the 
+The *model1* and *model2* arguments are, respectively, the *Mean* and the 
 *MeanRandom* contained inside the **robinRobust** output list.
 
 ```{r}
-plotRobin(graph=graph, model1=proc$MeanReal, model2=proc$MeanRandom, 
+plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
 legend=c("real data", "null model"), measure="vi")
 ```
 
@@ -134,7 +134,7 @@ Now we test the differeces between this two curves with:
 - Functional data analysis
 - Gaussian Process
 - Area Under the Curve (AUC)
-The *model1* and *model2* arguments are, respectively, the *MeanReal* and the 
+The *model1* and *model2* arguments are, respectively, the *Mean* and the 
 *MeanRandom* contained inside the **robinRobust** output list.
 
 ```{r}
