@@ -5,7 +5,7 @@ Authors@R: c(
     person("Valeria", "Policastro", role=c("aut", "cre"), email="valeria.policastro@gmail.com"),
     person("Dario", "Righelli", role=c("aut"), email="dario.righelli@gmail.com"),
     person("Luisa", "Cutillo", role=c("aut"), email="l.cutillo@leeds.ac.uk"),
-    person("Italia", "De Feis", role=c("aut"), email="l.defeos@na.iac.cnr.it"),
+    person("Italia", "De Feis", role=c("aut"), email="l.defeis@na.iac.cnr.it"),
     person("Annamaria", "Carissimo", role=c("aut"), email="a.carissimo@na.iac.cnr.it"))
 Maintainer: Valeria Policastro <valeria.policastro@gmail.com>
 Description: 
