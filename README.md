@@ -21,15 +21,11 @@ network to discover which fits better
 # Example 1: "Robustness of a community detection"
 ```{r}
 graph <- prepGraph(file=my_network, file.format="gml")
-
 graphRandom <- random(graph=graph)
-
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
-                  method="louvain", type="independent")
-                  
+                  method="louvain", type="independent")                  
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
 legend=c("real data", "null model"), measure="vi")
-
 robinGPTest(ratio=proc$ratios)
 ```
 
