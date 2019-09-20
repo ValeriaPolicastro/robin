@@ -18,6 +18,7 @@ network to discover which fits better
 
 
 Example 1: "Robustness of a community detection"
+
 graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
@@ -36,7 +37,6 @@ plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi",
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 
 
-a
 
 
 Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.
