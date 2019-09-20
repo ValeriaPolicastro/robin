@@ -1,0 +1,239 @@
+---
+title: "Figure Paper"
+author: "Valeria Policastro"
+date: "20 settembre 2019"
+output:
+  pdf_document: default
+  word_document: default
+---
+#Fig.3 Plot of the two curves for the robustness
+```{r}
+library("cowplot")
+library("robin")
+library("gprege")
+my_file <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_file, file.format="gml")
+graphRandom <- random(graph=graph)
+proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
+                  method="louvain", type="independent")
+plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
+legend=c("real data", "null model"), measure="vi")
+
+```
+
+#Fig.4 Plot for the comparison of the two algorithms 
+```{r}
+comp <- robinCompare(graph=graph, method1="fastGreedy",
+                method2="louvain", measure="vi", type="independent")
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
+legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
+```
+
+#Fig.5 Functional Data Analysis Test
+```{r}
+robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
+```
+
+#Fig.6 VI measure for all algorithms
+```{r}
+#1
+comp <- robinCompare(graph=graph, method1="louvain",
+                method2="fastGreedy", measure="vi", type="independent")
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
+legend=c("louvain", "fastGreedy"), title="Louvain vs FastGreedy")
+#2
+comp <- robinCompare(graph=graph, method1="louvain",
+                method2="walktrap", measure="vi", type="independent")
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
+legend=c("louvain", "walktrap"), title="Louvain vs Walktrap")
+#3
+comp <- robinCompare(graph=graph, method1="louvain",
+                method2="labelProp", measure="vi", type="independent")
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
+legend=c("louvain", "labelProp"), title="Louvain vs LabelProp")
+#4
+comp <- robinCompare(graph=graph, method1="louvain",
+                method2="leadingEigen", measure="vi", type="independent")
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
+legend=c("louvain", "leadingEigen"), title="Louvain vs LeadingEigen")
+#5
+comp <- robinCompare(graph=graph, method1="louvain",
+                method2="infomap", measure="vi", type="independent")
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
+legend=c("louvain", "infomap"), title="Louvain vs Infomap")
+#6
+comp <- robinCompare(graph=graph, method1="louvain",
+                method2="edgeBetweenness", measure="vi", type="independent")
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
+legend=c("louvain", "edgeBetweenness"), title="Louvain vs EdgeBetweenness")
+#7
+comp <- robinCompare(graph=graph, method1="louvain",
+                method2="spinglass", measure="vi", type="independent")
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
+legend=c("louvain", "spinglass"), title="Louvain vs Spinglass")
+
+```
+
+#Fig.7 Different Measures with simulated data (algorithm louvain) 
+```{r}
+setwd("/media/vpoli/MYFILES/CNR Tigem/Tutto per ROBIN/Dati/dati simulati")
+list.filenames<-list.files(pattern=".edgelist")
+BayesFactorVI<-NULL
+BayesFactorNMI<-NULL
+BayesFactorsplitjoin<-NULL
+BayesFactoradjrand<-NULL
+for (i in 1:length(list.filenames))
+{
+file<-list.filenames[i]
+graph<-prepGraph(file, file.format ="edgelist",numbers = TRUE)
+graph
+
+graphRandom <- random(graph)
+graphRandom
+
+#VI
+Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="louvain",
+                       type="independent",measure = "vi")
+BF<-robinGPTest(ratio=Proc$ratios)
+df<-data.frame(file,BF)
+BayesFactorVI<-rbind(BayesFactorVI,df)
+
+
+#NMI
+Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="louvain",
+                 type="independent",measure = "nmi")
+BF<-robinGPTest(ratio=Proc$ratios)
+df<-data.frame(file,BF)
+BayesFactorNMI<-rbind(BayesFactorNMI,df)
+
+#split-join
+Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="louvain",
+                 type="independent",measure = "split.join")
+BF<-robinGPTest(ratio=Proc$ratios)
+df<-data.frame(file,BF)
+BayesFactorsplitjoin<-rbind(BayesFactorsplitjoin,df)
+
+#adj rand
+Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="louvain",
+                 type="independent",measure = "adjusted.rand")
+BF<-robinGPTest(ratio=Proc$ratios)
+df<-data.frame(file,BF)
+BayesFactoradjrand<-rbind(BayesFactoradjrand,df)
+
+}
+write.csv(BayesFactorVI,file="BayesFactorVSModularityVI.csv")
+write.csv(BayesFactorNMI,file="BayesFactorVSModularityNMI.csv")
+write.csv(BayesFactoradjrand,file="BayesFactorVSModularityadjrand.csv")
+write.csv(BayesFactorsplitjoin,file="BayesFactorVSModularitysplitjoin.csv")
+
+
+####VI
+BayesFactorVSModularity <- read.csv("BayesFactorVSModularityVI.csv")
+head(BayesFactorVSModularity)
+x<-seq(0,0.8,0.025)
+df<-data.frame(BayesFactorVSModularity$BF,x)
+ggplot(data=df, aes(x=x, y=BayesFactorVSModularity$BF, group=1)) +
+    geom_line(color="dark blue")+
+    geom_point(color="dark blue")+
+    xlab("Modularity") +
+    ylab("BayesFactor") +
+    ggtitle("VI")
+
+
+###NMI
+BayesFactorVSModularityNMI <- read.csv("BayesFactorVSModularityNMI.csv")
+df<-data.frame(BayesFactorVSModularityNMI$BF,x)
+
+ggplot(data=df, aes(x=x, y=BayesFactorVSModularityNMI$BF, group=1)) +
+    geom_line(color="dark blue")+
+    geom_point(color="dark blue")+
+     xlab("Modularity") +
+    ylab("BayesFactor") +
+    ggtitle("NMI")
+
+
+
+###Adj rand 
+BayesFactorVSModularityadjrand <- read.csv("BayesFactorVSModularityadjrand.csv")
+
+df<-data.frame(BayesFactorVSModularityadjrand$BF,x)
+ggplot(data=df, aes(x=x, y=BayesFactorVSModularityadjrand$BF, group=1)) +
+    geom_line(color="dark blue")+
+    geom_point(color="dark blue")+
+    xlab("Modularity") +
+    ylab("BayesFactor") +
+    ggtitle("Adjusted Rand Index")
+
+
+####split join
+BayesFactorVSModularitysplitjoin <- read.csv("BayesFactorVSModularitysplitjoin.csv")
+
+df<-data.frame(BayesFactorVSModularitysplitjoin$BF,x)
+ggplot(data=df, aes(x=x, y=BayesFactorVSModularitysplitjoin$BF, group=1)) +
+    geom_line(color="dark blue")+
+    geom_point(color="dark blue")+
+    xlab("Modularity") +
+    ylab("BayesFactor") +
+    ggtitle("Split-join")
+
+```
+
+#Fig.8 Dependent vs Independent type
+```{r}
+#1
+setwd("/media/vpoli/MYFILES/CNR Tigem/Tutto per ROBIN/Dati/dati simulati")
+list.filenames<-list.files(pattern=".edgelist")
+BayesFactor<-NULL
+for (i in 1:length(list.filenames))
+{
+file <- list.filenames[i]
+graph <- prepGraph(file, header=FALSE) 
+graphRandom <- random(graph)
+Proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
+                  method="louvain", type="independent")
+
+BF<-robinGPTest(ratio=Proc$ratios)
+df<-data.frame(file,BF)
+BayesFactor<-rbind(BayesFactor,df)
+}
+write.csv(BayesFactor,file="BayesFactorVSModularityIndependentLouvain.csv")
+
+BayesFactorVSModularity <- read.csv("BayesFactorVSModularityIndependentLouvain.csv")
+x<-seq(0,0.8,0.025)
+df<-data.frame(BayesFactorVSModularity,x)
+ggplot(data=df, aes(x=x, y=BF, group=1)) +
+    geom_line(color="dark blue")+
+    xlab("Modularity") +
+    ylab("BayesFactor") +
+    ggtitle("Independent")
+
+#2
+setwd("/media/vpoli/MYFILES/CNR Tigem/Tutto per ROBIN/Dati/dati simulati")
+list.filenames<-list.files(pattern=".edgelist")
+BayesFactor<-NULL
+for (i in 1:length(list.filenames))
+{
+file <- list.filenames[i]
+graph <- prepGraph(file, header=FALSE) 
+graphRandom <- random(graph)
+Proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
+                  method="louvain", type="dependent")
+
+BF<-robinGPTest(ratio=Proc$ratios)
+df<-data.frame(file,BF)
+BayesFactor<-rbind(BayesFactor,df)
+}
+write.csv(BayesFactor,file="BayesFactorVSModularityDependentLouvain.csv")
+
+BayesFactorVSModularity <- read.csv("BayesFactorVSModularityDependentLouvain.csv")
+x<-seq(0,0.8,0.025)
+df<-data.frame(BayesFactorVSModularity,x)
+ggplot(data=df, aes(x=x, y=BF, group=1)) +
+    geom_line(color="dark blue")+
+    xlab("Modularity") +
+    ylab("BayesFactor") +
+    ggtitle("Dependent")
+
+```
+
+

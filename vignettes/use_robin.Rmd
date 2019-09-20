@@ -1,16 +1,13 @@
 ---
-title: "Vignette"
+
+title: "Vignette robin"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette robin}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 author: "Valeria Policastro - Dario Righelli"
-date: "`r Sys.Date()`"
-output:
-  html_document:
-    toc: yes
-  word_document:
-    toc: yes
-  pdf_document:
-    toc: yes
-editor_options:
-  chunk_output_type: console
+
 ---
 
 #Abstract
@@ -39,8 +36,8 @@ from the null model
 network to discover which fits better
 4)A graphical interactive representation 
 
-### Install packages
-```{r}
+# Install packages
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 #install.packages("devtools")
 library(devtools)
 install_github("ValeriaPolicastro/robin",force=TRUE)
@@ -58,9 +55,9 @@ With the **prepGraph** function we create an *igraph* object, from the selected
 input file, needed for the ROBIN execution.
 
 ```{r}
-my_file <- system.file("example/football.gml", package="robin")
+my_network <- system.file("example/football.gml", package="robin")
 # downloaded from: http://www-personal.umich.edu/~mejn/netdata/
-graph <- prepGraph(file=my_file, file.format="gml")
+graph <- prepGraph(file=my_network, file.format="gml")
 graph
 ```
 
@@ -91,7 +88,7 @@ methodCommunity(graph=graph, method="fastGreedy") #as community
 membershipCommunities(graph=graph, method="fastGreedy") #as membership
 ```
 
-#Community Plot
+# Community Plot
 
 It gives an interactive 3D plot of the communites for the chosen algorithm.
 
