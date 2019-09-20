@@ -18,18 +18,22 @@ network to discover which fits better
 
 
 
-# Example 1: "Robustness of a community detection"
+## Example 1: "Robustness of a community detection"
 ```{r}
 graph <- prepGraph(file=my_network, file.format="gml")
+
 graphRandom <- random(graph=graph)
+
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
-                  method="louvain", type="independent")                  
+                  method="louvain", type="independent")
+                  
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
 legend=c("real data", "null model"), measure="vi")
+
 robinGPTest(ratio=proc$ratios)
 ```
 
-# Example 2: "Comparison of two community detection"
+## Example 2: "Comparison of two community detection"
 ```{r}
 graph <- prepGraph(file=my_network, file.format="gml")
 
@@ -39,6 +43,6 @@ comp <- robinCompare(graph=graph, method1="fastGreedy",
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 ```
+## License
+[Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.](https://github.com/ValeriaPolicastro/robin/blob/master/LICENCE)
 
-
-Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.
