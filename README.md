@@ -43,7 +43,6 @@ comp <- robinCompare(graph=graph, method1="fastGreedy",
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 
-s
 
 
 
