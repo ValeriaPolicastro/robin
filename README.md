@@ -18,7 +18,7 @@ network to discover which fits better
 
 
 
-Example 1: "Robustness of a community detection"
+## Example 1: "Robustness of a community detection"
 
 graph <- prepGraph(file=my_network, file.format="gml")
 
@@ -36,7 +36,11 @@ robinGPTest(ratio=proc$ratios)
 
 
 
-Example 2: "Comparison of two community detection"
+
+
+
+
+## Example 2: "Comparison of two community detection"
 
 graph <- prepGraph(file=my_network, file.format="gml")
 
