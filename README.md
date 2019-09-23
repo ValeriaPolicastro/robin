@@ -39,6 +39,7 @@ comp <- robinCompare(graph=graph, method1="fastGreedy",
                 method2="louvain", measure="vi", type="independent")                
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
+robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 ```
 <img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-34-23.png" width="400" height="250" />
 
