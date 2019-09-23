@@ -33,7 +33,7 @@ robinGPTest(ratio=proc$ratios)
 ```
 <img class="aligncenter size-full wp-image-8747" alt="markdown" src="http://www.maffucci.it/wp-content/uploads/2013/08/markdown.jpg" width="640" height="108" />
 
-<img class="Figure_Paper_files/figure-latex/unnamed-chunk-1-1" src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf" width="640" height="108" />
+<img src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf" width="640" height="108" />
 
 
 
