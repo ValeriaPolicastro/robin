@@ -1,6 +1,8 @@
 # robin
 
-ROBIN (Robustness In Network) is an R package for the Validation of community detection it has a double aim it studies the robustness of a community detection algorithm and compares the robustness of two community detection algorithms. 
+
+
+*ROBIN (Robustness In Network)* is an R package for the Validation of community detection it has a double aim it studies the robustness of a community detection algorithm and compares the robustness of two community detection algorithms. 
 
 The package implements a methodology that detects if the community structure 
 found by a detection algorithm is statistically significant or is a result 
@@ -29,6 +31,9 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
+
+![Image of RObin Plot](https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf)
+
 ##### Example 2: "Comparison of two community detection"
 ```{r}
 graph <- prepGraph(file=my_network, file.format="gml")
