@@ -18,7 +18,7 @@ network to discover which fits better
 * A graphical interactive representation
 
 
-##### Example 1: "Robustness of a community detection"
+## Example 1: "Robustness of a community detection"
 ```{r}
 graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
@@ -32,7 +32,7 @@ robinGPTest(ratio=proc$ratios)
 <img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="300" height="250" />
 
 
-##### Example 2: "Comparison of two community detection"
+## Example 2: "Comparison of two community detection"
 ```{r}
 graph <- prepGraph(file=my_network, file.format="gml")
 comp <- robinCompare(graph=graph, method1="fastGreedy",
