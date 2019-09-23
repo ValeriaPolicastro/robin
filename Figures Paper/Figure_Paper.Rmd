@@ -16,7 +16,7 @@ graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
                   method="louvain", type="independent")
-jpeg("PlotRobin", width = 350, height = "350")
+jpeg(file= "PlotRobin.jpeg")
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
 legend=c("real data", "null model"), measure="vi")
 dev.off()
@@ -26,13 +26,17 @@ dev.off()
 ```{r}
 comp <- robinCompare(graph=graph, method1="fastGreedy",
                 method2="louvain", measure="vi", type="independent")
+jpeg(file= "PlotCompare.jpeg")
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
+dev.off()
 ```
 
 #Fig.5 Functional Data Analysis Test
 ```{r}
+jpeg(file= "FDA.jpeg")
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
+dev.off()
 ```
 
 #Fig.6 VI measure for all algorithms
@@ -40,38 +44,52 @@ robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 #1
 comp <- robinCompare(graph=graph, method1="louvain",
                 method2="fastGreedy", measure="vi", type="independent")
+jpeg(file= "PlotFastGreedy.jpeg")
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("louvain", "fastGreedy"), title="Louvain vs FastGreedy")
+dev.off()
 #2
 comp <- robinCompare(graph=graph, method1="louvain",
                 method2="walktrap", measure="vi", type="independent")
+jpeg(file= "PlotWalktrap.jpeg")
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("louvain", "walktrap"), title="Louvain vs Walktrap")
+dev.off()
 #3
 comp <- robinCompare(graph=graph, method1="louvain",
                 method2="labelProp", measure="vi", type="independent")
+jpeg(file= "PlotLabelProp.jpeg")
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("louvain", "labelProp"), title="Louvain vs LabelProp")
+dev.off()
 #4
 comp <- robinCompare(graph=graph, method1="louvain",
                 method2="leadingEigen", measure="vi", type="independent")
+jpeg(file= "PlotLeadingEigen.jpeg")
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("louvain", "leadingEigen"), title="Louvain vs LeadingEigen")
+dev.off()
 #5
 comp <- robinCompare(graph=graph, method1="louvain",
                 method2="infomap", measure="vi", type="independent")
+jpeg(file= "PlotInfomap.jpeg")
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("louvain", "infomap"), title="Louvain vs Infomap")
+dev.off()
 #6
 comp <- robinCompare(graph=graph, method1="louvain",
                 method2="edgeBetweenness", measure="vi", type="independent")
+jpeg(file= "PlotEdgeBetwenness.jpeg")
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("louvain", "edgeBetweenness"), title="Louvain vs EdgeBetweenness")
+dev.off()
 #7
 comp <- robinCompare(graph=graph, method1="louvain",
                 method2="spinglass", measure="vi", type="independent")
+jpeg(file= "PlotSpinglass.jpeg")
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("louvain", "spinglass"), title="Louvain vs Spinglass")
+dev.off()
 
 ```
 
