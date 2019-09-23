@@ -29,7 +29,7 @@ legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
 
-<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="300" height="250" />
+<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="400" height="250" />
 
 
 ## Example 2: "Comparison of two community detection"
@@ -40,7 +40,7 @@ comp <- robinCompare(graph=graph, method1="fastGreedy",
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 ```
-<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-34-23.png" width="300" height="250" />
+<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-34-23.png" width="400" height="250" />
 
 ## License
 [Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.](https://github.com/ValeriaPolicastro/robin/blob/master/LICENCE)
