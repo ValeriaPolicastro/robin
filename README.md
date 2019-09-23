@@ -1,11 +1,10 @@
 # robin <img align= "right" src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2016-15-54.png" width="100" height="100" /> 
----------
+
 **_ROBIN (Robustness In Network)_** is an R package for the Validation of community detection it has a double aim it studies the robustness of a community detection algorithm and compares the robustness of two community detection algorithms. 
 
 <p align="center">
   <img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-50-52.png" width="500" height="300" />
 </p>
-
 
 
 The package implements a methodology that detects if the community structure 
@@ -20,7 +19,7 @@ from the null model
 * A routine to compare different detection algorithms applied to the same 
 network to discover which fits better
 * A graphical interactive representation
-
+---------------
 
 ## Example 1: "Robustness of a community detection"
 ```{r}
