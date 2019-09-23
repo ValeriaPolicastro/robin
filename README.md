@@ -1,5 +1,4 @@
-# robin                        <img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2016-15-54.png" width="100" height="100" /> 
-------------
+# robin <img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2016-15-54.png" width="100" height="100" align= "right"/> 
 
 **_ROBIN (Robustness In Network)_** is an R package for the Validation of community detection it has a double aim it studies the robustness of a community detection algorithm and compares the robustness of two community detection algorithms. 
 
@@ -30,7 +29,7 @@ legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
 
-<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="400" height="250" />
+<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="400" height="250" align="middle" />
 
 
 ## Example 2: "Comparison of two community detection"
@@ -42,7 +41,7 @@ plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi",
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 ```
-<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-34-23.png" width="400" height="250" />
+<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-34-23.png" width="400" height="250" align="middle" />
 
 ## License
 [Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.](https://github.com/ValeriaPolicastro/robin/blob/master/LICENCE)
