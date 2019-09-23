@@ -1,4 +1,5 @@
 # robin
+------------
 <img src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf" title="RobinPlot" alt="RobinPlot"></a>
 
 <!-- [!["RobinPlot"]("https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf")]-->
@@ -30,12 +31,10 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
-![Immagine di Yaktocat](https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png)
+![RobinPlot](https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png)
 </pre>
 
-![RobinPlot]("https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf")
-
-<img src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf"/>
+<img class="aligncenter size-full wp-image-8747" alt="markdown" src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="640" height="108" />
 
 
 ##### Example 2: "Comparison of two community detection"
