@@ -16,9 +16,10 @@ graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
                   method="louvain", type="independent")
+jpeg("PlotRobin", width = 350, height = "350")
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
 legend=c("real data", "null model"), measure="vi")
-
+dev.off()
 ```
 
 #Fig.4 Plot for the comparison of the two algorithms 
@@ -76,7 +77,6 @@ legend=c("louvain", "spinglass"), title="Louvain vs Spinglass")
 
 #Fig.7 Different Measures with simulated data (algorithm louvain) 
 ```{r}
-setwd("simulated data")
 list.filenames<-list.files(pattern=".edgelist")
 BayesFactorVI<-NULL
 BayesFactorNMI<-NULL
@@ -121,18 +121,12 @@ df<-data.frame(file,BF)
 BayesFactoradjrand<-rbind(BayesFactoradjrand,df)
 
 }
-write.csv(BayesFactorVI,file="BayesFactorVSModularityVI.csv")
-write.csv(BayesFactorNMI,file="BayesFactorVSModularityNMI.csv")
-write.csv(BayesFactoradjrand,file="BayesFactorVSModularityadjrand.csv")
-write.csv(BayesFactorsplitjoin,file="BayesFactorVSModularitysplitjoin.csv")
 
-library(readr)
-####VI
-BayesFactorVSModularityVI <- read_csv("BayesFactorVSModularityVI.csv")
-head(BayesFactorVSModularity)
 x<-seq(0,0.8,0.025)
-df<-data.frame(BayesFactorVSModularityVI$BF,x)
-ggplot(data=df, aes(x=x, y=BayesFactorVSModularityVI$BF, group=1)) +
+
+####VI
+dfVI<-data.frame(BayesFactorVI$BF,x)
+ggplot(data=dfVI, aes(x=x, y=BayesFactorVI$BF, group=1)) +
     geom_line(color="dark blue")+
     geom_point(color="dark blue")+
     xlab("Modularity") +
@@ -141,10 +135,8 @@ ggplot(data=df, aes(x=x, y=BayesFactorVSModularityVI$BF, group=1)) +
 
 
 ###NMI
-BayesFactorVSModularityNMI <- read.csv("BayesFactorVSModularityNMI.csv")
-df<-data.frame(BayesFactorVSModularityNMI$BF,x)
-
-ggplot(data=df, aes(x=x, y=BayesFactorVSModularityNMI$BF, group=1)) +
+dfNMI<-data.frame(BayesFactorNMI$BF,x)
+ggplot(data=dfNMI, aes(x=x, y=BayesFactorNMI$BF, group=1)) +
     geom_line(color="dark blue")+
     geom_point(color="dark blue")+
      xlab("Modularity") +
@@ -154,10 +146,8 @@ ggplot(data=df, aes(x=x, y=BayesFactorVSModularityNMI$BF, group=1)) +
 
 
 ###Adj rand 
-BayesFactorVSModularityadjrand <- read.csv("BayesFactorVSModularityadjrand.csv")
-
-df<-data.frame(BayesFactorVSModularityadjrand$BF,x)
-ggplot(data=df, aes(x=x, y=BayesFactorVSModularityadjrand$BF, group=1)) +
+dfAdj<-data.frame(BayesFactoradjrand$BF,x)
+ggplot(data=dfAdj, aes(x=x, y=BayesFactoradjrand$BF, group=1)) +
     geom_line(color="dark blue")+
     geom_point(color="dark blue")+
     xlab("Modularity") +
@@ -166,10 +156,8 @@ ggplot(data=df, aes(x=x, y=BayesFactorVSModularityadjrand$BF, group=1)) +
 
 
 ####split join
-BayesFactorVSModularitysplitjoin <- read.csv("BayesFactorVSModularitysplitjoin.csv")
-
-df<-data.frame(BayesFactorVSModularitysplitjoin$BF,x)
-ggplot(data=df, aes(x=x, y=BayesFactorVSModularitysplitjoin$BF, group=1)) +
+dfsplit<-data.frame(BayesFactorVSModularitysplitjoin$BF,x)
+ggplot(data=dfsplit, aes(x=x, y=BayesFactorsplitjoin$BF, group=1)) +
     geom_line(color="dark blue")+
     geom_point(color="dark blue")+
     xlab("Modularity") +
@@ -181,9 +169,8 @@ ggplot(data=df, aes(x=x, y=BayesFactorVSModularitysplitjoin$BF, group=1)) +
 #Fig.8 Dependent vs Independent type
 ```{r}
 #1
-setwd("/media/vpoli/MYFILES/CNR Tigem/Tutto per ROBIN/Dati/dati simulati")
 list.filenames<-list.files(pattern=".edgelist")
-BayesFactor<-NULL
+BayesFactorInd<-NULL
 for (i in 1:length(list.filenames))
 {
 file <- list.filenames[i]
@@ -194,23 +181,22 @@ Proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi",
 
 BF<-robinGPTest(ratio=Proc$ratios)
 df<-data.frame(file,BF)
-BayesFactor<-rbind(BayesFactor,df)
+BayesFactorInd<-rbind(BayesFactorInd,df)
 }
-write.csv(BayesFactor,file="BayesFactorVSModularityIndependentLouvain.csv")
 
-BayesFactorVSModularity <- read.csv("BayesFactorVSModularityIndependentLouvain.csv")
 x<-seq(0,0.8,0.025)
-df<-data.frame(BayesFactorVSModularity,x)
-ggplot(data=df, aes(x=x, y=BF, group=1)) +
+dfI<-data.frame(BayesFactorInd,x)
+jpeg("Independent", width = 350, height = "350")
+ggplot(data=dfI, aes(x=x, y=BF, group=1)) +
     geom_line(color="dark blue")+
     xlab("Modularity") +
     ylab("BayesFactor") +
     ggtitle("Independent")
+dev.off()
 
 #2
-setwd("/media/vpoli/MYFILES/CNR Tigem/Tutto per ROBIN/Dati/dati simulati")
 list.filenames<-list.files(pattern=".edgelist")
-BayesFactor<-NULL
+BayesFactorDep<-NULL
 for (i in 1:length(list.filenames))
 {
 file <- list.filenames[i]
@@ -221,19 +207,17 @@ Proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi",
 
 BF<-robinGPTest(ratio=Proc$ratios)
 df<-data.frame(file,BF)
-BayesFactor<-rbind(BayesFactor,df)
+BayesFactorDep<-rbind(BayesFactorDep,df)
 }
-write.csv(BayesFactor,file="BayesFactorVSModularityDependentLouvain.csv")
 
-BayesFactorVSModularity <- read.csv("BayesFactorVSModularityDependentLouvain.csv")
-x<-seq(0,0.8,0.025)
-df<-data.frame(BayesFactorVSModularity,x)
-ggplot(data=df, aes(x=x, y=BF, group=1)) +
+jpeg("Dependent", width = 350, height = "350")
+dfDep<-data.frame(BayesFactorVSModularity,x)
+ggplot(data=dfDep, aes(x=x, y=BF, group=1)) +
     geom_line(color="dark blue")+
     xlab("Modularity") +
     ylab("BayesFactor") +
     ggtitle("Dependent")
-
+dev.off()
 ```
 
 
