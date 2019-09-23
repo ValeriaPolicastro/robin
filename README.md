@@ -34,9 +34,6 @@ robinGPTest(ratio=proc$ratios)
 
 ![Image of Robin Plot](https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf)
 
-![GitHub Logo](/images/logo.png)
-Format: ![Alt Text](url)
-
 
 ##### Example 2: "Comparison of two community detection"
 ```{r}
