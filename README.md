@@ -31,7 +31,7 @@ legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
 
-[!["RobinPlot"]("https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf")]
+![RobinPlot]("https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf")
 
 <img src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf" width="640" height="108" />
 
