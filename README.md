@@ -26,10 +26,8 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
-![RobinPlot](https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png)
-</pre>
 
-<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="640" height="108" />
+<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="120" height="108" />
 
 
 ##### Example 2: "Comparison of two community detection"
