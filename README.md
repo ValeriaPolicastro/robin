@@ -31,8 +31,9 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
+<img class="aligncenter size-full wp-image-8747" alt="markdown" src="http://www.maffucci.it/wp-content/uploads/2013/08/markdown.jpg" width="640" height="108" />
 
-![Image of Robin Plot](https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf)
+< img src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf">
 
 
 ##### Example 2: "Comparison of two community detection"
