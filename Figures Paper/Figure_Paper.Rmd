@@ -76,7 +76,7 @@ legend=c("louvain", "spinglass"), title="Louvain vs Spinglass")
 
 #Fig.7 Different Measures with simulated data (algorithm louvain) 
 ```{r}
-setwd("/media/vpoli/MYFILES/CNR Tigem/Tutto per ROBIN/Dati/dati simulati")
+setwd("simulated data")
 list.filenames<-list.files(pattern=".edgelist")
 BayesFactorVI<-NULL
 BayesFactorNMI<-NULL
@@ -126,13 +126,13 @@ write.csv(BayesFactorNMI,file="BayesFactorVSModularityNMI.csv")
 write.csv(BayesFactoradjrand,file="BayesFactorVSModularityadjrand.csv")
 write.csv(BayesFactorsplitjoin,file="BayesFactorVSModularitysplitjoin.csv")
 
-
+library(readr)
 ####VI
-BayesFactorVSModularity <- read.csv("BayesFactorVSModularityVI.csv")
+BayesFactorVSModularityVI <- read_csv("BayesFactorVSModularityVI.csv")
 head(BayesFactorVSModularity)
 x<-seq(0,0.8,0.025)
-df<-data.frame(BayesFactorVSModularity$BF,x)
-ggplot(data=df, aes(x=x, y=BayesFactorVSModularity$BF, group=1)) +
+df<-data.frame(BayesFactorVSModularityVI$BF,x)
+ggplot(data=df, aes(x=x, y=BayesFactorVSModularityVI$BF, group=1)) +
     geom_line(color="dark blue")+
     geom_point(color="dark blue")+
     xlab("Modularity") +
