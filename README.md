@@ -27,7 +27,7 @@ legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
 
-<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="120" height="108" />
+<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Schermata%20del%202019-09-23%2012-24-29.png" width="200" height="150" />
 
 
 ##### Example 2: "Comparison of two community detection"
