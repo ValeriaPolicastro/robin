@@ -9,17 +9,17 @@ perturbation strategy and runs a null model to build a set of procedures based
 on different stability measures. 
 
 It provides:
-1)A procedure to examine the stability of the partition recovered against random 
+1. A procedure to examine the stability of the partition recovered against random 
 perturbations of the original graph structure
-2)Three tests to determine whether the obtained clustering departs significantly 
+2. Three tests to determine whether the obtained clustering departs significantly 
 from the null model
-3)A routine to compare different detection algorithms applied to the same 
+3. A routine to compare different detection algorithms applied to the same 
 network to discover which fits better
-4)A graphical interactive representation
+4. A graphical interactive representation
 
 
 
-###### Example 1: "Robustness of a community detection"
+### Example 1: "Robustness of a community detection"
 ```{r}
 graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
@@ -29,7 +29,7 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
-###### Example 2: "Comparison of two community detection"
+### Example 2: "Comparison of two community detection"
 ```{r}
 graph <- prepGraph(file=my_network, file.format="gml")
 comp <- robinCompare(graph=graph, method1="fastGreedy",
