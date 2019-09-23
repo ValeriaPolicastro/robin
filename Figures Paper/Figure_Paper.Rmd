@@ -11,8 +11,8 @@ output:
 library("cowplot")
 library("robin")
 library("gprege")
-my_file <- system.file("example/football.gml", package="robin")
-graph <- prepGraph(file=my_file, file.format="gml")
+my_network <- system.file("example/football.gml", package="robin")
+graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
                   method="louvain", type="independent")
@@ -92,7 +92,7 @@ graphRandom <- random(graph)
 graphRandom
 
 #VI
-Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="louvain",
+Proc <-robinRobust(graph=graph,graphRandom=graphRandom, method="louvain",
                        type="independent",measure = "vi")
 BF<-robinGPTest(ratio=Proc$ratios)
 df<-data.frame(file,BF)
@@ -100,21 +100,21 @@ BayesFactorVI<-rbind(BayesFactorVI,df)
 
 
 #NMI
-Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="louvain",
+Proc <-robinRobust(graph=graph,graphRandom=graphRandom, method="louvain",
                  type="independent",measure = "nmi")
 BF<-robinGPTest(ratio=Proc$ratios)
 df<-data.frame(file,BF)
 BayesFactorNMI<-rbind(BayesFactorNMI,df)
 
 #split-join
-Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="louvain",
+Proc <-robinRobust(graph=graph,graphRandom=graphRandom, method="louvain",
                  type="independent",measure = "split.join")
 BF<-robinGPTest(ratio=Proc$ratios)
 df<-data.frame(file,BF)
 BayesFactorsplitjoin<-rbind(BayesFactorsplitjoin,df)
 
 #adj rand
-Proc <-robinProc(graph=graph,graphRandom=graphRandom, method="louvain",
+Proc <-robinRobust(graph=graph,graphRandom=graphRandom, method="louvain",
                  type="independent",measure = "adjusted.rand")
 BF<-robinGPTest(ratio=Proc$ratios)
 df<-data.frame(file,BF)
