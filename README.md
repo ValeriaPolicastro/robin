@@ -22,7 +22,6 @@ network to discover which fits better
 *A graphical interactive representation
 
 
-
 ##### Example 1: "Robustness of a community detection"
 ```{r}
 graph <- prepGraph(file=my_network, file.format="gml")
@@ -35,7 +34,6 @@ robinGPTest(ratio=proc$ratios)
 ```
 
 <img src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf" width="640" height="108" />
-
 
 
 ##### Example 2: "Comparison of two community detection"
