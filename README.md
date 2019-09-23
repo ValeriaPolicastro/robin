@@ -8,9 +8,7 @@
 
 The package implements a methodology that detects if the community structure 
 found by a detection algorithm is statistically significant or is a result 
-of chance, merely due to edge positions in the network. It performs a 
-perturbation strategy and runs a null model to build a set of procedures based 
-on different stability measures. 
+of chance, merely due to edge positions in the network.
 
 ###### It provides:
 * A procedure to examine the stability of the partition recovered against random 
@@ -33,6 +31,7 @@ legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
 
+[!["RobinPlot"]("https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf")]
 
 <img src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf" width="640" height="108" />
 
