@@ -13,13 +13,13 @@ perturbation strategy and runs a null model to build a set of procedures based
 on different stability measures. 
 
 ###### It provides:
-*A procedure to examine the stability of the partition recovered against random 
+* A procedure to examine the stability of the partition recovered against random 
 perturbations of the original graph structure
-*Three tests to determine whether the obtained clustering departs significantly 
+* Three tests to determine whether the obtained clustering departs significantly 
 from the null model
-*A routine to compare different detection algorithms applied to the same 
+* A routine to compare different detection algorithms applied to the same 
 network to discover which fits better
-*A graphical interactive representation
+* A graphical interactive representation
 
 
 ##### Example 1: "Robustness of a community detection"
@@ -32,8 +32,6 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
-![GitHub Logo](/images/logo.png)
-Format: ![Alt Text](url)
 
 
 <img src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf" width="640" height="108" />
