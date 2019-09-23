@@ -32,6 +32,9 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
+![GitHub Logo](/images/logo.png)
+Format: ![Alt Text](url)
+
 
 <img src="https://github.com/ValeriaPolicastro/robin/blob/master/R/Figure_Paper_files/figure-latex/unnamed-chunk-1-1.pdf" width="640" height="108" />
 
