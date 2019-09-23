@@ -8,7 +8,7 @@ of chance, merely due to edge positions in the network. It performs a
 perturbation strategy and runs a null model to build a set of procedures based 
 on different stability measures. 
 
-It provides:
+##### It provides:
 1. A procedure to examine the stability of the partition recovered against random 
 perturbations of the original graph structure
 2. Three tests to determine whether the obtained clustering departs significantly 
