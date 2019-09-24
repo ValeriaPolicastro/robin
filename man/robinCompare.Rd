@@ -10,7 +10,7 @@ robinCompare(graph, method1 = c("walktrap", "edgeBetweenness",
   "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain", "spinglass",
   "labelProp", "infomap", "optimal", "other"), FUN1 = NULL,
   FUN2 = NULL, measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  type = c("dependent", "independent"), directed = FALSE,
+  type = c("independent", "dependent"), directed = FALSE,
   weights = NULL, steps = 4, spins = 25, e.weights = NULL,
   v.weights = NULL, nb.trials = 10)
 }

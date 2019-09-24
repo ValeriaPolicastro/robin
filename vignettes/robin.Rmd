@@ -1,9 +1,9 @@
 ---
 
-title: "Vignette robin"
+title: "robin"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette robin}
+  %\VignetteIndexEntry{ robin}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 author: "Valeria Policastro - Dario Righelli"
