@@ -34,11 +34,9 @@ dev.off()
 
 #Fig.5 Functional Data Analysis Test
 ```{r}
-jpeg(file= "FDA.jpeg")
-jpeg(file= "FDA.jpeg")
+
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
-dev.off()
-dev.off()
+
 ```
 
 #Fig.6 VI measure for all algorithms
@@ -146,44 +144,48 @@ x<-seq(0,0.8,0.025)
 
 ####VI
 dfVI<-data.frame(BayesFactorVI$BF,x)
+jpeg(file= "PlotVI.jpeg")
 ggplot(data=dfVI, aes(x=x, y=BayesFactorVI$BF, group=1)) +
-    geom_line(color="dark blue")+
-    geom_point(color="dark blue")+
+    geom_line(color=" blue")+
+    geom_point(color=" blue")+
     xlab("Modularity") +
     ylab("BayesFactor") +
     ggtitle("VI")
-
+dev.off()
 
 ###NMI
 dfNMI<-data.frame(BayesFactorNMI$BF,x)
+jpeg(file= "PlotNMI.jpeg")
 ggplot(data=dfNMI, aes(x=x, y=BayesFactorNMI$BF, group=1)) +
-    geom_line(color="dark blue")+
-    geom_point(color="dark blue")+
+    geom_line(color=" blue")+
+    geom_point(color=" blue")+
      xlab("Modularity") +
     ylab("BayesFactor") +
     ggtitle("NMI")
-
+dev.off()
 
 
 ###Adj rand 
 dfAdj<-data.frame(BayesFactoradjrand$BF,x)
+jpeg(file= "PlotAdj.jpeg")
 ggplot(data=dfAdj, aes(x=x, y=BayesFactoradjrand$BF, group=1)) +
-    geom_line(color="dark blue")+
-    geom_point(color="dark blue")+
+    geom_line(color=" blue")+
+    geom_point(color=" blue")+
     xlab("Modularity") +
     ylab("BayesFactor") +
     ggtitle("Adjusted Rand Index")
-
+dev.off()
 
 ####split join
 dfsplit<-data.frame(BayesFactorVSModularitysplitjoin$BF,x)
+jpeg(file= "PlotSplit.jpeg")
 ggplot(data=dfsplit, aes(x=x, y=BayesFactorsplitjoin$BF, group=1)) +
-    geom_line(color="dark blue")+
-    geom_point(color="dark blue")+
+    geom_line(color="blue")+
+    geom_point(color="blue")+
     xlab("Modularity") +
     ylab("BayesFactor") +
     ggtitle("Split-join")
-
+dev.off()
 ```
 
 #Fig.8 Dependent vs Independent type
@@ -206,7 +208,7 @@ BayesFactorInd<-rbind(BayesFactorInd,df)
 
 x<-seq(0,0.8,0.025)
 dfI<-data.frame(BayesFactorInd,x)
-jpeg("Independent", width = 350, height = "350")
+jpeg("Independent.jpeg")
 ggplot(data=dfI, aes(x=x, y=BF, group=1)) +
     geom_line(color="dark blue")+
     xlab("Modularity") +
@@ -230,7 +232,7 @@ df<-data.frame(file,BF)
 BayesFactorDep<-rbind(BayesFactorDep,df)
 }
 
-jpeg("Dependent", width = 350, height = "350")
+jpeg("Dependent.jpeg")
 dfDep<-data.frame(BayesFactorVSModularity,x)
 ggplot(data=dfDep, aes(x=x, y=BF, group=1)) +
     geom_line(color="dark blue")+

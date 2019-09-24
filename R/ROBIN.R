@@ -182,7 +182,7 @@ methodCommunity <- function(graph,
                             e.weights=NULL, 
                             v.weights=NULL, 
                             nb.trials=10)
-{
+{   
     method <- match.arg(method)
     if(is.null(weights) &
        (sum(method %in% c("walktrap", "edgeBetweenness", "fastGreedy") == 1 )))
@@ -491,7 +491,12 @@ robinRobust <- function(graph, graphRandom,
                 e.weights=NULL, 
                 v.weights=NULL, 
                 nb.trials=10) 
-{
+{   if (is.null(measure)) { 
+    measure <-"vi"
+    }
+    if (is.null(type)) { 
+        type <-"independent"
+    }
     measure <- match.arg (measure)
     method <- match.arg(method)
     type <- match.arg(type)
@@ -820,8 +825,10 @@ plotRobin <- function(graph,
                       measure= c("vi", "nmi","split.join", "adjusted.rand"),
                       legend=c("model1", "model2"),
                       title="Robin plot")
-{   
-    measure <- match.arg (measure)
+{   if (is.null(measure)) { 
+    measure <-"vi"
+    }
+     measure <- match.arg (measure)
     if(measure=="vi")
    {
     N <- igraph::vcount(graph)
@@ -910,7 +917,12 @@ robinCompare <- function(graph,
                       e.weights=NULL, 
                       v.weights=NULL, 
                       nb.trials=10)
-{
+{   if (is.null(measure)) { 
+    measure <-"vi"
+    }
+    if (is.null(type)) { 
+        type <-"independent"
+    }
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
     type <- match.arg(type)
@@ -1908,7 +1920,9 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
     #     ggplot2::ggtitle("Robin plot")
     # plot1
     # print(plot1)
-   
+    if (is.null(measure)) { 
+        measure <-"vi"
+    }
     perc <- rep((seq(0,60,5)/100))
     ITPresult <- createITPSplineResult(graph, model1, model2, measure)
     plot2 <- plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='perturbation', 
@@ -1944,7 +1958,11 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
 robinAUC <- function(graph, model1, model2, 
                          measure= c("vi", "nmi","split.join", "adjusted.rand"))
 {
-    measure <- match.arg (measure)
+    if (is.null(measure)) { 
+        measure <-"vi"
+    }
+
+        measure <- match.arg (measure)
     if(measure=="vi")
     {
         N <- igraph::vcount(graph)
