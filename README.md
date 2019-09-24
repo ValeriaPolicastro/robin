@@ -33,7 +33,7 @@ legend=c("real data", "null model"), measure="vi")
 robinGPTest(ratio=proc$ratios)
 ```
 <p align="center">
-<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Figures%20Paper/PlotRobin.jpeg" width="400" height="300" />
+<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Figures%20Paper/PlotRobin.jpeg" width="400" height="350" />
 </p>
 
 ## Example 2: "Comparison of two community detection"
@@ -47,7 +47,7 @@ legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 ```
 <p align="center">
-<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Figures%20Paper/PlotCompare.jpeg" width="400" height="300"/>
+<img src="https://github.com/ValeriaPolicastro/robin/blob/master/Figures%20Paper/PlotCompare.jpeg" width="400" height="350"/>
 </p>
 
 ## License
