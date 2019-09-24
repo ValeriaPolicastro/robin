@@ -35,7 +35,9 @@ dev.off()
 #Fig.5 Functional Data Analysis Test
 ```{r}
 jpeg(file= "FDA.jpeg")
+jpeg(file= "FDA.jpeg")
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
+dev.off()
 dev.off()
 ```
 
