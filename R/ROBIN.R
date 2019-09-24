@@ -483,7 +483,7 @@ robinRobust <- function(graph, graphRandom,
                          "optimal", "other"),
                 FUN=NULL,
                 measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                type=c("dependent", "independent"),
+                type=c("independent","dependent"),
                 directed=FALSE,
                 weights=NULL, 
                 steps=4, 
@@ -491,16 +491,11 @@ robinRobust <- function(graph, graphRandom,
                 e.weights=NULL, 
                 v.weights=NULL, 
                 nb.trials=10) 
-{   if (is.null(measure)) { 
-    measure <-"vi"
-    }
-    if (is.null(type)) { 
-        type <-"independent"
-    }
-    measure <- match.arg (measure)
+{   
+    measure <- match.arg(measure)
+    type<- match.arg(type)
     method <- match.arg(method)
-    type <- match.arg(type)
-    nrep <- 10
+        nrep <- 10
     comReal <- membershipCommunities(graph=graph, method=method, 
                                     FUN=FUN,
                                     directed=directed,
@@ -825,10 +820,8 @@ plotRobin <- function(graph,
                       measure= c("vi", "nmi","split.join", "adjusted.rand"),
                       legend=c("model1", "model2"),
                       title="Robin plot")
-{   if (is.null(measure)) { 
-    measure <-"vi"
-    }
-     measure <- match.arg (measure)
+{   
+    measure <- match.arg (measure)
     if(measure=="vi")
    {
     N <- igraph::vcount(graph)
@@ -909,7 +902,7 @@ robinCompare <- function(graph,
                       FUN1=NULL,
                       FUN2=NULL,
                       measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                      type=c("dependent", "independent"),
+                      type=c("independent", "dependent"),
                       directed=FALSE,
                       weights=NULL, 
                       steps=4, 
@@ -917,12 +910,7 @@ robinCompare <- function(graph,
                       e.weights=NULL, 
                       v.weights=NULL, 
                       nb.trials=10)
-{   if (is.null(measure)) { 
-    measure <-"vi"
-    }
-    if (is.null(type)) { 
-        type <-"independent"
-    }
+{   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
     type <- match.arg(type)
@@ -1920,9 +1908,6 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
     #     ggplot2::ggtitle("Robin plot")
     # plot1
     # print(plot1)
-    if (is.null(measure)) { 
-        measure <-"vi"
-    }
     perc <- rep((seq(0,60,5)/100))
     ITPresult <- createITPSplineResult(graph, model1, model2, measure)
     plot2 <- plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='perturbation', 
@@ -1958,11 +1943,7 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
 robinAUC <- function(graph, model1, model2, 
                          measure= c("vi", "nmi","split.join", "adjusted.rand"))
 {
-    if (is.null(measure)) { 
-        measure <-"vi"
-    }
-
-        measure <- match.arg (measure)
+    measure <- match.arg (measure)
     if(measure=="vi")
     {
         N <- igraph::vcount(graph)
