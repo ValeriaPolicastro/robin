@@ -17,7 +17,10 @@ methodCommunity(graph, method = c("walktrap", "edgeBetweenness",
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "optimal", "other".}
 
-\item{FUN}{see \code{\link{methodCommunity}}.}
+\item{FUN}{in case the @method parameter is "other" there is the possibility 
+to use a personal function passing its name through this parameter.
+The personal parameter has to take as input the @graph and the @weights 
+(that can be NULL), moreover it has to return a communities object.}
 
 \item{directed}{Logical constant, whether to calculate directed edge 
 betweenness for directed graphs. This argument is settable only for 
@@ -55,11 +58,6 @@ argument is settable only for "infomap" method.}
 \item{nb.trials}{The number of attempts to partition the network (can be any
 integer value equal or larger than 1). This argument is settable only for
 "infomap" method.}
-
-\item{FUN}{in case the @method parameter is "other" there is the possibility 
-to use a personal function passing its name through this parameter.
-The personal parameter has to take as input the @graph and the @weights 
-(that can be NULL), moreover it has to return a communities object.}
 }
 \value{
 a Communities object.

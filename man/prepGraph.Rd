@@ -19,6 +19,9 @@ supported}
 values.This argument is settable for the edgelist format. 
 The default is FALSE.}
 
+\item{directed}{A logical value indicating if is a directed graph. The 
+default is FALSE.}
+
 \item{header}{A logical value indicating whether the file contains 
 the names of the variables as its first line.This argument is settable 
 for the edgelist format.The default is FALSE.}

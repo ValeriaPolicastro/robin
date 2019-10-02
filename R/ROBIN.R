@@ -1762,7 +1762,7 @@ robinCompare <- function(graph,
 #' @param nKnots the nknots parameter for ITP2bspline (default 7).
 #' @param BParam the B parameter for ITP2bspline (default 10000).
 #' @param isPaired the paired parameter for ITP2bspline (default TRUE).
-#'
+#' @keyword internal
 #' @return an ITP2 object
 createITPSplineResult <- function(graph, model1, model2,
                                 measure= c("vi", "nmi","split.join", 

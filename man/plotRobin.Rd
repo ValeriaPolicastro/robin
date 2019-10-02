@@ -38,6 +38,6 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 type="independent")
-plotRobin(graph=graph, model1=Proc$MeanReal, model2=Proc$MeanRandom,
+plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,
 measure="vi", legend=c("real data", "null model"))
 }
