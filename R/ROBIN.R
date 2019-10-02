@@ -1810,8 +1810,7 @@ createITPSplineResult <- function(graph, model1, model2,
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-#' measure="vi",type="independent")
+#' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain", measure="vi",type="independent")
 #' library("gprege")
 #' robinGPTest(ratio=Proc$ratios)
 robinGPTest <- function(ratio)
