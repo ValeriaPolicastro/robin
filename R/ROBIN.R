@@ -12,6 +12,8 @@
 #' @param numbers A logical value indicating if the names of the nodes are 
 #' values.This argument is settable for the edgelist format. 
 #' The default is FALSE.
+#' @param directed A logical value indicating if is a directed graph. The 
+#' default is FALSE.
 #' @param header A logical value indicating whether the file contains 
 #' the names of the variables as its first line.This argument is settable 
 #' for the edgelist format.The default is FALSE.
@@ -125,7 +127,6 @@ random <- function(graph)
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "optimal", "other".
-#' @param FUN see \code{\link{methodCommunity}}.
 #' @param FUN in case the @method parameter is "other" there is the possibility 
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights 
@@ -812,7 +813,7 @@ robinRobust <- function(graph, graphRandom,
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 #' type="independent")
-#' plotRobin(graph=graph, model1=Proc$MeanReal, model2=Proc$MeanRandom,
+#' plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,
 #' measure="vi", legend=c("real data", "null model"))
 plotRobin <- function(graph,
                       model1,
