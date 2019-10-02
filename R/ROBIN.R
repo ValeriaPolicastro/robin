@@ -1812,6 +1812,7 @@ createITPSplineResult <- function(graph, model1, model2,
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
+#' library("gprege")
 #' robinGPTest(ratio=Proc$ratios)
 robinGPTest <- function(ratio)
 {
