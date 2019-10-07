@@ -31,4 +31,5 @@ VignetteBuilder: knitr
 Suggests: 
     cowplot,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 2.1.0)
