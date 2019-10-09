@@ -40,4 +40,5 @@ Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 type="independent")
 plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,
 measure="vi", legend=c("real data", "null model"))
+
 }

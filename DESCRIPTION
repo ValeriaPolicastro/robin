@@ -13,22 +13,24 @@ Description:
     detection it has a double aim it studies the robustness of a community 
     detection algorithm and compares the robustness of two community detection 
     algorithms. 
-License: Artistic-2.0
+License: MIT + file LICENCE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 Depends: 
     R (>= 3.5),
-    igraph
+    igraph,
+    gprege
 Imports:
-    gprege,
     ggplot2,
     networkD3,
     DescTools,
     fdatest,
-    gridExtra
+    gridExtra,
+    methods
 VignetteBuilder: knitr
-Suggests: 
+Suggests:
+    devtools,
     cowplot,
     knitr,
     rmarkdown,

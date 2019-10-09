@@ -17,8 +17,9 @@
 #' @param header A logical value indicating whether the file contains 
 #' the names of the variables as its first line.This argument is settable 
 #' for the edgelist format.The default is FALSE.
-#' @return A graph which do not contain loop and multiple edges.
+#' @return An igraph object, which do not contain loop and multiple edges.
 #' @import igraph
+#' @importFrom utils read.table
 #' @export
 #'
 #' @examples 
@@ -43,7 +44,7 @@ prepGraph <- function(file,
         graph <- igraph::simplify(graph)
     }else if((file.format == "edgelist") & (numbers == TRUE))
     {
-        edge <- read.table(file,colClasses = "character", quote="\"",
+        edge <- utils::read.table(file,colClasses = "character", quote="\"",
                            header=header)
         edge <- as.matrix(edge)
         graph <- igraph::graph_from_edgelist(edge, directed=directed)
@@ -100,7 +101,7 @@ prepGraph <- function(file,
 #' degree distribution.
 #' @param graph The output of prepGraph.
 #'
-#' @return A randomly rewired graph.
+#' @return An igraph object, a randomly rewired graph.
 #' @import igraph
 #' @export
 #'
@@ -272,7 +273,8 @@ methodCommunity <- function(graph,
 #' betweenness for directed graphs. This argument is settable only for 
 #' "edgeBetweenness" method.
 #' 
-#' @return Membership vector of the community structure.
+#' @return returns a numeric vector, one number for each vertex in the graph; 
+#' the membership vector of the community structure.
 #' @import igraph
 #' @export
 #'
@@ -316,7 +318,7 @@ membershipCommunities<- function(graph,
 #' @description Graphical interactive representation of the network.
 #' @param graph The output of prepGraph.
 #'
-#' @return An interactive plot.
+#' @return creates simple D3 JavaScript network graph,an interactive plot.
 #' @import networkD3
 #' @export
 #'
@@ -343,8 +345,10 @@ plotGraph <- function(graph)
 #' @param members A membership vector of the community structure, the output of
 #' membershipCommunities. 
 #'
-#' @return An interactive plot.
-#' @import networkD3
+#' @return creates an interactive plot with colorful communities, a D3 
+#' JavaScript network graph.
+#' @import networkD3 
+#' @importFrom methods is
 #' @export
 #'
 #' @examples
@@ -354,11 +358,11 @@ plotGraph <- function(graph)
 #' plotComm(graph, members)
 plotComm <- function(graph, members) 
 {
-    stopifnot(is(graph, "igraph"))
-    stopifnot(is(members, "membership"))
+    stopifnot(methods::is(graph, "igraph"))
+    stopifnot(methods::is(members, "membership"))
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group=members)
-    # Create force directed network plot
-    plot <- networkD3 ::forceNetwork(Links=graph_d3$links, 
+    # Create network plot
+    plot <- networkD3::forceNetwork(Links=graph_d3$links, 
                                      Nodes=graph_d3$nodes,
                                      Source='source', 
                                      Target='target', 
@@ -815,6 +819,7 @@ robinRobust <- function(graph, graphRandom,
 #' type="independent")
 #' plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,
 #' measure="vi", legend=c("real data", "null model"))
+#' 
 plotRobin <- function(graph,
                       model1,
                       model2,
@@ -835,14 +840,15 @@ plotRobin <- function(graph,
     mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))/(2*N)),legend[2])     
     }else
     {
-    mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))),legend[1])
-    mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))),legend[2])
+    mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))), legend[1])
+    mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))), legend[2])
     }
     
-    percPert <- rep((seq(0,60,5)/100),2)
-    mvi <- rbind(mvimodel1,mvimodel2)
-    colnames(mvi) <- c("mvi","model")
-    dataFrame <- data.frame(percPert,mvi)
+    percPert <- rep((seq(0,60,5)/100), 2)
+    model <- mvimodel2
+    mvi <- rbind(mvimodel1, model)
+    colnames(mvi) <- c("mvi", "model")
+    dataFrame <- data.frame(percPert, mvi)
     plot <- ggplot2::ggplot(dataFrame, aes(x=percPert, 
                                             y=as.numeric(as.character(mvi)), 
                                             colour=model,
@@ -1746,7 +1752,8 @@ robinCompare <- function(graph,
 ########################### TEST ROBIN ###################
 
 ################ CREATE ITPSpline ##################
-#' createITPSplineResult
+
+#' @title createITPSplineResult
 #' 
 #' @description creates an fdatest::ITP2 class object 
 #' 
@@ -1762,8 +1769,11 @@ robinCompare <- function(graph,
 #' @param nKnots the nknots parameter for ITP2bspline (default 7).
 #' @param BParam the B parameter for ITP2bspline (default 10000).
 #' @param isPaired the paired parameter for ITP2bspline (default TRUE).
+#' 
 #' @keyword internal
+#' 
 #' @return an ITP2 object
+#' 
 createITPSplineResult <- function(graph, model1, model2,
                                 measure= c("vi", "nmi","split.join", 
                                            "adjusted.rand"),
@@ -1802,16 +1812,17 @@ createITPSplineResult <- function(graph, model1, model2,
 #' @param ratio The ratios output of the robinRobust function (or the ratios1vs2 
 #' output of the comparison function). 
 #'
-#' @return The Bayes factor
-#' @import gprege
+#' @return A numeric value, the Bayes factor
+#' @import gprege 
+#' @importFrom stats sd var
 #' @export
 #'
 #' @examples 
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain", measure="vi",type="independent")
-#' library("gprege")
+#' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, 
+#' method="louvain", measure="vi",type="independent")
 #' robinGPTest(ratio=Proc$ratios)
 robinGPTest <- function(ratio)
 {
@@ -1827,8 +1838,8 @@ robinGPTest <- function(ratio)
     varv <- NULL
     for (i in c(1:ntimes)){    #ntime number of percentuage of rewire
         ind <- which(colnames(MA)==vt[i])
-        stdv[i] <- sd(MA[1,ind])
-        varv[i] <- var(MA[1,ind])
+        stdv[i] <- stats::sd(MA[1,ind])
+        varv[i] <- stats::var(MA[1,ind])
     }
     #sigmaest=mean(stdv)Order of the B-spline basis expansion.
     GlobalVar <- var(MA[1,])
@@ -1877,8 +1888,7 @@ robinGPTest <- function(ratio)
 #' "null model").
 #'
 #' @return Two plots.
-#' @import igraph ggplot2 
-#' @importFrom fdatest ITP2bspline
+#' @import igraph ggplot2 fdatest graphics
 #' @export
 #'
 #' @examples 
@@ -1911,9 +1921,9 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
     # print(plot1)
     perc <- rep((seq(0,60,5)/100))
     ITPresult <- createITPSplineResult(graph, model1, model2, measure)
-    plot2 <- plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='perturbation', 
+    plot2 <- graphics::plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='perturbation', 
                 ylab="Measure")
-    lines(perc, rep(0.05, 13), type="l", col="red")
+    graphics::lines(perc, rep(0.05, 13), type="l", col="red")
     
     print(plot2)
 }  
