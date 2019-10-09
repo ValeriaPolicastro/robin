@@ -10,7 +10,7 @@ Authors@R: c(
 Maintainer: Valeria Policastro <valeria.policastro@gmail.com>
 Description: 
     ROBIN (Robustness In Network) is an R package for the Validation of 
-    community detection, it has a double aim it studies the robustness of a 
+    community detection. It has a double aim it studies the robustness of a 
     community detection algorithm and compares the robustness of two community 
     detection algorithms in order to understand which provides the best 
     partition. 
