@@ -41,9 +41,7 @@ network to discover which fits better
 library(devtools)
 install_github("ValeriaPolicastro/robin",force=TRUE)
 library("robin")
-
 ```
-
 
 # Preparation of the Graph 
 As input, the **ROBIN** package expects a network that can be read from different 

@@ -13,7 +13,8 @@ plotComm(graph, members)
 membershipCommunities.}
 }
 \value{
-An interactive plot.
+creates an interactive plot with colorful communities, a D3 
+JavaScript network graph.
 }
 \description{
 Graphical interactive representation of the network and its 

@@ -27,7 +27,7 @@ the names of the variables as its first line.This argument is settable
 for the edgelist format.The default is FALSE.}
 }
 \value{
-A graph which do not contain loop and multiple edges.
+An igraph object, which do not contain loop and multiple edges.
 }
 \description{
 The prepGraph function is able to read graphs from a file and 

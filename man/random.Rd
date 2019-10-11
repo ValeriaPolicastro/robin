@@ -10,7 +10,7 @@ random(graph)
 \item{graph}{The output of prepGraph.}
 }
 \value{
-A randomly rewired graph.
+An igraph object, a randomly rewired graph.
 }
 \description{
 Randomly rewire the edges while preserving the original graph's 

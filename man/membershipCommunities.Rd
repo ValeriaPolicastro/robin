@@ -57,7 +57,8 @@ integer value equal or larger than 1). This argument is settable only for
 "infomap" method.}
 }
 \value{
-Membership vector of the community structure.
+returns a numeric vector, one number for each vertex in the graph; 
+the membership vector of the community structure.
 }
 \description{
 This function gives the membership vector of the community 

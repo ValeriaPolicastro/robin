@@ -10,7 +10,7 @@ plotGraph(graph)
 \item{graph}{The output of prepGraph.}
 }
 \value{
-An interactive plot.
+creates simple D3 JavaScript network graph,an interactive plot.
 }
 \description{
 Graphical interactive representation of the network.

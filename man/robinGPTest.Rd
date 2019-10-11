@@ -11,7 +11,7 @@ robinGPTest(ratio)
 output of the comparison function).}
 }
 \value{
-The Bayes factor
+A numeric value, the Bayes factor
 }
 \description{
 This function makes a test between the curves, calculating the 
