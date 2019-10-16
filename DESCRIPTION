@@ -10,7 +10,7 @@ Authors@R: c(
 Maintainer: Valeria Policastro <valeria.policastro@gmail.com>
 Description: Many community detection algorithms have been developed in network 
     analysis. However, their applications leave unaddressed the statistical 
-    validation of the results, for this reason we developed ROBIN (Robustness 
+    validation of the results, for this reason we developed ROBIN (ROBustness 
     In Network), a useful method for the validation of community detection. 
     It has a double aim, it studies the robustness of a single community 
     detection algorithm and compares two community detection algorithms to 
