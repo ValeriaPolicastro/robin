@@ -49,7 +49,7 @@ robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 <p align="center">
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Schermata%20del%202019-09-23%2012-34-23.png" width="400" height="350"/>
 </p>
-In this example, the Louvain algorithm fits better the network of interest, as the found communities varies less than the Fast greedy method.
+In this example, the Louvain algorithm fits better the network of interest, as the curve of the stability measure varies less than the one obtained by the Fast greedy method.
 
 ## License
 [Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.](https://github.com/ValeriaPolicastro/robin/blob/master/LICENSE)
