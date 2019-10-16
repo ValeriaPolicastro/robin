@@ -51,5 +51,5 @@ robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 </p>
 
 ## License
-[Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.](https://github.com/ValeriaPolicastro/robin/blob/master/LICENCE)
+[Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.](https://github.com/ValeriaPolicastro/robin/blob/master/LICENSE)
 
