@@ -10,14 +10,13 @@ author: "Valeria Policastro - Dario Righelli"
 
 ---
 
-#Abstract
 In network analysis, many community detection algorithms have been developed. 
 However,their applications leave unaddressed one important question: 
 the statistical validation of the results. 
 Are the detected communities significant or are they a result of chance only 
 due to the positions of edges in the network?
 
-ROBIN (Robustness In Network) is an R package for the Validation of community 
+ROBIN (Robustness In Network) is an R package for the validation of community 
 detection it has a double aim it studies the robustness of a community 
 detection algorithm and compares the robustness of two community algorithms. 
 
@@ -170,6 +169,8 @@ the *Mean1*, *Mean2* contained inside the **robinCompare** output list.
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 ```
+In this example, the Louvain algorithm fits better the network of interest, as 
+the found communities varies less than the Fast greedy method.
 
 # Statistical Tests between two community detection algorithms
 Now we test the differeces between the two curves, as we did before but for the
