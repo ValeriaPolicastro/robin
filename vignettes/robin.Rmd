@@ -9,7 +9,8 @@ vignette: >
 author: "Valeria Policastro - Dario Righelli"
 
 ---
-#ROBIN
+# ROBIN
+
 In network analysis, many community detection algorithms have been developed. 
 However,their applications leave unaddressed one important question: 
 the statistical validation of the results. 
