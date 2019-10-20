@@ -857,8 +857,8 @@ plotRobin <- function(graph,
         geom_point()+ 
         xlab("Percentage of perturbation") +
         ylab("Measure") +
-        scale_y_continuous(limits=c(0,0.6))+ #only for VI
-        scale_color_manual(values=c("#00AFBB","#FF9999"))+
+        #scale_y_continuous(limits=c(0,0.6))+ #only for VI
+        #scale_color_manual(values=c("#00AFBB","indianred2"))+
         ggtitle(title)
       
     return(plot)
