@@ -41,10 +41,8 @@ method}
 
 \item{nb.trials}{This argument is settable only for "infomap" method}
 }
-\value{
-A list object
-}
 \description{
 rewires the graph, creates the communities and 
 compares the communities through different measures.
 }
+\keyword{internal}

@@ -11,9 +11,7 @@ rewireOnl(data, number)
 
 \item{number}{Number of rewiring trials to perform.}
 }
-\value{
-An igraph object
-}
 \description{
 makes the rewire function of igraph
 }
+\keyword{internal}

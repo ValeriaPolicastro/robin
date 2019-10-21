@@ -30,7 +30,6 @@ Imports:
     networkD3,
     DescTools,
     fdatest,
-    gridExtra,
     methods
 VignetteBuilder: knitr
 Suggests:
