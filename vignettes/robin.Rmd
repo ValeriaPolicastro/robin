@@ -116,7 +116,6 @@ The differeces between this two curves are tested using:
 ```{r}
 robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
              measure="vi")
-
 ```
 
 The first figure represents the stability measure plot on the clustering obtained via *louvain* algorithm. The second one represents the corresponding adjusted p-values of the Interval Testing procedure. Horizontal red line corresponds to the critical value 0.05. 

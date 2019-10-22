@@ -25,6 +25,7 @@ Depends:
     R (>= 3.5),
     igraph,
     gprege
+biocViews:
 Imports:
     ggplot2,
     networkD3,
