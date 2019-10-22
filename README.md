@@ -11,7 +11,8 @@ The package implements a methodology that detects if the community structure
 found by a detection algorithm is statistically significant or is a result 
 of chance, merely due to edge positions in the network.
 
-####### The package: 
+###### The package: 
+
 1) Examine the robustness of a community detection algorithm against random perturbations of the original graph
 
 2) Tests the statistical difference between the stability measure curves created
