@@ -13,9 +13,13 @@ of chance, merely due to edge positions in the network.
 
 ###### The package:
 *Examine the robustness of a community detection algorithm against random perturbations of the original graph
+
 *Tests the statistical difference between the stability measure curves created
+
 *Makes a comparison between different community detection algorithms to choose the one that better fits the network of interest
+
 *Gives a graphical interactive representation 
+
 ---------------
 
 ## Example 1: "Robustness of a community detection"
