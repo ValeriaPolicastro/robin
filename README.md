@@ -1,6 +1,6 @@
 # robin <img align= "right" src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Logo.png" width="100" height="100" /> 
 
-**_ROBIN (ROBustness In Network)_** is an R package for the validation of community detection it has a double aim it studies the robustness of a community detection algorithm and compares the robustness of two community detection algorithms. 
+**_ROBIN (ROBustness In Network)_** is an R package for the validation of community detection it has a double aim it **studies the robustness** of a community detection algorithm and **compares** the robustness of **two community detection algorithms**. 
 
 <p align="center">
   <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Schermata%20del%202019-09-23%2012-50-52.png" width="500" height="300" />
@@ -13,13 +13,13 @@ of chance, merely due to edge positions in the network.
 
 ###### The package: 
 
-1) Examine the robustness of a community detection algorithm against random perturbations of the original graph
+1) **Examine the robustness** of a community detection algorithm against random perturbations of the original graph
 
-2) Tests the statistical difference between the stability measure curves created
+2) **Tests the statistical difference** between the stability measure curves created
 
-3) Makes a comparison between different community detection algorithms to choose the one that better fits the network of interest
+3) Makes a **comparison between different community detection algorithms** to choose the one that better fits the network of interest
 
-4) Gives a graphical interactive representation 
+4) Gives a graphical **interactive representation** 
 
 ---------------
 
