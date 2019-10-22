@@ -12,10 +12,10 @@ found by a detection algorithm is statistically significant or is a result
 of chance, merely due to edge positions in the network.
 
 ###### The package:
-1)Examine the robustness of a community detection algorithm against random perturbations of the original graph
-2)Tests the statistical difference between the stability measure curves created
-3)Makes a comparison between different community detection algorithms to choose the one that better fits the network of interest
-4)Gives a graphical interactive representation 
+*Examine the robustness of a community detection algorithm against random perturbations of the original graph
+*Tests the statistical difference between the stability measure curves created
+*Makes a comparison between different community detection algorithms to choose the one that better fits the network of interest
+*Gives a graphical interactive representation 
 ---------------
 
 ## Example 1: "Robustness of a community detection"
