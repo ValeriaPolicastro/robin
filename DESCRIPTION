@@ -1,6 +1,6 @@
 Package: robin
 Title: ROBustness in Network
-Version: 0.99.0
+Version: 0.99.1
 Authors@R: c(
     person("Valeria", "Policastro", role=c("aut", "cre"), email="valeria.policastro@gmail.com"),
     person("Dario", "Righelli", role=c("aut"), email="dario.righelli@gmail.com"),
@@ -25,7 +25,6 @@ Depends:
     R (>= 3.5),
     igraph,
     gprege
-biocViews:
 Imports:
     ggplot2,
     networkD3,

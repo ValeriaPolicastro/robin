@@ -1,7 +1,7 @@
 ---
 title: "robin"
 subtitle: "ROBustness In Network"
-author: "Valeria Policastro - Dario Righelli"
+author: "Valeria Policastro"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{robin}
@@ -32,7 +32,7 @@ perturbations of the original graph
 3)A routine to choose among different community detection algorithms the one that better fits the network of interest
 4)A graphical interactive representation 
 
-# Install package
+# Loading package
 ```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 library("robin")
 ```
