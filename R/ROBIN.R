@@ -1,4 +1,4 @@
-######PREPARATION GRAPH########### 
+###### PREPARATION GRAPH ########### 
 
 #' prepGraph
 #' 
@@ -119,7 +119,7 @@ random <- function(graph)
 }
 
 
-#####COMMUNITY METHOD####    
+###### COMMUNITY METHOD ######    
 #' methodCommunity
 #' 
 #' @description This function detects the community structure of a graph.
@@ -231,7 +231,7 @@ methodCommunity <- function(graph,
     return(communities)
 }
 
-#####MEMBERSHIP COMMUNITIES####    
+##### MEMBERSHIP COMMUNITIES ######    
 #' membershipCommunities
 #' 
 #' @description This function gives the membership vector of the community 
