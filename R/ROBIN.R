@@ -1,4 +1,4 @@
-######PREPARATION GRAPH########## 
+######PREPARATION GRAPH########### 
 
 #' prepGraph
 #' 
@@ -94,7 +94,7 @@ prepGraph <- function(file,
 }
 
 
-######GRAPH RANDOM#########
+####### GRAPH RANDOM #########
 #' random
 #'
 #' @description Randomly rewire the edges while preserving the original graph's 
