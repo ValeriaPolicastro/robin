@@ -23,7 +23,7 @@ of chance, merely due to edge positions in the network.
 
 ---------------
 
-## Example 1: "Robustness of a community detection"
+## Example 1:   "Robustness of a community detection"
 ```{r}
 my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
@@ -38,7 +38,7 @@ robinGPTest(ratio=proc$ratios)
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Schermata%20del%202019-09-23%2012-24-29.png" width="500" height="350" />
 </p>
 
-## Example 2: "Comparison of two community detection"
+## Example 2:   "Comparison of two community detection"
 ```{r}
 my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
