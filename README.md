@@ -1,4 +1,8 @@
+
 # robin <img align= "right" src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Logo2.png" width="70" height="70" /> 
+#### Available on CRAN https://cran.r-project.org/web/packages/robin/index.html
+
+<br/><br>
 
 **_ROBIN (ROBustness In Network)_** is an R package for the validation of community detection it has a double aim it **studies the robustness** of a community detection algorithm and **compares** the robustness of **two community detection algorithms**. 
 
