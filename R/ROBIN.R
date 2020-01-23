@@ -330,6 +330,7 @@ plotGraph <- function(graph)
 {
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph)
     plot <- networkD3::simpleNetwork(graph_d3$links, opacity=0.8, zoom=TRUE,
+                                     linkColour = "B1AEAE", nodeColour = "#2E66AC",
                                      fontSize=12)
     return(plot)
 }   
