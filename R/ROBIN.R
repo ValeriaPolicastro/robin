@@ -1329,7 +1329,7 @@ robinGPTest <- function(ratio)
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
-#' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
+#' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,measure="vi")
 robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
                         "split.join", "adjusted.rand"),
                         legend=c("real data", "null model"))
@@ -1353,7 +1353,7 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
     # print(plot1)
     perc <- rep((seq(0,60,5)/100))
     ITPresult <- createITPSplineResult(graph, model1, model2, measure)
-    plot2 <- graphics::plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='perturbation', 
+    plot2 <- graphics::plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='Percentage of perturbation', 
                 ylab="Measure")
     graphics::lines(perc, rep(0.05, 13), type="l", col="red")
     
