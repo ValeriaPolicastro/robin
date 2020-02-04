@@ -58,39 +58,7 @@ prepGraph <- function(file,
         graph <- igraph::delete.vertices(net, ind)
         graph <- igraph::simplify(graph)
     }
-    ##Other method:
-    # method <- match.arg(method)
-    # if(method == "igraph")
-    # {
-    #     graph <- igraph::read_graph(file, format=file.format, 
-    #                                 directed=is.directed)
-    # } else if(method == "robin") {
-    #     edge <- read.table(file, quote="\"")
-    #     edge <- as.matrix(edge)
-    #     
-    #     #graph_from_edgelist(edge,direct=FALSE)
-    #     
-    #     vet1 <- as.vector(t(edge))
-    #     un <- unique(sort(vet1))
-    #     if(max(un) != length(un)) 
-    #     { ##se non vi sono tutti i nodi il massimo del vettore 
-    #         #non è uguale alla lunghezza
-    #         id <- seq(1, length(un))  ##il nome dei nodi è vet 
-    #         #che è uguale all'id, altrimenti è vet1
-    #         vet <- vet1
-    #         for(i in c(1:length(un))) 
-    #         {
-    #             ind <- which(vet1 == un[i])
-    #             vet[ind] <- id[i]
-    #         }
-    #         edge <- matrix(vet, ncol=2, byrow=TRUE)
-    #         graph <- igraph::graph(vet, directed=is.directed)
-    #     } else {
-    #         graph <- igraph::graph(vet1, directed=is.directed)
-    #     }
-    # }
-    # graph <- igraph::simplify(graph) 
-    return(graph)
+   return(graph)
 }
 
 
@@ -1329,33 +1297,17 @@ robinGPTest <- function(ratio)
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
-#' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,measure="vi")
+#' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, measure="vi")
 robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
                         "split.join", "adjusted.rand"),
                         legend=c("real data", "null model"))
 {
-    ##To do it with ggplot:
-    #  N <- igraph::vcount(graph)
-    # mvimodel1 <- cbind(as.vector((model1)/log2(N)), legend[1], 
-    #                     seq(1,10), rep((seq(0,60,5)/100), each=10))
-    # mvimodel2 <- cbind(as.vector((model2)/log2(N)), legend[2], 
-    #                     seq(11,20),rep((seq(0,60,5)/100),each=10))
-    # mvi <- rbind(mvimodel1, mvimodel2)
-    # colnames(mvi) <- c("mvi","model","s","percPert")
-    # dataFrame <- data.frame(mvi)
-    # plot1 <- ggplot2::ggplot(dataFrame, ggplot2::aes(x=percPert, 
-    #             y=as.numeric(as.character(mvi)), color= model, group=s)) + 
-    #     ggplot2::geom_line() + 
-    #     ggplot2::xlab("Percentage of perturbation") +
-    #     ggplot2::ylab("Measure")+
-    #     ggplot2::ggtitle("Robin plot")
-    # plot1
-    # print(plot1)
     perc <- rep((seq(0,60,5)/100))
     ITPresult <- createITPSplineResult(graph, model1, model2, measure)
     plot2 <- graphics::plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='Percentage of perturbation', 
                 ylab="Measure")
     graphics::lines(perc, rep(0.05, 13), type="l", col="red")
+    
     
     print(plot2)
 }  

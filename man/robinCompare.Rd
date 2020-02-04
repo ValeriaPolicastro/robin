@@ -4,15 +4,24 @@
 \alias{robinCompare}
 \title{robinCompare}
 \usage{
-robinCompare(graph, method1 = c("walktrap", "edgeBetweenness",
-  "fastGreedy", "leadingEigen", "louvain", "spinglass", "labelProp",
-  "infomap", "optimal", "other"), method2 = c("walktrap",
-  "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain", "spinglass",
-  "labelProp", "infomap", "optimal", "other"), FUN1 = NULL,
-  FUN2 = NULL, measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  type = c("independent", "dependent"), directed = FALSE,
-  weights = NULL, steps = 4, spins = 25, e.weights = NULL,
-  v.weights = NULL, nb.trials = 10)
+robinCompare(
+  graph,
+  method1 = c("walktrap", "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain",
+    "spinglass", "labelProp", "infomap", "optimal", "other"),
+  method2 = c("walktrap", "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain",
+    "spinglass", "labelProp", "infomap", "optimal", "other"),
+  FUN1 = NULL,
+  FUN2 = NULL,
+  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
+  type = c("independent", "dependent"),
+  directed = FALSE,
+  weights = NULL,
+  steps = 4,
+  spins = 25,
+  e.weights = NULL,
+  v.weights = NULL,
+  nb.trials = 10
+)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}

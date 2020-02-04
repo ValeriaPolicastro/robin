@@ -4,9 +4,14 @@
 \alias{plotRobin}
 \title{plotRobin}
 \usage{
-plotRobin(graph, model1, model2, measure = c("vi", "nmi", "split.join",
-  "adjusted.rand"), legend = c("model1", "model2"),
-  title = "Robin plot")
+plotRobin(
+  graph,
+  model1,
+  model2,
+  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
+  legend = c("model1", "model2"),
+  title = "Robin plot"
+)
 }
 \arguments{
 \item{graph}{The output of prepGraph}

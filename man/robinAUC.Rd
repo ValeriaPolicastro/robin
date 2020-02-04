@@ -4,8 +4,12 @@
 \alias{robinAUC}
 \title{robinAUC}
 \usage{
-robinAUC(graph, model1, model2, measure = c("vi", "nmi", "split.join",
-  "adjusted.rand"))
+robinAUC(
+  graph,
+  model1,
+  model2,
+  measure = c("vi", "nmi", "split.join", "adjusted.rand")
+)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}

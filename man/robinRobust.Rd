@@ -4,12 +4,22 @@
 \alias{robinRobust}
 \title{robinRobust}
 \usage{
-robinRobust(graph, graphRandom, method = c("walktrap", "edgeBetweenness",
-  "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp",
-  "infomap", "optimal", "other"), FUN = NULL, measure = c("vi", "nmi",
-  "split.join", "adjusted.rand"), type = c("independent", "dependent"),
-  directed = FALSE, weights = NULL, steps = 4, spins = 25,
-  e.weights = NULL, v.weights = NULL, nb.trials = 10)
+robinRobust(
+  graph,
+  graphRandom,
+  method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
+    "leadingEigen", "labelProp", "infomap", "optimal", "other"),
+  FUN = NULL,
+  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
+  type = c("independent", "dependent"),
+  directed = FALSE,
+  weights = NULL,
+  steps = 4,
+  spins = 25,
+  e.weights = NULL,
+  v.weights = NULL,
+  nb.trials = 10
+)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}

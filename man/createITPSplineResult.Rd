@@ -4,9 +4,17 @@
 \alias{createITPSplineResult}
 \title{createITPSplineResult}
 \usage{
-createITPSplineResult(graph, model1, model2, measure = c("vi", "nmi",
-  "split.join", "adjusted.rand"), muParam = 0, orderParam = 4,
-  nKnots = 7, BParam = 10000, isPaired = TRUE)
+createITPSplineResult(
+  graph,
+  model1,
+  model2,
+  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
+  muParam = 0,
+  orderParam = 4,
+  nKnots = 7,
+  BParam = 10000,
+  isPaired = TRUE
+)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}

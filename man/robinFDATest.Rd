@@ -4,8 +4,13 @@
 \alias{robinFDATest}
 \title{robinFDATest}
 \usage{
-robinFDATest(graph, model1, model2, measure = c("vi", "nmi",
-  "split.join", "adjusted.rand"), legend = c("real data", "null model"))
+robinFDATest(
+  graph,
+  model1,
+  model2,
+  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
+  legend = c("real data", "null model")
+)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
@@ -35,5 +40,5 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 measure="vi",type="independent")
-robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
+robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,measure="vi")
 }

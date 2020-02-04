@@ -4,12 +4,22 @@
 \alias{rewireCompl}
 \title{rewireCompl}
 \usage{
-rewireCompl(data, number, community, method = c("walktrap",
-  "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
-  "labelProp", "infomap", "optimal", "other"), FUN = NULL,
+rewireCompl(
+  data,
+  number,
+  community,
+  method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
+    "leadingEigen", "labelProp", "infomap", "optimal", "other"),
+  FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  directed = FALSE, weights = NULL, steps = 4, spins = 25,
-  e.weights = NULL, v.weights = NULL, nb.trials = 10)
+  directed = FALSE,
+  weights = NULL,
+  steps = 4,
+  spins = 25,
+  e.weights = NULL,
+  v.weights = NULL,
+  nb.trials = 10
+)
 }
 \arguments{
 \item{data}{The output of prepGraph}

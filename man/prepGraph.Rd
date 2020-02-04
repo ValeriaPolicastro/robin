@@ -4,9 +4,14 @@
 \alias{prepGraph}
 \title{prepGraph}
 \usage{
-prepGraph(file, file.format = c("edgelist", "pajek", "ncol", "lgl",
-  "graphml", "dimacs", "graphdb", "gml", "dl", "igraph"),
-  numbers = FALSE, directed = FALSE, header = FALSE)
+prepGraph(
+  file,
+  file.format = c("edgelist", "pajek", "ncol", "lgl", "graphml", "dimacs", "graphdb",
+    "gml", "dl", "igraph"),
+  numbers = FALSE,
+  directed = FALSE,
+  header = FALSE
+)
 }
 \arguments{
 \item{file}{The file to read from.}
