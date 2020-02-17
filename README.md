@@ -1,6 +1,6 @@
 
 # robin <img align= "right" src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Logo2.png" width="70" height="70" /> 
-### Available on CRAN https://cran.r-project.org/web/packages/robin/index.html
+### Available on CRAN https://CRAN.R-project.org/package=robin
 
 <br/><br>
 
