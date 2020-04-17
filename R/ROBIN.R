@@ -430,8 +430,9 @@ rewireOnl <- function(data, number)
 ########  ROBIN PROCEDURE ROBUSTNESS#######
 #' robinRobust
 #'
-#' @description This functions implements a procedure to examine the stability of the partition recovered by some algorithm 
-#' against random perturbations of the original graph structure.
+#' @description This functions implements a procedure to examine the stability 
+#' of the partition recovered by some algorithm against random perturbations 
+#' of the original graph structure.
 #' @param graph The output of prepGraph.
 #' @param graphRandom The output of random function.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
@@ -451,7 +452,14 @@ rewireOnl <- function(data, number)
 #' @param directed This argument is settable only for "edgeBetweenness" method.
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
-#' @return A list object.
+#' @return A list object with: 
+#' -the matrices "measureReal" and "measureRandom" with the 
+#' measures calculated at each step of the procedure, respectively for the real and 
+#' the random graph.
+#' -the matrices "Mean" and "MeanRandom" with the mean of the measures of every ten steps, 
+#' respectively for the real and the random graph.
+#' -the vector "ratios" with the ratios between the measures of the real and the random graph.
+#' 
 #' @import igraph
 #' @export
 #'
@@ -876,7 +884,12 @@ plotRobin <- function(graph,
 #' @param directed This argument is settable only for "edgeBetweenness" method.
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
-#' @return A list object
+#' @return A list object with:
+#' -the matrices "Mean1" and "Mean2" with the mean of the measures of every ten steps, 
+#' respectively for the first and the second community detection algorithm.
+#' -the vector "ratios1vs2" with the ratios between the measures of the first and the second 
+#' community detection algorithm.
+#' 
 #' @import igraph
 #' @export
 #'
