@@ -10,7 +10,8 @@ prepGraph(
     "gml", "dl", "igraph"),
   numbers = FALSE,
   directed = FALSE,
-  header = FALSE
+  header = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -28,7 +29,9 @@ The default is FALSE.}
 default is FALSE.}
 
 \item{header}{A logical value indicating whether the file contains 
-the names of the variables as its first line.This argument is settable 
+the names of the variables as its first line.This argument is settable}
+
+\item{verbose}{flag for verbose output (default as FALSE).
 for the edgelist format.The default is FALSE.}
 }
 \value{

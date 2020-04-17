@@ -15,7 +15,8 @@ methodCommunity(
   spins = 25,
   e.weights = NULL,
   v.weights = NULL,
-  nb.trials = 10
+  nb.trials = 10,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -66,6 +67,8 @@ argument is settable only for "infomap" method.}
 \item{nb.trials}{The number of attempts to partition the network (can be any
 integer value equal or larger than 1). This argument is settable only for
 "infomap" method.}
+
+\item{verbose}{flag for verbose output (default as FALSE)}
 }
 \value{
 A Communities object.

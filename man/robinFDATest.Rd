@@ -9,7 +9,8 @@ robinFDATest(
   model1,
   model2,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  legend = c("real data", "null model")
+  legend = c("real data", "null model"),
+  verbose = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ Mean2 output of the comparison function).}
 
 \item{legend}{The legend for the graph. The default is c("real data", 
 "null model").}
+
+\item{verbose}{flag for verbose output (default as FALSE).}
 }
 \value{
 Two plots: the fitted curves and the adjusted p-values. A vector of the adjusted p-values.

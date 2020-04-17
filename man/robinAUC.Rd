@@ -8,7 +8,8 @@ robinAUC(
   graph,
   model1,
   model2,
-  measure = c("vi", "nmi", "split.join", "adjusted.rand")
+  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
+  verbose = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ Mean2 output of the comparison function).}
 
 \item{measure}{The stability measure "vi", "nmi", "split.join", 
 "adjusted.rand".}
+
+\item{verbose}{flag for verbose output (default as FALSE).}
 }
 \value{
 A list

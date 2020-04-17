@@ -4,11 +4,13 @@
 \alias{robinGPTest}
 \title{robinGPTest}
 \usage{
-robinGPTest(ratio)
+robinGPTest(ratio, verbose = FALSE)
 }
 \arguments{
 \item{ratio}{The ratios output of the robinRobust function (or the ratios1vs2 
 output of the comparison function).}
+
+\item{verbose}{flag for verbose output (default as FALSE).}
 }
 \value{
 A numeric value, the Bayes factor

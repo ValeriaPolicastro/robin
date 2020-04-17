@@ -18,7 +18,8 @@ robinRobust(
   spins = 25,
   e.weights = NULL,
   v.weights = NULL,
-  nb.trials = 10
+  nb.trials = 10,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ method.}
 \item{v.weights}{This argument is settable only for "infomap" method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
+
+\item{verbose}{flag for verbose output (default as FALSE).}
 }
 \value{
 A list object.

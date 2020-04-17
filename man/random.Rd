@@ -4,10 +4,12 @@
 \alias{random}
 \title{random}
 \usage{
-random(graph)
+random(graph, verbose = FALSE)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
+
+\item{verbose}{flag for verbose output (default as FALSE)}
 }
 \value{
 An igraph object, a randomly rewired graph.
