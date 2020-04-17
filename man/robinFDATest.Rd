@@ -28,11 +28,11 @@ Mean2 output of the comparison function).}
 "null model").}
 }
 \value{
-Two plots.
+Two plots: the fitted curves and the adjusted p-values. A vector of the adjusted p-values.
 }
 \description{
-The function implements the Interval Testing Procedure for 
-testing the difference between the two curves.
+The function implements the Interval Testing Procedure to 
+test the difference between two curves.
 }
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
@@ -40,5 +40,5 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 measure="vi",type="independent")
-robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,measure="vi")
+robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, measure="vi")
 }

@@ -32,10 +32,10 @@ robinRobust(
 
 \item{FUN}{see \code{\link{methodCommunity}}.}
 
-\item{measure}{The stability measure "vi", "nmi", "split.join", 
+\item{measure}{The stability measure, one of "vi", "nmi", "split.join", 
 "adjusted.rand".}
 
-\item{type}{The type of robin costruction dependent or independent data}
+\item{type}{The type of robin costruction, dependent or independent data}
 
 \item{directed}{This argument is settable only for "edgeBetweenness" method.}
 
@@ -56,7 +56,7 @@ method.}
 A list object.
 }
 \description{
-A procedure to examine the stability of the partition recovered 
+This functions implements a procedure to examine the stability of the partition recovered by some algorithm 
 against random perturbations of the original graph structure.
 }
 \examples{

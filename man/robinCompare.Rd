@@ -34,16 +34,16 @@ robinCompare(
 "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
 "labelProp", "infomap","optimal".}
 
-\item{FUN1}{its a personal designed function when method1 is "others". 
+\item{FUN1}{personal designed function when method1 is "others". 
 see \code{\link{methodCommunity}}.}
 
-\item{FUN2}{its a personal designed function when method2 is "others". 
+\item{FUN2}{personal designed function when method2 is "others". 
 see \code{\link{methodCommunity}}.}
 
-\item{measure}{The stability measure "vi", "nmi", "split.join", 
+\item{measure}{The stability measure, one of "vi", "nmi", "split.join", 
 "adjusted.rand".}
 
-\item{type}{The type of robin costruction dependent or independent.}
+\item{type}{The type of robin costruction, dependent or independent.}
 
 \item{directed}{This argument is settable only for "edgeBetweenness" method.}
 
@@ -64,8 +64,8 @@ method.}
 A list object
 }
 \description{
-A procedure to compare two different methods of community 
-detection.
+This function compares the robustness of two community 
+detection algorithms.
 }
 \examples{
 my_file <- system.file("example/football.gml", package="robin")

@@ -14,7 +14,7 @@ prepGraph(
 )
 }
 \arguments{
-\item{file}{The file to read from.}
+\item{file}{The input file containing the graph.}
 
 \item{file.format}{Character constant giving the file format. Right now
 as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are
@@ -35,8 +35,8 @@ for the edgelist format.The default is FALSE.}
 An igraph object, which do not contain loop and multiple edges.
 }
 \description{
-The prepGraph function is able to read graphs from a file and 
-to prepare them for the analysis.
+This function reads graphs from a file and 
+prepares them for the analysis.
 }
 \examples{
 my_file <- system.file("example/football.gml", package="robin")

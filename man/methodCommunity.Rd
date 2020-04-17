@@ -28,7 +28,7 @@ methodCommunity(
 \item{FUN}{in case the @method parameter is "other" there is the possibility 
 to use a personal function passing its name through this parameter.
 The personal parameter has to take as input the @graph and the @weights 
-(that can be NULL), moreover it has to return a communities object.}
+(that can be NULL), and has to return a community object.}
 
 \item{directed}{Logical constant, whether to calculate directed edge 
 betweenness for directed graphs. This argument is settable only for 
@@ -42,7 +42,7 @@ correspond to stronger connections. This argument is not settable for
 
 \item{steps}{The number of steps to take, this is actually the number of 
 tries to make a step. It is not a particularly useful parameter. This 
-argument is settable only for "leadingEigen"and"walktrap" method.}
+argument is settable only for "leadingEigen" and "walktrap" method.}
 
 \item{spins}{Integer constant, the number of spins to use. This is the upper 
 limit for the number of communities. It is not a problem to supply a 
@@ -53,7 +53,7 @@ unpopulated. This argument is settable only for "spinglass" method.}
 The length must match the number of edges in the graph. By default the 
 ‘weight’ edge attribute is used as weights. If it is not present, then all
 edges are considered to have the same weight. Larger edge weights correspond 
-to stronger connections.  This argument is settable only for "infomap"
+to stronger connections. This argument is settable only for "infomap"
  method.}
 
 \item{v.weights}{If not NULL, then a numeric vector of vertex weights. The
@@ -68,11 +68,12 @@ integer value equal or larger than 1). This argument is settable only for
 "infomap" method.}
 }
 \value{
-a Communities object.
+A Communities object.
 }
 \description{
 This function detects the community structure of a graph.
-The community structure are found by all functions implemented in igraph.
+To detect the community structure the user can choose one of the methods implemented 
+in igraph.
 }
 \examples{
 my_file <- system.file("example/football.gml", package="robin")

@@ -13,7 +13,7 @@ random(graph)
 An igraph object, a randomly rewired graph.
 }
 \description{
-Randomly rewire the edges while preserving the original graph's 
+This function randomly rewires the edges while preserving the original graph's 
 degree distribution.
 }
 \examples{

@@ -14,35 +14,35 @@ output:
 ---
 
 
-# ROBIN
+# robin
 
 In network analysis, many community detection algorithms have been developed. 
 However,their applications leave unaddressed one important question: 
 **the statistical validation of the results**. 
 
 
-ROBIN (ROBustness In Network) is an R package for the validation of community 
-detection it has a double aim: it **studies the robustness** of a community 
-detection algorithm and **compares** the robustness of **different community detection algorithms** on the same network. 
+*robin* (ROBustness in Network) is an R package for the validation of community 
+detection. It has a double aim: **to study the robustness** of a community 
+detection algorithm and **to compare** the robustness of **different community detection algorithms** on the same network. 
 
 It provides:
-1)A procedure to examine the robustness of a community detection algorithm against random 
-perturbations of the original graph
-2)Two tests to determine the statistical difference between stability measure curves
-3)A routine to choose among different community detection algorithms the one that better fits the network of interest
-4)A graphical interactive representation 
+1) a procedure to examine the robustness of a community detection algorithm against random 
+perturbations of the original graph; 
+2) two tests to determine the statistical difference between stability measure curves;
+3) a routine to choose among different community detection algorithms the one that better fits the network of interest;
+4) a graphical interactive representation.
 
 # Loading package
 ```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 library("robin")
 ```
 
-# Preparation of the Graph 
-As input, the **ROBIN** package expects a network that can be read from different 
+# Input 
+The input of the *robin* package is a network that can be read from different 
 format: edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph 
 graphs.
 
-**prepGraph** function creates an *igraph* object from the input file. This step is necessary for ROBIN execution
+**prepGraph** function creates an *igraph* object from the input file. This step is necessary for *robin* execution
 
 ```{r}
 my_network <- system.file("example/football.gml", package="robin")
@@ -51,78 +51,99 @@ graph <- prepGraph(file=my_network, file.format="gml")
 graph
 ```
 
-# Random Graph 
-**random** creates the null model for the robustness procedure **robinRobust**. The graph argument must be the same returned by **prepGraph** function.
+# Null model 
+
+*robin* offers two choiches for the null model:
+
+1) external building according to users’ preferences, then the null graph is passed as a
+variable;
+
+2) generation by using the function **random**.
+
+**random** function creates the null model for the robustness procedure **robinRobust**. The graph argument must be the same returned by **prepGraph** function. 
+
+The function **random** creates a random graph with the same degree distribution of the
+original graph, but with completely random edges, using the **rewire** function of the package
+igraph with the option "keeping_degseq" that preserves the degree distribution of the original
+network. The function **rewire** randomly assigns a number of edges between vertices with
+the given degree distribution.
 
 ```{r}
 graphRandom <- random(graph=graph)
 graphRandom
 ```
 
-# Plot graph
-**plotGraph** function implements a graphical representation of the network with aid of *networkD3* package.
+# Network visualization
+**plotGraph** function offers a graphical representation of the network with the aid of *networkD3* package.
 
 ```{r}
 plotGraph(graph)
 ```
 
-# Create Community 
-To dectect communities using all the algorithms implemented in *igraph* package.
+# Community detection 
+**methodCommunity** function detects communities using all the algorithms implemented in *igraph* package:  "walktrap", "edgeBetweenness", "fastGreedy", "spinglass", "leadingEigen",
+"labelProp", "infomap", "optimal", "other".
 
 ```{r}
-methodCommunity(graph=graph, method="fastGreedy") #as community 
-membershipCommunities(graph=graph, method="fastGreedy") #as membership
+methodCommunity(graph=graph, method="fastGreedy") 
+```
+**membershipCommunities** function detects the community membership.
+```{r}
+membershipCommunities(graph=graph, method="fastGreedy") 
 ```
 
-# Community Plot
+# Community visualization
 
-**plotComm** produces an interactive 3D plot of the communites detected by chosen algorithm.
+**plotComm** function produces an interactive 3D plot of the communites detected by the chosen algorithm.
 
 ```{r}
 members <- membershipCommunities(graph=graph, method="fastGreedy")
 plotComm(graph=graph, members=members)
 ```
 
-# Procedure to validate the robustness
-**robinRobust** implements the validation of community robustness.
-In this example we use "vi" distance as stability measure, indipendent 
-type procedure and *louvain* as community detection algorithm. 
-Users can choose different measures ("nmi","split.join", "adjusted.rand") and 
-algorithms (walktrap", "edgeBetweenness", "fastGreedy", "spinglass", "leadingEigen",
-"labelProp", "infomap", "optimal", "other").
+# Community detection robustness
+**robinRobust** function implements the validation of the community robustness.
+In this example we use "vi" distance as stability measure, "indipendent" 
+type procedure and "louvain" as community detection algorithm. 
+
+Users can choose different measures: "nmi","split.join", "adjusted.rand".
 
 ```{r}
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
                   method="louvain", type="independent")
 ```
 
-# Robin Plots
+# Stability measure visualization
 **plotRobin** function plots the stability measure curves. 
-The (x,y)-axis represent the percentuage of perturbation and the average of the stability measure, respectively.
+The (x,y)-axes represent the percentuage of perturbation and the average of the stability measure, respectively.
 
 ```{r}
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
 legend=c("real data", "null model"), measure="vi")
 ```
 
-# Statistical Tests between Real data and Null model 
-The differeces between this two curves are tested using:
-- Functional data analysis
-- Gaussian Process
-- Area Under the Curve (AUC)
+# Statistical tests for robustness
+The differeces between the stability measure curves are tested using:
+1) Functional Data Analysis (FDA);
+2) Gaussian Process (GP).
+Moreover the Area Under the Curve (AUC) is evaluated too.
 
+**robinFDATest** function implements the FDA testing.
 
 ```{r}
 robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
              measure="vi")
 ```
 
-The first figure represents the stability measure plot on the clustering obtained via *louvain* algorithm. The second one represents the corresponding adjusted p-values of the Interval Testing procedure. Horizontal red line corresponds to the critical value 0.05. 
+The first figure represents the stability measure plot using "louvain" algorithm for detecting communities. The second one represents the corresponding adjusted p-values of the Interval Testing procedure. Horizontal red line corresponds to the critical value 0.05. 
 
+**robinGPTest** function implements the GP testing.
 ```{r}
 robinGPTest(ratio=proc$ratios)
 ```
-The output is the Bayes Factor
+The output is the Bayes Factor.
+
+**robinAUC** function implements the AUC.
 
 ```{r}
 robinAUC(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
@@ -131,11 +152,12 @@ robinAUC(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 The outputs are the area under the two curves
 
 
-# Comparison Two different Methods
+# Comparing robustness of two community detection algorithms
 
-To choose among different community detection algorithms the one that better fits the network of interest, the fuction **robinCompare** has to be used.
+**robinCompare** function compares two detection algorithms on the same network  and permitts the user
+to choose the one that better fits the network of interest.
 
-In this example we take the *Fast Greedy* and *Louvain* algorithms.
+In this example we consider the "Fast Greedy" and "Louvain" algorithms.
 
 We firstly plot the communities dectected by both algorithms.
 
@@ -146,7 +168,7 @@ plotComm(graph=graph, members=membersFast)
 plotComm(graph=graph, members=membersLouv)
 ```
 
-Secondly, we compare the with **robinCompare** function. 
+Secondly, we compare them with **robinCompare** function. 
 
 
 ```{r}
@@ -154,7 +176,7 @@ comp <- robinCompare(graph=graph, method1="fastGreedy",
                 method2="louvain", measure="vi", type="independent")
 ```
 
-Thirdly, we plot the two curves of the two compared methods.
+Thirdly, we plot the curves of the compared methods.
 
 
 ```{r}
@@ -166,7 +188,7 @@ In this example, the Louvain algorithm fits better the network of interest,
 as the curve of the stability measure assumes lower values than the one obtained by 
 the Fast greedy method. 
 
-# Statistical Tests between two community detection algorithms
+# Statistical tests between two community detection algorithms
 
 The following procedures test the statistical differeces between the two curves using two different methods
 ```{r}
@@ -177,4 +199,4 @@ while
 ```{r}
 robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 ```
-calculates the area under the two curves.
+calculates the area under the curves.

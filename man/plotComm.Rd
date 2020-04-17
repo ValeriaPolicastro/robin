@@ -13,12 +13,12 @@ plotComm(graph, members)
 membershipCommunities.}
 }
 \value{
-creates an interactive plot with colorful communities, a D3 
+Creates an interactive plot with colorful communities, a D3 
 JavaScript network graph.
 }
 \description{
 Graphical interactive representation of the network and its 
-communities
+communities.
 }
 \examples{
 my_file <- system.file("example/football.gml", package="robin")

@@ -14,7 +14,7 @@ output of the comparison function).}
 A numeric value, the Bayes factor
 }
 \description{
-This function makes a test between the curves, calculating the 
+This function implements the GP testing procedure and calculates the 
 Bayes factor.
 }
 \examples{
