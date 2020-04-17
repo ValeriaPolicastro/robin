@@ -64,7 +64,11 @@ method.}
 \item{verbose}{flag for verbose output (default as FALSE).}
 }
 \value{
-A list object
+A list object with:
+-the matrices "Mean1" and "Mean2" with the mean of the measures of every ten steps, 
+respectively for the first and the second community detection algorithm.
+-the vector "ratios1vs2" with the ratios between the measures of the first and the second 
+community detection algorithm.
 }
 \description{
 This function compares the robustness of two community 
