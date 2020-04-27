@@ -57,12 +57,10 @@ method.}
 }
 \value{
 A list object with: 
--the matrices "measureReal" and "measureRandom" with the 
-measures calculated at each step of the procedure, respectively for the real and 
+-the matrices "Mean" and "MeanRandom" with the mean of the measures 
+of every ten steps, respectively for the real and the random graph.
+-the vector "ratios" with the ratios between the measures of the real and 
 the random graph.
--the matrices "Mean" and "MeanRandom" with the mean of the measures of every ten steps, 
-respectively for the real and the random graph.
--the vector "ratios" with the ratios between the measures of the real and the random graph.
 }
 \description{
 This functions implements a procedure to examine the stability 

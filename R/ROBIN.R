@@ -453,12 +453,10 @@ rewireOnl <- function(data, number)
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return A list object with: 
-#' -the matrices "measureReal" and "measureRandom" with the 
-#' measures calculated at each step of the procedure, respectively for the real and 
+#' -the matrices "Mean" and "MeanRandom" with the mean of the measures 
+#' of every ten steps, respectively for the real and the random graph.
+#' -the vector "ratios" with the ratios between the measures of the real and 
 #' the random graph.
-#' -the matrices "Mean" and "MeanRandom" with the mean of the measures of every ten steps, 
-#' respectively for the real and the random graph.
-#' -the vector "ratios" with the ratios between the measures of the real and the random graph.
 #' 
 #' @import igraph
 #' @export
@@ -760,6 +758,9 @@ robinRobust <- function(graph, graphRandom,
     }
     colnames(measureRandom) <- nRewire
     colnames(measureReal) <- nRewire
+    #the matrices "measureReal" and "measureRandom" with the 
+    #measures calculated at each step of the procedure, respectively for the real and 
+    #the random graph.
     colnames(MeanRandom) <- nRewire
     colnames(Mean) <- nRewire
     nn <- rep(nRewire, each=nrep) 
@@ -768,10 +769,10 @@ robinRobust <- function(graph, graphRandom,
     #e la media delle distanze tra il random e la sua perturbazione
     bats <- as.vector(ratios)
     names(bats) <- nn
-    res <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
+    res <- t(bats)#la trasposta del rapporto
     
-    output <- list( measureReal=measureReal,
-                    measureRandom=measureRandom,
+    output <- list( #measureReal=measureReal,
+                    #measureRandom=measureRandom,
                     Mean=Mean,
                     MeanRandom=MeanRandom,
                     ratios=res
@@ -1171,7 +1172,7 @@ robinCompare <- function(graph,
     ratios1vs2 <- log2((Mean1+0.001)/(Mean2+0.001))
     bats1vs2 <- as.vector(ratios1vs2)
     names(bats1vs2) <- nn
-    res1vs2 <- cbind(ID="ratios", t(bats1vs2))
+    res1vs2 <- t(bats1vs2)
     
     output <- list(Mean1=Mean1,
                    Mean2=Mean2,
@@ -1263,7 +1264,7 @@ robinGPTest <- function(ratio, verbose=FALSE)
                          labels=rep(FALSE,2), display=FALSE)
     
     if(verbose) cat("Computing Gaussian Process Testing.\n")
-    MA <- as.matrix(ratio[,c(2:dim(ratio)[2])])
+    MA <- as.matrix(ratio[,c(1:dim(ratio)[2])])
     MA <- t(MA)
     vt <- unique(colnames(MA))
     ntimes <- length(vt)
@@ -1290,8 +1291,8 @@ robinGPTest <- function(ratio, verbose=FALSE)
     # 1/1000,  0,	1
     #,1/ntimes,	0.8,0.2
     #), ncol=3, byrow=TRUE)
-    dvet <- data.matrix(as.numeric(colnames(ratio)[-1]))
-    dd <- t(data.matrix(as.numeric((ratio)[-1])))
+    dvet <- data.matrix(as.numeric(colnames(ratio)))
+    dd <- t(data.matrix(as.numeric(ratio)))
     rownames(dd) <- 'Measure'
     colnames(dd) <- dvet
     datadum <- rbind(dd, dd)
