@@ -35,7 +35,6 @@ proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi",
                   method="louvain", type="independent")               
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
 legend=c("real data", "null model"), measure="vi")
-robinGPTest(ratio=proc$ratios)
 ```
 <p align="center">
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Schermata%20del%202019-09-23%2012-24-29.png" width="500" height="350" />
@@ -49,7 +48,6 @@ comp <- robinCompare(graph=graph, method1="fastGreedy",
                 method2="louvain", measure="vi", type="independent")                
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
-robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 ```
 <p align="center">
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Schermata%20del%202019-09-23%2012-34-23.png" width="500" height="350"/>

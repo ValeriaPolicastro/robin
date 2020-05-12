@@ -452,11 +452,9 @@ rewireOnl <- function(data, number)
 #' @param directed This argument is settable only for "edgeBetweenness" method.
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
-#' @return A list object with: 
-#' -the matrices "Mean" and "MeanRandom" with the mean of the measures 
-#' of every ten steps, respectively for the real and the random graph.
-#' -the vector "ratios" with the ratios between the measures of the real and 
-#' the random graph.
+#' @return A list object with two matrices:
+#' - the matrix "Mean" with the means of the procedure for the graph
+#' - the matrix "MeanRandom" with the means of the procedure for the random graph. 
 #' 
 #' @import igraph
 #' @export
@@ -763,19 +761,19 @@ robinRobust <- function(graph, graphRandom,
     #the random graph.
     colnames(MeanRandom) <- nRewire
     colnames(Mean) <- nRewire
-    nn <- rep(nRewire, each=nrep) 
-    ratios <- log2((Mean+0.001)/(MeanRandom+0.001))
-    #rapporto tra la media delle misure tra il modello reale e quello perturbato 
-    #e la media delle distanze tra il random e la sua perturbazione
-    bats <- as.vector(ratios)
-    names(bats) <- nn
-    res <- t(bats)#la trasposta del rapporto
-    
+    # nn <- rep(nRewire, each=nrep) 
+    # ratios <- log2((Mean+0.001)/(MeanRandom+0.001))
+    # #rapporto tra la media delle misure tra il modello reale e quello perturbato 
+    # #e la media delle distanze tra il random e la sua perturbazione
+    # bats <- as.vector(ratios)
+    # names(bats) <- nn
+    # res <- t(bats)#la trasposta del rapporto
+    # 
     output <- list( #measureReal=measureReal,
                     #measureRandom=measureRandom,
                     Mean=Mean,
-                    MeanRandom=MeanRandom,
-                    ratios=res
+                    MeanRandom=MeanRandom
+                    #ratios=res
                     )
       return(output)
 
@@ -885,11 +883,9 @@ plotRobin <- function(graph,
 #' @param directed This argument is settable only for "edgeBetweenness" method.
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
-#' @return A list object with:
-#' -the matrices "Mean1" and "Mean2" with the mean of the measures of every ten steps, 
-#' respectively for the first and the second community detection algorithm.
-#' -the vector "ratios1vs2" with the ratios between the measures of the first and the second 
-#' community detection algorithm.
+#' @return A list object with two matrices:
+#' - the matrix "Mean1" with the means of the procedure for the first method 
+#' - the matrix "Mean2" with the means of the procedure for the second method.
 #' 
 #' @import igraph
 #' @export
@@ -1168,15 +1164,16 @@ robinCompare <- function(graph,
     }
     colnames(Mean1) <- nRewire 
     colnames(Mean2) <- nRewire 
-    nn <- rep(nRewire, each=nrep) 
-    ratios1vs2 <- log2((Mean1+0.001)/(Mean2+0.001))
-    bats1vs2 <- as.vector(ratios1vs2)
-    names(bats1vs2) <- nn
-    res1vs2 <- t(bats1vs2)
+    # nn <- rep(nRewire, each=nrep) 
+    # ratios1vs2 <- log2((Mean1+0.001)/(Mean2+0.001))
+    # bats1vs2 <- as.vector(ratios1vs2)
+    # names(bats1vs2) <- nn
+    # res1vs2 <- t(bats1vs2)
     
     output <- list(Mean1=Mean1,
-                   Mean2=Mean2,
-                   ratios1vs2=res1vs2)
+                   Mean2=Mean2
+                   #ratios1vs2=res1vs2
+                   )
     return(output)
 }
 
@@ -1240,8 +1237,10 @@ createITPSplineResult <- function(graph, model1, model2,
 #'
 #' @description This function implements the GP testing procedure and calculates the 
 #' Bayes factor.
-#' @param ratio The ratios output of the robinRobust function (or the ratios1vs2 
-#' output of the comparison function). 
+#' @param model1 The Mean output of the robinRobust function (or the Mean1 
+#' output of the robinCompare function).
+#' @param model2 The MeanRandom output of the robinRobust function (or the 
+#' Mean2 output of the robinCompare function).
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return A numeric value, the Bayes factor
@@ -1255,10 +1254,20 @@ createITPSplineResult <- function(graph, model1, model2,
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, 
 #' method="louvain", measure="vi",type="independent")
-#' robinGPTest(ratio=Proc$ratios)
-robinGPTest <- function(ratio, verbose=FALSE)
+#' robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)
+robinGPTest <- function(model1, model2, verbose=FALSE)
 {
-    gpregeOptions <- list(indexRange=(1:2), explore=FALSE, 
+   ratios <- log2((model1+0.001)/(model2+0.001))
+   #rapporto tra la media delle misure tra il modello reale e quello perturbato 
+   #e la media delle distanze tra il random e la sua perturbazione
+   res <- as.vector(ratios)
+  
+   nRewire <- seq(0,60,5)
+   nrep <- 10
+   names(res) <- rep(nRewire, each=nrep) 
+  
+   ratio <- t(res)#la trasposta del rapporto
+   gpregeOptions <- list(indexRange=(1:2), explore=FALSE, 
                          exhaustPlotRes=30, exhaustPlotLevels=10, 
                          exhaustPlotMaxWidth=100, iters=100, 
                          labels=rep(FALSE,2), display=FALSE)
@@ -1313,9 +1322,9 @@ robinGPTest <- function(ratio, verbose=FALSE)
 #'
 #' @param graph The output of prepGraph.
 #' @param model1 The Mean output of the robinRobust function (or the Mean1 
-#' output of the comparison function).
+#' output of the robinCompare function).
 #' @param model2 The MeanRandom output of the robinRobust function (or the 
-#' Mean2 output of the comparison function).
+#' Mean2 output of the robinCompare function).
 #' @param measure The stability measure "vi", "nmi", "split.join", 
 #' "adjusted.rand".
 #' @param legend The legend for the graph. The default is c("real data", 
@@ -1355,9 +1364,9 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
 #' @description This function calculates the area under two curves with a spline approach. 
 #' @param graph The output of prepGraph.
 #' @param model1 The Mean output of the robinRobust function (or the Mean1 
-#' output of the comparison function).
+#' output of the robinCompare function).
 #' @param model2 The MeanRandom output of the robinRobust function (or the 
-#' Mean2 output of the comparison function).
+#' Mean2 output of the robinCompare function).
 #' @param measure The stability measure "vi", "nmi", "split.join", 
 #' "adjusted.rand".
 #' @param verbose flag for verbose output (default as FALSE).
