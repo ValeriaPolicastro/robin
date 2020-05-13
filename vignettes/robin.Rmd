@@ -139,7 +139,7 @@ The first figure represents the stability measure plot using "louvain" algorithm
 
 **robinGPTest** function implements the GP testing.
 ```{r}
-robinGPTest(ratio=proc$ratios)
+robinGPTest(model1=proc$Mean, model2=proc$MeanRandom)
 ```
 The output is the Bayes Factor.
 
@@ -193,7 +193,7 @@ the Fast greedy method.
 The following procedures test the statistical differeces between the two curves using two different methods
 ```{r}
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
-robinGPTest(ratio=comp$ratios1vs2)
+robinGPTest(model1=comp$Mean1, model2=comp$Mean2)
 ```
 while 
 ```{r}
