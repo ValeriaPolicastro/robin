@@ -4,11 +4,14 @@
 \alias{robinGPTest}
 \title{robinGPTest}
 \usage{
-robinGPTest(ratio, verbose = FALSE)
+robinGPTest(model1, model2, verbose = FALSE)
 }
 \arguments{
-\item{ratio}{The ratios output of the robinRobust function (or the ratios1vs2 
-output of the comparison function).}
+\item{model1}{The Mean output of the robinRobust function (or the Mean1 
+output of the robinCompare function).}
+
+\item{model2}{The MeanRandom output of the robinRobust function (or the 
+Mean2 output of the robinCompare function).}
 
 \item{verbose}{flag for verbose output (default as FALSE).}
 }
@@ -25,5 +28,5 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, 
 method="louvain", measure="vi",type="independent")
-robinGPTest(ratio=Proc$ratios)
+robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)
 }

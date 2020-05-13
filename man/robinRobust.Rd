@@ -56,11 +56,9 @@ method.}
 \item{verbose}{flag for verbose output (default as FALSE).}
 }
 \value{
-A list object with: 
--the matrices "Mean" and "MeanRandom" with the mean of the measures 
-of every ten steps, respectively for the real and the random graph.
--the vector "ratios" with the ratios between the measures of the real and 
-the random graph.
+A list object with two matrices:
+- the matrix "Mean" with the means of the procedure for the graph
+- the matrix "MeanRandom" with the means of the procedure for the random graph.
 }
 \description{
 This functions implements a procedure to examine the stability 
