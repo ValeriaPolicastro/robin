@@ -761,19 +761,8 @@ robinRobust <- function(graph, graphRandom,
     #the random graph.
     colnames(MeanRandom) <- nRewire
     colnames(Mean) <- nRewire
-    # nn <- rep(nRewire, each=nrep) 
-    # ratios <- log2((Mean+0.001)/(MeanRandom+0.001))
-    # #rapporto tra la media delle misure tra il modello reale e quello perturbato 
-    # #e la media delle distanze tra il random e la sua perturbazione
-    # bats <- as.vector(ratios)
-    # names(bats) <- nn
-    # res <- t(bats)#la trasposta del rapporto
-    # 
-    output <- list( #measureReal=measureReal,
-                    #measureRandom=measureRandom,
-                    Mean=Mean,
+    output <- list( Mean=Mean,
                     MeanRandom=MeanRandom
-                    #ratios=res
                     )
       return(output)
 
@@ -1164,16 +1153,8 @@ robinCompare <- function(graph,
     }
     colnames(Mean1) <- nRewire 
     colnames(Mean2) <- nRewire 
-    # nn <- rep(nRewire, each=nrep) 
-    # ratios1vs2 <- log2((Mean1+0.001)/(Mean2+0.001))
-    # bats1vs2 <- as.vector(ratios1vs2)
-    # names(bats1vs2) <- nn
-    # res1vs2 <- t(bats1vs2)
-    
     output <- list(Mean1=Mean1,
-                   Mean2=Mean2
-                   #ratios1vs2=res1vs2
-                   )
+                   Mean2=Mean2)
     return(output)
 }
 
