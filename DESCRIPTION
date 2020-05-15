@@ -8,7 +8,7 @@ Authors@R: c(
     person("Italia", "De Feis", role=c("aut"), email="i.defeis@na.iac.cnr.it"),
     person("Annamaria", "Carissimo", role=c("aut"), email="a.carissimo@na.iac.cnr.it"))
 Maintainer: Valeria Policastro <valeria.policastro@gmail.com>
-Description: robin assesses the robustness of the community structure of a network found by one or more community detection algorithm to give indications about their reliability.It detects if the community structure found by a set of algorithms is statistically significant and compares the different selected detection algorithms on the same network. robin helps to choose among different community detection algorithms the one that better fits the network of interest. Reference in Annamaria Carissimo, Luisa Cutillo, Italia De Feis (2018) <doi:10.1016/j.csda.2017.10.006>.
+Description: Assesses the robustness of the community structure of a network found by one or more community detection algorithm to give indications about their reliability. It detects if the community structure found by a set of algorithms is statistically significant and compares the different selected detection algorithms on the same network. robin helps to choose among different community detection algorithms the one that better fits the network of interest. Reference in Annamaria Carissimo, Luisa Cutillo, Italia De Feis (2018) <doi:10.1016/j.csda.2017.10.006>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
