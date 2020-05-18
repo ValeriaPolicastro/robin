@@ -80,7 +80,7 @@ graphRandom
 plotGraph(graph)
 ```
 
-# Community detection 
+## Community detection 
 **methodCommunity** function detects communities using all the algorithms implemented in *igraph* package:  "walktrap", "edgeBetweenness", "fastGreedy", "spinglass", "leadingEigen",
 "labelProp", "infomap", "optimal", "other".
 
@@ -92,7 +92,7 @@ methodCommunity(graph=graph, method="fastGreedy")
 membershipCommunities(graph=graph, method="fastGreedy") 
 ```
 
-# Community visualization
+## Community visualization
 
 **plotComm** function produces an interactive 3D plot of the communites detected by the chosen algorithm.
 
@@ -101,7 +101,7 @@ members <- membershipCommunities(graph=graph, method="fastGreedy")
 plotComm(graph=graph, members=members)
 ```
 
-# Community detection robustness
+# Robustness of a community detection algorithm
 **robinRobust** function implements the validation of the community robustness.
 In this example we use "vi" distance as stability measure, "indipendent" 
 type procedure and "louvain" as community detection algorithm. 
@@ -113,7 +113,6 @@ proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi",
                   method="louvain", type="independent")
 ```
 
-# Stability measure visualization
 **plotRobin** function plots the stability measure curves. 
 The (x,y)-axes represent the percentuage of perturbation and the average of the stability measure, respectively.
 
@@ -122,7 +121,7 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"), measure="vi")
 ```
 
-# Statistical tests for robustness
+## Statistical tests
 The differeces between the stability measure curves are tested using:
 1) Functional Data Analysis (FDA);
 2) Gaussian Process (GP).
@@ -138,7 +137,7 @@ robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 The first figure represents the stability measure plot using "louvain" algorithm for detecting communities. The second one represents the corresponding adjusted p-values of the Interval Testing procedure. Horizontal red line corresponds to the critical value 0.05. 
 
 **robinGPTest** function implements the GP testing.
-```{r}
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 robinGPTest(model1=proc$Mean, model2=proc$MeanRandom)
 ```
 The output is the Bayes Factor.
@@ -152,7 +151,7 @@ robinAUC(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 The outputs are the area under the two curves
 
 
-# Comparing robustness of two community detection algorithms
+# Comparison of two community detection algorithms
 
 **robinCompare** function compares two detection algorithms on the same network  and permitts the user
 to choose the one that better fits the network of interest.
@@ -188,13 +187,18 @@ In this example, the Louvain algorithm fits better the network of interest,
 as the curve of the stability measure assumes lower values than the one obtained by 
 the Fast greedy method. 
 
-# Statistical tests between two community detection algorithms
+## Statistical tests
 
 The following procedures test the statistical differeces between the two curves using two different methods
 ```{r}
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
+
+```
+
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 robinGPTest(model1=comp$Mean1, model2=comp$Mean2)
 ```
+
 while 
 ```{r}
 robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
