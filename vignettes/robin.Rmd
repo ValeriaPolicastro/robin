@@ -137,7 +137,7 @@ robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 The first figure represents the stability measure plot using "louvain" algorithm for detecting communities. The second one represents the corresponding adjusted p-values of the Interval Testing procedure. Horizontal red line corresponds to the critical value 0.05. 
 
 **robinGPTest** function implements the GP testing.
-```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+```{r message=FALSE, warning=FALSE}
 robinGPTest(model1=proc$Mean, model2=proc$MeanRandom)
 ```
 The output is the Bayes Factor.
@@ -195,7 +195,7 @@ robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 
 ```
 
-```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+```{r message=FALSE, warning=FALSE}
 robinGPTest(model1=comp$Mean1, model2=comp$Mean2)
 ```
 
