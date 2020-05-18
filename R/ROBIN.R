@@ -1238,54 +1238,57 @@ createITPSplineResult <- function(graph, model1, model2,
 #' robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)
 robinGPTest <- function(model1, model2, verbose=FALSE)
 { 
-   nRewire <- seq(0,60,5)
-   nrep <- 10
-   nn <- rep(nRewire, each=nrep) 
    ratios <- log2((model1+0.001)/(model2+0.001))
    #rapporto tra la media delle misure tra il modello reale e quello perturbato 
    #e la media delle distanze tra il random e la sua perturbazione
-   bats <- as.vector(ratios)
-   names(bats) <- nn
-   ratio <- cbind(ID="ratios", t(bats))#la trasposta del rapporto
-   gpregeOptions <- list(indexRange=(1:2), explore=FALSE, 
-                         exhaustPlotRes=30, exhaustPlotLevels=10, 
-                         exhaustPlotMaxWidth=100, iters=100, 
+   res <- as.vector(ratios)
+
+   nRewire <- seq(0,60,5)
+   nrep <- 10
+   names(res) <- rep(nRewire, each=nrep)
+
+   ratio <- t(res)#la trasposta del rapporto
+   gpregeOptions <- list(indexRange=(1:2), explore=FALSE,
+                         exhaustPlotRes=30, exhaustPlotLevels=10,
+                         exhaustPlotMaxWidth=100, iters=100,
                          labels=rep(FALSE,2), display=FALSE)
-   MA <- as.matrix(ratio[,c(2:dim(ratio)[2])])
-   MA <- t(MA)
-   vt <- unique(colnames(MA))
-   ntimes <- length(vt)
-   stdv <- NULL
-   varv <- NULL
-   for (i in c(1:ntimes)){    #ntime number of percentuage of rewire
-     ind <- which(colnames(MA)==vt[i])
-     stdv[i] <- stats::sd(MA[1,ind])
-     varv[i] <- stats::var(MA[1,ind])
-   }
-   #sigmaest=mean(stdv)Order of the B-spline basis expansion.
-   GlobalVar <- var(MA[1,])
-   SigNoise <- mean(varv)/GlobalVar
-   if (SigNoise>1) SigNoise <- 1
-   #SigNoise=1-var(MA[2,])
-   sigmaest <- 1-SigNoise
-   #mod='08'
-   #ntimes=50
-   gpregeOptions$inithypers <- matrix( c(
-     1/1000,	0,	1
-     ,1/ntimes,	sigmaest, SigNoise
-   ), ncol=3, byrow=TRUE)
-   #gpregeOptions$inithypers <- matrix( c(
-   # 1/1000,  0,	1
-   #,1/ntimes,	0.8,0.2
-   #), ncol=3, byrow=TRUE)
-   dvet <- data.matrix(as.numeric(colnames(ratio)[-1]))
-   dd <- t(data.matrix(as.numeric((ratio)[-1])))
-   rownames(dd) <- 'Measure'
-   colnames(dd) <- dvet
-   datadum <- rbind(dd, dd)
-   gpregeOutput <- gprege::gprege(data=datadum, inputs=dvet,
+
+    if(verbose) cat("Computing Gaussian Process Testing.\n")
+    MA <- as.matrix(ratio[,c(1:dim(ratio)[2])])
+    MA <- t(MA)
+    vt <- unique(colnames(MA))
+    ntimes <- length(vt)
+    stdv <- NULL
+    varv <- NULL
+    for (i in c(1:ntimes)){    #ntime number of percentuage of rewire
+        ind <- which(colnames(MA)==vt[i])
+        stdv[i] <- stats::sd(MA[1,ind])
+        varv[i] <- stats::var(MA[1,ind])
+    }
+    #sigmaest=mean(stdv)Order of the B-spline basis expansion.
+    GlobalVar <- var(MA[1,])
+    SigNoise <- mean(varv)/GlobalVar
+    if (SigNoise>1) SigNoise <- 1
+    #SigNoise=1-var(MA[2,])
+    sigmaest <- 1-SigNoise
+    #mod='08'
+    #ntimes=50
+    gpregeOptions$inithypers <- matrix( c(
+        1/1000,	0,	1
+        ,1/ntimes,	sigmaest, SigNoise
+    ), ncol=3, byrow=TRUE)
+    #gpregeOptions$inithypers <- matrix( c(
+    # 1/1000,  0,	1
+    #,1/ntimes,	0.8,0.2
+    #), ncol=3, byrow=TRUE)
+    dvet <- data.matrix(as.numeric(colnames(ratio)))
+    dd <- t(data.matrix(as.numeric(ratio)))
+    rownames(dd) <- 'Measure'
+    colnames(dd) <- dvet
+    datadum <- rbind(dd, dd)
+    gpregeOutput <- gprege::gprege(data=datadum, inputs=dvet,
                                   gpregeOptions=gpregeOptions)
-   bf <- gpregeOutput$rankingScores[1]
+    bf <- gpregeOutput$rankingScores[1]
 
     return(Bayes_Factor=bf)
   
