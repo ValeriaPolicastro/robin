@@ -1265,22 +1265,15 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
         stdv[i] <- stats::sd(MA[1,ind])
         varv[i] <- stats::var(MA[1,ind])
     }
-    #sigmaest=mean(stdv)Order of the B-spline basis expansion.
     GlobalVar <- var(MA[1,])
     SigNoise <- mean(varv)/GlobalVar
     if (SigNoise>1) SigNoise <- 1
-    #SigNoise=1-var(MA[2,])
     sigmaest <- 1-SigNoise
-    #mod='08'
-    #ntimes=50
+    ## [inverse-lengthscale percent-signal-variance percent-noise-variance]
     gpregeOptions$inithypers <- matrix( c(
         1/1000,	0,	1
-        ,1/ntimes,	sigmaest, SigNoise
+        ,1/ntimes,	sigmaest, SigNoise 
     ), ncol=3, byrow=TRUE)
-    #gpregeOptions$inithypers <- matrix( c(
-    # 1/1000,  0,	1
-    #,1/ntimes,	0.8,0.2
-    #), ncol=3, byrow=TRUE)
     dvet <- data.matrix(as.numeric(colnames(ratio)))
     dd <- t(data.matrix(as.numeric(ratio)))
     rownames(dd) <- 'Measure'
