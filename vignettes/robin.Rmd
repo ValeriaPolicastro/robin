@@ -106,7 +106,7 @@ plotComm(graph=graph, members=members)
 In this example we use "vi" distance as stability measure, "indipendent" 
 type procedure and "louvain" as community detection algorithm. 
 
-Users can choose different measures: "nmi","split.join", "adjusted.rand".
+Users can choose also different measures as: "nmi","split.join", "adjusted.rand".
 
 ```{r}
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
@@ -120,6 +120,7 @@ The (x,y)-axes represent the percentuage of perturbation and the average of the 
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
 legend=c("real data", "null model"), measure="vi")
 ```
+The procedure implemented depends on the network of interest.In this example, the Louvain algorithm fits good the network of interest,as the curve of the stability measure assumes lower values than the one obtained by the null model. 
 
 ## Statistical tests
 The differeces between the stability measure curves are tested using:
