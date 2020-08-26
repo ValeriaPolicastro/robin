@@ -53,7 +53,7 @@ graph
 
 # Null model 
 
-*robin* offers two choiches for the null model:
+*robin* offers two choices for the null model:
 
 1) external building according to users’ preferences, then the null graph is passed as a
 variable;
