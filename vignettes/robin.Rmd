@@ -53,7 +53,7 @@ graph
 
 # Null model 
 
-*robin* offers two choiches for the null model:
+*robin* offers two choices for the null model:
 
 1) external building according to users’ preferences, then the null graph is passed as a
 variable;
@@ -154,7 +154,7 @@ The outputs are the area under the two curves
 
 # Comparison of two community detection algorithms
 
-**robinCompare** function compares two detection algorithms on the same network  and permitts the user
+**robinCompare** function compares two detection algorithms on the same network  and permits the user
 to choose the one that better fits the network of interest.
 
 In this example we consider the "Fast Greedy" and "Louvain" algorithms.
