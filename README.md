@@ -3,7 +3,7 @@
 
 <br/><br>
 
-**_ROBIN (ROBustness In Network)_** is an R package for the validation of community detection it has a double aim it **studies the robustness** of a community detection algorithm and **compares** the robustness of **two community detection algorithms**. 
+**_ROBIN (ROBustness In Network)_** is an R package for the validation of community detection. It has a double aim: it **studies the robustness** of a community detection algorithm and it **compares** the robustness of **two community detection algorithms**. 
 
 <p align="center">
   <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Schermata%20del%202019-09-23%2012-50-52.png" width="500" height="300" />
