@@ -117,8 +117,8 @@ proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi",
 The (x,y)-axes represent the percentuage of perturbation and the average of the stability measure, respectively.
 
 ```{r}
-plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
-legend=c("real data", "null model"), measure="vi")
+plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, measure="vi",
+legend=c("real data", "null model"))
 ```
 The procedure implemented depends on the network of interest.In this example, the Louvain algorithm fits good the network of interest,as the curve of the stability measure assumes lower values than the one obtained by the null model. 
 

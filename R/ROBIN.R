@@ -26,13 +26,9 @@
 #' @examples 
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
-prepGraph <- function(file,
-                        file.format=c("edgelist", "pajek", "ncol", "lgl",
-                                      "graphml", "dimacs", "graphdb", "gml",
-                                      "dl","igraph"),
-                        numbers=FALSE,
-                        directed=FALSE,
-                        header=FALSE,
+prepGraph <- function(file, file.format=c("edgelist", "pajek", "ncol", "lgl",
+                        "graphml", "dimacs", "graphdb", "gml", "dl","igraph"),
+                        numbers=FALSE, directed=FALSE, header=FALSE, 
                         verbose=FALSE)
 { 
     file.format <- match.arg(file.format)
@@ -48,20 +44,19 @@ prepGraph <- function(file,
     }else if((file.format == "edgelist") & (numbers == TRUE))
     {
         edge <- utils::read.table(file,colClasses = "character", quote="\"",
-                           header=header)
+                                  header=header)
         edge <- as.matrix(edge)
         graph <- igraph::graph_from_edgelist(edge, directed=directed)
         graph <- igraph::simplify(graph)
     }else
     {
         net <- igraph::read_graph(file=file, format=file.format,
-                                  directed=directed
-                                  )
+                                  directed=directed)
         ind <- igraph::V(net)[degree(net) == 0] #isolate node
         graph <- igraph::delete.vertices(net, ind)
         graph <- igraph::simplify(graph)
     }
-   return(graph)
+    return(graph)
 }
 
 
@@ -86,7 +81,7 @@ random <- function(graph, verbose=FALSE)
     if(verbose) cat("Randomizing the graph edges.\n")
     z <- igraph::gsize(graph) ## number of edges
     graphRandom <- igraph::rewire(graph, 
-                            with=igraph::keeping_degseq(loops=FALSE, niter=z))
+                     with=igraph::keeping_degseq(loops=FALSE, niter=z))
     #rewiring for z all the edges
     return(graphRandom)
 }
@@ -151,15 +146,9 @@ methodCommunity <- function(graph,
                                     "fastGreedy", "louvain", "spinglass", 
                                     "leadingEigen", "labelProp", "infomap",
                                     "optimal", "other"),
-                            FUN=NULL,
-                            directed=FALSE,
-                            weights=NULL, 
-                            steps=4, 
-                            spins=25, 
-                            e.weights=NULL, 
-                            v.weights=NULL, 
-                            nb.trials=10, 
-                            verbose=FALSE)
+                            FUN=NULL, directed=FALSE, weights=NULL, steps=4, 
+                            spins=25, e.weights=NULL, v.weights=NULL, 
+                            nb.trials=10, verbose=FALSE)
 {   
     
     method <- match.arg(method)
@@ -175,33 +164,21 @@ methodCommunity <- function(graph,
         steps  <- -1
     }
     communities <- switch(method, 
-            optimal=igraph::cluster_optimal(graph, 
-                                            weights = weights),
-            louvain=igraph::cluster_louvain(graph=graph, 
-                                    weights=weights), 
-           
-            walktrap=igraph::cluster_walktrap(graph=graph, 
-                                    weights=weights, 
+            optimal=igraph::cluster_optimal(graph, weights = weights),
+            louvain=igraph::cluster_louvain(graph=graph, weights=weights),
+            walktrap=igraph::cluster_walktrap(graph=graph, weights=weights, 
                                     steps=steps), 
-           
-            spinglass=igraph::cluster_spinglass(graph=graph, 
-                                        weights=weights, 
+            spinglass=igraph::cluster_spinglass(graph=graph, weights=weights, 
                                         spins=spins), 
-           
             leadingEigen=igraph::cluster_leading_eigen(graph=graph, 
-                                            steps=steps, 
-                                            weights=weights,
+                                            steps=steps, weights=weights,
                                             options=list(maxiter=1000000)), 
-           
             edgeBetweenness=igraph::cluster_edge_betweenness(graph=graph, 
                                                     weights=weights,
                                                     directed=directed), 
-           
             fastGreedy=igraph::cluster_fast_greedy(graph=graph, 
                                                    weights=weights), 
-           
             labelProp=igraph::cluster_label_prop(graph=graph, weights=weights), 
-           
             infomap=igraph::cluster_infomap(graph=graph, e.weights=e.weights, 
                                 v.weights=v.weights, nb.trials=nb.trials),
             other=FUN(graph, weights)
@@ -266,14 +243,9 @@ membershipCommunities<- function(graph,
                                         "fastGreedy", "louvain", "spinglass", 
                                         "leadingEigen", "labelProp", "infomap",
                                         "optimal", "other"),
-                                 FUN=NULL,
-                                 directed=FALSE,
-                                 weights=NULL, 
-                                 steps=4, 
-                                 spins=25, 
-                                 e.weights=NULL, 
-                                 v.weights=NULL, 
-                                 nb.trials=10)
+                                 FUN=NULL, directed=FALSE, weights=NULL, 
+                                 steps=4, spins=25, e.weights=NULL, 
+                                 v.weights=NULL, nb.trials=10)
 {
     method <- match.arg(method)
     members <- membership(methodCommunity(graph=graph, method=method,
@@ -308,8 +280,8 @@ plotGraph <- function(graph)
 {
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph)
     plot <- networkD3::simpleNetwork(graph_d3$links, opacity=0.8, zoom=TRUE,
-                                     linkColour = "B1AEAE", nodeColour = "#2E66AC",
-                                     fontSize=12)
+                                linkColour = "B1AEAE", nodeColour = "#2E66AC",
+                                fontSize=12)
     return(plot)
 }   
 
@@ -341,15 +313,10 @@ plotComm <- function(graph, members)
     stopifnot(methods::is(members, "membership"))
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group=members)
     # Create network plot
-    plot <- networkD3::forceNetwork(Links=graph_d3$links, 
-                                     Nodes=graph_d3$nodes,
-                                     Source='source', 
-                                     Target='target', 
-                                     NodeID='name', 
-                                     Group='group',
-                                     opacity=0.8,
-                                     fontSize=12,
-                                     legend=TRUE)
+    plot <- networkD3::forceNetwork(Links=graph_d3$links, Nodes=graph_d3$nodes,
+                                    Source='source', Target='target', 
+                                    NodeID='name', Group='group', opacity=0.8,
+                                    fontSize=12, legend=TRUE)
     return(plot)
 }
 
@@ -385,26 +352,17 @@ rewireCompl <- function(data, number, community,
                                  "optimal", "other"),
                         FUN=NULL,
                         measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                        directed=FALSE,
-                        weights=NULL, 
-                        steps=4, 
-                        spins=25, 
-                        e.weights=NULL, 
-                        v.weights=NULL, 
-                        nb.trials=10)
+                        directed=FALSE, weights=NULL, steps=4, spins=25, 
+                        e.weights=NULL, v.weights=NULL, nb.trials=10)
 {
     method <- match.arg(method)
     measure <- match.arg (measure)
     graphRewire <- igraph::rewire(data,
                                   with=keeping_degseq(loops=FALSE,niter=number))
     comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
-                            directed=directed,
-                            weights=weights,
-                            steps=steps, 
-                            spins=spins, 
-                            e.weights=e.weights, 
-                            v.weights=v.weights, 
-                            nb.trials=nb.trials)
+                            directed=directed, weights=weights, steps=steps, 
+                            spins=spins, e.weights=e.weights, 
+                            v.weights=v.weights, nb.trials=nb.trials)
     Measure <- igraph::compare(community, comR, method=measure)
     output <- list(Measure=Measure, graphRewire=graphRewire)
     
@@ -420,9 +378,8 @@ rewireCompl <- function(data, number, community,
 
 rewireOnl <- function(data, number)
 {
-    graphRewire <- igraph::rewire(data,
-                                    with=keeping_degseq(loops=FALSE,
-                                                        niter=number))
+    graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
+                                              niter=number))
     return(graphRewire)
 }
 
@@ -470,17 +427,10 @@ robinRobust <- function(graph, graphRandom,
                          "fastGreedy", "louvain", "spinglass", 
                          "leadingEigen", "labelProp", "infomap",
                          "optimal", "other"),
-                FUN=NULL,
-                measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                type=c("independent","dependent"),
-                directed=FALSE,
-                weights=NULL, 
-                steps=4, 
-                spins=25, 
-                e.weights=NULL, 
-                v.weights=NULL, 
-                nb.trials=10,
-                verbose=FALSE) 
+                FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
+                type=c("independent","dependent"), directed=FALSE, weights=NULL, 
+                steps=4, spins=25, e.weights=NULL, v.weights=NULL, 
+                nb.trials=10, verbose=FALSE) 
 {   
     measure <- match.arg(measure)
     type<- match.arg(type)
@@ -774,7 +724,7 @@ robinRobust <- function(graph, graphRandom,
 #' plotRobin
 #'
 #' @description This function plots two curves: the measure of the null model and the measure
-#' of the real graph.
+#' of the real graph or the measure of the two community detection algorithms.
 #' @param graph The output of prepGraph
 #' @param model1 The Mean output of the robinRobust function or the Mean1 
 #' output of robinCompare.
@@ -799,28 +749,24 @@ robinRobust <- function(graph, graphRandom,
 #' plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,
 #' measure="vi", legend=c("real data", "null model"))
 #' 
-plotRobin <- function(graph,
-                      model1,
-                      model2,
+plotRobin <- function(graph, model1, model2,
                       measure= c("vi", "nmi","split.join", "adjusted.rand"),
                       legend=c("model1", "model2"),
                       title="Robin plot")
 {   
     measure <- match.arg (measure)
     if(measure=="vi")
-   {
-    N <- igraph::vcount(graph)
-    mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)),legend[1])
-    mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)),legend[2]) 
-    }else if(measure=="split.join")
     {
-    N <- igraph::vcount(graph)
-    mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))/(2*N)),legend[1])
-    mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))/(2*N)),legend[2])     
-    }else
-    {
-    mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))), legend[1])
-    mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))), legend[2])
+      N <- igraph::vcount(graph)
+      mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)),legend[1])
+      mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)),legend[2]) 
+    } else if(measure=="split.join") {
+      N <- igraph::vcount(graph)
+      mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))/(2*N)),legend[1])
+      mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))/(2*N)),legend[2])     
+    } else {
+      mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))), legend[1])
+      mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))), legend[2])
     }
     
     percPert <- rep((seq(0,60,5)/100), 2)
@@ -830,8 +776,7 @@ plotRobin <- function(graph,
     dataFrame <- data.frame(percPert, mvi)
     plot <- ggplot2::ggplot(dataFrame, aes(x=percPert, 
                                             y=as.numeric(as.character(mvi)), 
-                                            colour=model,
-                                            group=factor(model)))+ 
+                                            colour=model, group=factor(model)))+ 
         geom_line()+
         geom_point()+ 
         xlab("Percentage of perturbation") +
@@ -891,18 +836,12 @@ robinCompare <- function(graph,
                       method2=c("walktrap", "edgeBetweenness", "fastGreedy",
                                 "leadingEigen","louvain","spinglass",
                                 "labelProp","infomap","optimal", "other"),
-                      FUN1=NULL,
-                      FUN2=NULL,
+                      FUN1=NULL, FUN2=NULL,
                       measure= c("vi", "nmi","split.join", "adjusted.rand"),
                       type=c("independent", "dependent"),
-                      directed=FALSE,
-                      weights=NULL, 
-                      steps=4, 
-                      spins=25, 
-                      e.weights=NULL, 
-                      v.weights=NULL, 
-                      nb.trials=10,
-                      verbose=FALSE)
+                      directed=FALSE, weights=NULL, steps=4, 
+                      spins=25, e.weights=NULL, v.weights=NULL, 
+                      nb.trials=10, verbose=FALSE)
 {   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
@@ -1326,6 +1265,8 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
     ITPresult <- createITPSplineResult(graph, model1, model2, measure)
     plot2 <- graphics::plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='Percentage of perturbation', 
                 ylab="Measure")
+    graphics::points(seq(0,0.6,length.out = 9),y=ITPresult$pval,col="red")
+    graphics::legend(0.4,1,c("adjasted p-values","p-values"),pch=c(16,1),col=c("black","red"))
     graphics::lines(perc, rep(0.05, 13), type="l", col="red")
     
     adj.pvalue<-ITPresult$corrected.pval
