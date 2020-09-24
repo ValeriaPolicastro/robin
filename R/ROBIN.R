@@ -1261,17 +1261,92 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
                         legend=c("real data", "null model"), verbose=FALSE)
 {
     if(verbose) cat("Computing Interval testing procedure.\n")
-    perc <- rep((seq(0,60,5)/100))
-    ITPresult <- createITPSplineResult(graph, model1, model2, measure)
-    plot2 <- graphics::plot(ITPresult, main='Measure', xrange=c(0,0.6), xlab='Percentage of perturbation', 
-                ylab="Measure")
-    graphics::points(seq(0,0.6,length.out = 9),y=ITPresult$pval,col="red")
-    graphics::legend(0.4,1,c("adjasted p-values","p-values"),pch=c(16,1),col=c("black","red"))
-    graphics::lines(perc, rep(0.05, 13), type="l", col="red")
+    object <- createITPSplineResult(graph, model1, model2, measure)
     
-    adj.pvalue<-ITPresult$corrected.pval
-    print(plot2)
-    return(adj.pvalue)
+    #Functional Data plot
+    par(mfrow=c(1,2)) 
+    p <- length(object$pval)
+    n <- dim(object$data.eval)[1]
+    J <- dim(object$data.eval)[2]
+    alpha1=0.05
+    alpha2=0.01
+    
+    xmin <- 0
+    xmax <- 1
+    abscissa.pval = seq(xmin,xmax,len=p)
+    Abscissa = seq(xmin,xmax,len=J)
+    
+    colors <- numeric(n)
+    col=c(1,2)
+    colors[which(object$labels==1)] <- col[1]
+    colors[which(object$labels==2)] <- col[2]
+    
+    matplot(Abscissa,t(object$data.eval),type='l',main='Functional Data',ylab='Measure',
+            xlab='Percentage of perturbation',col=colors,lwd=1,ylim=range(object$data.eval))
+    
+    difference1 <- which(object$corrected.pval<alpha1)
+    if (length(difference1) > 0) {
+      for (j in 1:length(difference1)) {
+        min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+        max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+        rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
+      }
+      rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    difference2 <- which(object$corrected.pval<alpha2)
+    if (length(difference2) > 0) {
+      for (j in 1:length(difference2)) {
+        min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+        max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+        rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
+      }
+      rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    
+    matplot(Abscissa,t(object$data.eval),type='l',main='Functional Data',ylab='Measure',
+            xlab='Percentage of perturbation',col=colors,lwd=1,add=TRUE)
+    
+    
+    #P-value plot
+    
+    plot(abscissa.pval,object$corrected.pval,pch=16,ylim=c(0,1),main='p-values and adjusted p-values',
+         ylab='p-values',xlab='Percentage of perturbation')
+    lines(abscissa.pval,object$pval,type="p",pch=23,col="red")
+    
+    difference1 <- which(object$corrected.pval<alpha1)
+    if (length(difference1) > 0) {
+      for (j in 1:length(difference1)) {
+        min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+        max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+        rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
+      }
+      rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    
+    difference2 <- which(object$corrected.pval<alpha2)
+    if (length(difference2) > 0) {
+      for (j in 1:length(difference2)) {
+        min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
+        max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
+        rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
+      }
+      rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
+    }
+    for(j in 0:10){
+      abline(h=j/10,col='lightgray',lty="dotted")
+    }
+    
+    points(abscissa.pval,object$corrected.pval,pch=16)
+    abline(h=0.05,col='red')
+    legend("topright", legend=c("adjusted p-values", "p-values"),
+           col=c("black","red"), pch=c(16,23), cex=0.8)
+    
+    #numeric pvalue and adj.pvalue
+    adj.pvalue<-object$corrected.pval
+    pvalue<-object$pval
+    output<-list(adj.pvalue=adj.pvalue,
+                 pvalues=pvalue)
+    return(output)
 }  
 
 ########### AREA UNDER THE CURVE    ##############
