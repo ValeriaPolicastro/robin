@@ -196,7 +196,10 @@ methodCommunity <- function(graph,
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "optimal".
-#' @param FUN see \code{\link{methodCommunity}}.
+#' @param FUN in case the @method parameter is "other" there is the possibility 
+#' to use a personal function passing its name through this parameter.
+#' The personal parameter has to take as input the @graph and the @weights 
+#' (that can be NULL), and has to return a community object.
 #' @param weights  Optional positive weight vector. If the graph has a weight 
 #' edge attribute, then this is used by default. Supply NA here if the graph 
 #' has a weight edge attribute, but you want to ignore it. Larger edge weights
@@ -395,7 +398,10 @@ rewireOnl <- function(data, number)
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "optimal".
-#' @param FUN see \code{\link{methodCommunity}}.
+#' @param FUN in case the @method parameter is "other" there is the possibility 
+#' to use a personal function passing its name through this parameter.
+#' The personal parameter has to take as input the @graph and the @weights 
+#' (that can be NULL), and has to return a community object.
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand".
 #' @param type The type of robin costruction, dependent or independent data
@@ -455,6 +461,8 @@ robinRobust <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials) # random network
+    #stopifnot(length(table(comRandom))>1)
+    if(length(table(comRandom))==1) {stop("Not random graph")}
     de <- igraph::gsize(graph)
     Measure <- NULL
     vector <- NULL
