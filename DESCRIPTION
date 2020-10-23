@@ -23,7 +23,8 @@ Imports:
     networkD3,
     DescTools,
     fdatest,
-    methods
+    methods,
+    gridExtra
 VignetteBuilder: knitr
 Suggests:
     devtools,

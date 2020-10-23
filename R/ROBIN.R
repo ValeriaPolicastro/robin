@@ -462,7 +462,7 @@ robinRobust <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials) # random network
     #stopifnot(length(table(comRandom))>1)
-    if(length(table(comRandom))==1) {stop("Not random graph")}
+    #if(length(table(comRandom))==1) {stop("Not random graph")}
     de <- igraph::gsize(graph)
     Measure <- NULL
     vector <- NULL
@@ -741,7 +741,9 @@ robinRobust <- function(graph, graphRandom,
 #' @param measure The stability measure: one of "vi", "nmi", "split.join", 
 #' "adjusted.rand".
 #' @param legend The legend for the graph. The default is c("model1", 
-#' "model2").
+#' "model2"). If using robinRobust is recommended c("real data", "null model"), 
+#' if using robinCompare, enter the names of the community detection 
+#' algorithms.
 #' @param title The title for the graph. The default is "Robin plot".
 #'
 #' @return A ggplot object.
@@ -789,8 +791,6 @@ plotRobin <- function(graph, model1, model2,
         geom_point()+ 
         xlab("Percentage of perturbation") +
         ylab("Measure") +
-        #scale_y_continuous(limits=c(0,0.6))+ #only for VI
-        #scale_color_manual(values=c("#00AFBB","indianred2"))+
         ggtitle(title)
       
     return(plot)
@@ -1156,6 +1156,7 @@ createITPSplineResult <- function(graph, model1, model2,
     ITPresult <- fdatest::ITP2bspline(modeled1, modeled2, mu=muParam, 
                                     order=orderParam, nknots=nKnots, 
                                     B=BParam, paired=isPaired)
+   
     return(ITPresult)
 }
 
@@ -1249,8 +1250,10 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #' Mean2 output of the robinCompare function).
 #' @param measure The stability measure "vi", "nmi", "split.join", 
 #' "adjusted.rand".
-#' @param legend The legend for the graph. The default is c("real data", 
-#' "null model").
+#' @param legend The legend for the graph. The default is c("model1", 
+#' "model2"). If using robinRobust is recommended c("real data", "null model"), 
+#' if using robinCompare, enter the names of the community detection 
+#' algorithms.
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return Two plots: the fitted curves and the adjusted p-values. A vector of the adjusted p-values. 
@@ -1263,93 +1266,68 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
-#' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, measure="vi")
+#' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
+#' measure="vi",legend=c("real data", "null model"))
 robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
                         "split.join", "adjusted.rand"),
-                        legend=c("real data", "null model"), verbose=FALSE)
+                        legend=c("model1", "model2"), verbose=FALSE)
 {
     if(verbose) cat("Computing Interval testing procedure.\n")
     object <- createITPSplineResult(graph, model1, model2, measure)
     
-    #Functional Data plot
-    par(mfrow=c(1,2)) 
-    p <- length(object$pval)
-    n <- dim(object$data.eval)[1]
+    
+  #Functional Data plot
+    
     J <- dim(object$data.eval)[2]
-    alpha1=0.05
-    alpha2=0.01
-    
     xmin <- 0
-    xmax <- 1
-    abscissa.pval = seq(xmin,xmax,len=p)
-    Abscissa = seq(xmin,xmax,len=J)
-    
-    colors <- numeric(n)
-    col=c(1,2)
-    colors[which(object$labels==1)] <- col[1]
-    colors[which(object$labels==2)] <- col[2]
-    
-    matplot(Abscissa,t(object$data.eval),type='l',main='Functional Data',ylab='Measure',
-            xlab='Percentage of perturbation',col=colors,lwd=1,ylim=range(object$data.eval))
-    
-    difference1 <- which(object$corrected.pval<alpha1)
-    if (length(difference1) > 0) {
-      for (j in 1:length(difference1)) {
-        min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-        max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-        rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
-      }
-      rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-    }
-    difference2 <- which(object$corrected.pval<alpha2)
-    if (length(difference2) > 0) {
-      for (j in 1:length(difference2)) {
-        min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-        max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-        rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
-      }
-      rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-    }
-    
-    matplot(Abscissa,t(object$data.eval),type='l',main='Functional Data',ylab='Measure',
-            xlab='Percentage of perturbation',col=colors,lwd=1,add=TRUE)
+    xmax <- 0.6
+    Abscissa <- seq(xmin,xmax,len=J)
     
     
-    #P-value plot
+    model1 <- cbind(as.numeric(as.vector(t(object$data.eval[1:10,]))), 
+                    legend[1], rep(1:10,each=1000), as.numeric(rep(Abscissa, 
+                                                                   times = 10)))
+    model2 <- cbind(as.numeric(as.vector(t(object$data.eval[11:20,]))), 
+                    legend[2], rep(11:20,each=1000), as.numeric(rep(Abscissa, 
+                                                                    times = 10))
+                    )
+    measure <- rbind(model1, model2)
+    colnames(measure) <- c("measure","model","s","percPert")
+    dataFrame <- data.frame(measure)
+    plot1<-ggplot2::ggplot(dataFrame, ggplot2::aes(x=as.numeric(percPert),
+                 y=as.numeric(measure), color= model, group=s)) +
+              ggplot2::geom_line() +
+              ggplot2::xlab("Percentage of perturbation") +
+              ggplot2::ylab("Measure")+
+              ggplot2::ggtitle("Functional Data Analysis")+
+              ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4, 
+                                                     0.5, 0.6))  
     
-    plot(abscissa.pval,object$corrected.pval,pch=16,ylim=c(0,1),main='p-values and adjusted p-values',
-         ylab='p-values',xlab='Percentage of perturbation')
-    lines(abscissa.pval,object$pval,type="p",pch=23,col="red")
+     
+  
+    #P value plot
+     p <- length(object$pval)
+     xmin <- 0
+     xmax <- 0.6
+     abscissa.pval <- rep(seq(xmin,xmax,len=p),time=2)
+     pvalue <- c(object$pval,object$corrected.pval)
+     type <- c(rep("pvalue",p),rep("pvalue.adj",p))
+     PdataFrame<-data.frame(cbind(abscissa.pval,pvalue,type))
+     plot2<-ggplot2::ggplot(PdataFrame, ggplot2::aes(x=as.numeric(abscissa.pval),
+                                                    y=as.numeric(pvalue), color= type)) +
+       ggplot2::geom_point() +
+       ggplot2::xlab("Percentage of perturbation") +
+       ggplot2::ylab("p_value")+
+       ggplot2::ggtitle("P-values")+
+       ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4, 
+                                              0.5, 0.6))+
+       ggplot2::geom_hline(yintercept = 0.05,color = "red")
+     
     
-    difference1 <- which(object$corrected.pval<alpha1)
-    if (length(difference1) > 0) {
-      for (j in 1:length(difference1)) {
-        min.rect <- abscissa.pval[difference1[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-        max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-        rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray90", density = -2, border = NA)
-      }
-      rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-    }
+    plot <- gridExtra::grid.arrange(plot1,plot2, ncol=2)
     
-    difference2 <- which(object$corrected.pval<alpha2)
-    if (length(difference2) > 0) {
-      for (j in 1:length(difference2)) {
-        min.rect <- abscissa.pval[difference2[j]] - (abscissa.pval[2] - abscissa.pval[1])/2
-        max.rect <- min.rect + (abscissa.pval[2] - abscissa.pval[1])
-        rect(min.rect, par("usr")[3], max.rect, par("usr")[4], col = "gray80", density = -2, border = NA)
-      }
-      rect(par("usr")[1], par("usr")[3], par("usr")[2],par("usr")[4], col = NULL, border = "black")
-    }
-    for(j in 0:10){
-      abline(h=j/10,col='lightgray',lty="dotted")
-    }
-    
-    points(abscissa.pval,object$corrected.pval,pch=16)
-    abline(h=0.05,col='red')
-    legend("topright", legend=c("adjusted p-values", "p-values"),
-           col=c("black","red"), pch=c(16,23), cex=0.8)
-    
-    #numeric pvalue and adj.pvalue
+    print(plot)
+   
     adj.pvalue<-object$corrected.pval
     pvalue<-object$pval
     output<-list(adj.pvalue=adj.pvalue,
