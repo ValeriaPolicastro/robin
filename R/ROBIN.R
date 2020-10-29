@@ -6,7 +6,7 @@
 #' prepares them for the analysis.
 #'
 #' @param file The input file containing the graph.
-#' @param file.format Character constant giving the file format. Eedgelist, 
+#' @param file.format Character constant giving the file format. Edgelist, 
 #' pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are
 #' supported.
 #' @param numbers A logical value indicating if the names of the nodes are 

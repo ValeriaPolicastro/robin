@@ -31,7 +31,10 @@ robinRobust(
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "optimal".}
 
-\item{FUN}{see \code{\link{methodCommunity}}.}
+\item{FUN}{in case the @method parameter is "other" there is the possibility 
+to use a personal function passing its name through this parameter.
+The personal parameter has to take as input the @graph and the @weights 
+(that can be NULL), and has to return a community object.}
 
 \item{measure}{The stability measure, one of "vi", "nmi", "split.join", 
 "adjusted.rand".}

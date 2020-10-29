@@ -17,9 +17,9 @@ prepGraph(
 \arguments{
 \item{file}{The input file containing the graph.}
 
-\item{file.format}{Character constant giving the file format. Right now
-as_edgelist, pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are
-supported}
+\item{file.format}{Character constant giving the file format. Eedgelist, 
+pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are
+supported.}
 
 \item{numbers}{A logical value indicating if the names of the nodes are 
 values.This argument is settable for the edgelist format. 

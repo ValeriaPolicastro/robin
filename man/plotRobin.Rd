@@ -26,7 +26,9 @@ output of robinCompare.}
 "adjusted.rand".}
 
 \item{legend}{The legend for the graph. The default is c("model1", 
-"model2").}
+"model2"). If using robinRobust is recommended c("real data", "null model"), 
+if using robinCompare, enter the names of the community detection 
+algorithms.}
 
 \item{title}{The title for the graph. The default is "Robin plot".}
 }
@@ -35,7 +37,7 @@ A ggplot object.
 }
 \description{
 This function plots two curves: the measure of the null model and the measure
-of the real graph.
+of the real graph or the measure of the two community detection algorithms.
 }
 \examples{
 my_file <- system.file("example/football.gml", package="robin")

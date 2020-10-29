@@ -9,7 +9,7 @@ robinFDATest(
   model1,
   model2,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  legend = c("real data", "null model"),
+  legend = c("model1", "model2"),
   verbose = FALSE
 )
 }
@@ -25,8 +25,10 @@ Mean2 output of the robinCompare function).}
 \item{measure}{The stability measure "vi", "nmi", "split.join", 
 "adjusted.rand".}
 
-\item{legend}{The legend for the graph. The default is c("real data", 
-"null model").}
+\item{legend}{The legend for the graph. The default is c("model1", 
+"model2"). If using robinRobust is recommended c("real data", "null model"), 
+if using robinCompare, enter the names of the community detection 
+algorithms.}
 
 \item{verbose}{flag for verbose output (default as FALSE).}
 }
@@ -43,5 +45,6 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 measure="vi",type="independent")
-robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, measure="vi")
+robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
+measure="vi",legend=c("real data", "null model"))
 }
