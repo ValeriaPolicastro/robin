@@ -21,6 +21,7 @@ Depends:
 Imports:
     ggplot2,
     networkD3,
+    qpdf,
     DescTools,
     fdatest,
     methods,
@@ -28,7 +29,6 @@ Imports:
 VignetteBuilder: knitr
 Suggests:
     devtools,
-    qpdf,
     knitr,
     rmarkdown,
     testthat (>= 2.1.0)

@@ -17,7 +17,7 @@ prepGraph(
 \arguments{
 \item{file}{The input file containing the graph.}
 
-\item{file.format}{Character constant giving the file format. Eedgelist, 
+\item{file.format}{Character constant giving the file format. Edgelist, 
 pajek, graphml, gml, ncol, lgl, dimacs, graphdb and igraph are
 supported.}
 
