@@ -1257,7 +1257,7 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return Two plots: the fitted curves and the adjusted p-values. A vector of the adjusted p-values. 
-#' @import igraph ggplot2 fdatest graphics
+#' @import igraph ggplot2 fdatest graphics qpdf
 #' @export
 #'
 #' @examples 

@@ -17,11 +17,11 @@ URL: https://github.com/ValeriaPolicastro/robin
 Depends: 
     R (>= 3.5),
     igraph,
-    gprege
+    gprege,
+    qpdf
 Imports:
     ggplot2,
     networkD3,
-    qpdf,
     DescTools,
     fdatest,
     methods,
