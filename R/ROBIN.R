@@ -1276,8 +1276,7 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
     object <- createITPSplineResult(graph, model1, model2, measure)
     
     
-  #Functional Data plot
-    
+    #Functional Data plot
     J <- dim(object$data.eval)[2]
     xmin <- 0
     xmax <- 0.6
@@ -1288,23 +1287,21 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
                                                                    times = 10)))
     model2 <- cbind(as.numeric(as.vector(t(object$data.eval[11:20,]))), 
                     legend[2], rep(11:20,each=1000), as.numeric(rep(Abscissa, 
-                                                                    times = 10))
-                    )
-    measure <- rbind(model1, model2)
-    colnames(measure) <- c("measure","model","s","percPert")
-    dataFrame <- data.frame(measure)
-    plot1<-ggplot2::ggplot(dataFrame, ggplot2::aes(x=as.numeric(percPert),
+                                                                    times = 10)))
+    measures <- rbind(model1, model2)
+    colnames(measures) <- c("measure","model","s","percPert")
+    dataFrame <- data.frame(measures)
+    plot1 <- ggplot2::ggplot(dataFrame, ggplot2::aes(x=as.numeric(percPert),
                  y=as.numeric(measure), color= model, group=s)) +
-              ggplot2::geom_line() +
-              ggplot2::xlab("Percentage of perturbation") +
-              ggplot2::ylab("Measure")+
-              ggplot2::ggtitle("Functional Data Analysis")+
-              ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4, 
-                                                     0.5, 0.6))  
+             ggplot2::geom_line() +
+             ggplot2::xlab("Percentage of perturbation") +
+             ggplot2::ylab("Measure")+
+             ggplot2::ggtitle("Functional Data Analysis")+
+             ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4,0.5, 0.6))  
     
      
   
-    #P value plot
+     #P value plot
      p <- length(object$pval)
      xmin <- 0
      xmax <- 0.6
@@ -1312,25 +1309,24 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
      pvalue <- c(object$pval,object$corrected.pval)
      type <- c(rep("pvalue",p),rep("pvalue.adj",p))
      PdataFrame<-data.frame(cbind(abscissa.pval,pvalue,type))
-     plot2<-ggplot2::ggplot(PdataFrame, ggplot2::aes(x=as.numeric(abscissa.pval),
+     plot2 <- ggplot2::ggplot(PdataFrame, ggplot2::aes(x=as.numeric(abscissa.pval),
                                                     y=as.numeric(pvalue), color= type)) +
-       ggplot2::geom_point() +
-       ggplot2::xlab("Percentage of perturbation") +
-       ggplot2::ylab("p_value")+
-       ggplot2::ggtitle("P-values")+
-       ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4, 
-                                              0.5, 0.6))+
-       ggplot2::geom_hline(yintercept = 0.05,color = "red")
+              ggplot2::geom_point() +
+              ggplot2::xlab("Percentage of perturbation") +
+              ggplot2::ylab("p_value")+
+              ggplot2::ggtitle("P-values")+
+              ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4,0.5, 0.6))+
+              ggplot2::geom_hline(yintercept = 0.05,color = "red")
      
     
     plot <- gridExtra::grid.arrange(plot1,plot2, ncol=2)
-    
     print(plot)
    
     adj.pvalue<-object$corrected.pval
     pvalue<-object$pval
     output<-list(adj.pvalue=adj.pvalue,
                  pvalues=pvalue)
+    
     return(output)
 }  
 
