@@ -1283,7 +1283,6 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
     xmax <- 0.6
     Abscissa <- seq(xmin,xmax,len=J)
     
-    
     model1 <- cbind(as.numeric(as.vector(t(object$data.eval[1:10,]))), 
                     legend[1], rep(1:10,each=1000), as.numeric(rep(Abscissa, 
                                                                    times = 10)))
