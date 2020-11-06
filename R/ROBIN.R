@@ -1282,17 +1282,16 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
     xmax <- 0.6
     Abscissa <- seq(xmin,xmax,len=J)
     
-    model1 <- cbind(as.numeric(as.vector(t(object$data.eval[1:10,]))), 
-                    legend[1], rep(1:10,each=1000), as.numeric(rep(Abscissa, 
-                                                                   times = 10)))
-    model2 <- cbind(as.numeric(as.vector(t(object$data.eval[11:20,]))), 
-                    legend[2], rep(11:20,each=1000), as.numeric(rep(Abscissa, 
-                                                                    times = 10)))
+    model1 <- cbind(as.numeric(as.vector(t(object$data.eval[1:10,]))))
+    model2 <- cbind(as.numeric(as.vector(t(object$data.eval[11:20,]))))
+    
     measures <- rbind(model1, model2)
-    colnames(measures) <- c("measure","model","s","percPert")
-    dataFrame <- data.frame(measures)
+    model <- c(rep(legend[1],each=10000),rep(legend[2],each=10000))
+    percPert <- as.numeric(rep(Abscissa, times = 10))
+    s <- c(rep(1:10,each=1000),rep(11:20,each=1000))
+    dataFrame <- data.frame(measures,model,s,percPert)
     plot1 <- ggplot2::ggplot(dataFrame, ggplot2::aes(x=as.numeric(percPert),
-                 y=as.numeric(measure), color= model, group=s)) +
+                 y=as.numeric(measures), color= model, group=s)) +
              ggplot2::geom_line() +
              ggplot2::xlab("Percentage of perturbation") +
              ggplot2::ylab("Measure")+
@@ -1312,6 +1311,7 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
      plot2 <- ggplot2::ggplot(PdataFrame, ggplot2::aes(x=as.numeric(abscissa.pval),
                                                     y=as.numeric(pvalue), color= type)) +
               ggplot2::geom_point() +
+              ggplot2::ylim(0,1) +
               ggplot2::xlab("Percentage of perturbation") +
               ggplot2::ylab("p_value")+
               ggplot2::ggtitle("P-values")+
