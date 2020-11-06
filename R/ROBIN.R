@@ -581,7 +581,7 @@ robinRobust <- function(graph, graphRandom,
                 MeanRandom[s, count] <- mean(vectRandom)
                 Mean[s, count] <- mean(vector)
             }
-            if(verbose) cat("Perturbed ", z, " nodes\n")
+            if(verbose) cat("Perturbed ", z, " edges\n")
         }
   #DEPENDENT 
     }else{
@@ -709,7 +709,7 @@ robinRobust <- function(graph, graphRandom,
             MeanRandom <- cbind(MeanRandom,MeanRandom1)
             z1 <- igraph::gsize(graph)
             #print(z1)
-            if(verbose) cat("Perturbed ", z, " nodes\n")
+            if(verbose) cat("Perturbed ", z, " edges\n")
             }
     }
     colnames(measureRandom) <- nRewire
@@ -982,7 +982,7 @@ robinCompare <- function(graph,
                 Mean1[s, count] <- mean(vector1)
                 Mean2[s, count] <- mean(vector2)
             }
-            if(verbose) cat("Perturbed ", z, " nodes\n")
+            if(verbose) cat("Perturbed ", z, " edges\n")
         }
         
     }else{
@@ -1095,7 +1095,7 @@ robinCompare <- function(graph,
             Mean1 <-cbind(Mean1,Mean11)
             Mean2 <-cbind(Mean2,Mean22)
             z1 <- igraph::gsize(graph)
-            if(verbose) cat("Perturbed ", z, " nodes\n")
+            if(verbose) cat("Perturbed ", z, " edges\n")
         }
     }
     colnames(Mean1) <- nRewire 
