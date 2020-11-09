@@ -780,18 +780,18 @@ plotRobin <- function(graph, model1, model2,
     }
     
     percPert <- rep((seq(0,60,5)/100), 2)
-    model <- mvimodel2
-    mvi <- rbind(mvimodel1, model)
+    mvi <- rbind(mvimodel1, mvimodel2)
     colnames(mvi) <- c("mvi", "model")
     dataFrame <- data.frame(percPert, mvi)
-    plot <- ggplot2::ggplot(dataFrame, aes(x=percPert, 
-                                            y=as.numeric(as.character(mvi)), 
-                                            colour=model, group=factor(model)))+ 
-        geom_line()+
-        geom_point()+ 
-        xlab("Percentage of perturbation") +
-        ylab("Measure") +
-        ggtitle(title)
+    plot <- ggplot2::ggplot(dataFrame, aes(x = percPert, y = as.numeric(as.character(mvi)), 
+                                           colour = model, group = factor(model))) + 
+                     geom_line() + 
+                     geom_point() + 
+                     xlab("Percentage of perturbation") + 
+                     ylab("Measure") +
+                     ggplot2::ylim(0,1)+
+                     ggtitle(title)
+    
       
     return(plot)
 }
@@ -1296,7 +1296,9 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
              ggplot2::xlab("Percentage of perturbation") +
              ggplot2::ylab("Measure")+
              ggplot2::ggtitle("Functional Data Analysis")+
-             ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4,0.5, 0.6))  
+             ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4,0.5, 0.6))+
+             ggplot2::ylim(0,1)
+      
     
      
   
