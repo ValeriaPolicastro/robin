@@ -1293,11 +1293,12 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
     plot1 <- ggplot2::ggplot(dataFrame, ggplot2::aes(x=as.numeric(percPert),
                  y=as.numeric(measures), color= model, group=s)) +
              ggplot2::geom_line() +
+             ggplot2::ylim(0,1)+
              ggplot2::xlab("Percentage of perturbation") +
              ggplot2::ylab("Measure")+
              ggplot2::ggtitle("Functional Data Analysis")+
-             ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4,0.5, 0.6))+
-             ggplot2::ylim(0,1)
+             ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6))
+             
       
     
      
@@ -1317,7 +1318,7 @@ robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
               ggplot2::xlab("Percentage of perturbation") +
               ggplot2::ylab("p_value")+
               ggplot2::ggtitle("P-values")+
-              ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4,0.5, 0.6))+
+              ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6))+
               ggplot2::geom_hline(yintercept = 0.05,color = "red")
      
     
