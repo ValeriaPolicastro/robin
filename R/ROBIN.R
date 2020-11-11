@@ -768,21 +768,21 @@ plotRobin <- function(graph, model1, model2,
     if(measure=="vi")
     {
       N <- igraph::vcount(graph)
-      mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)),legend[1])
-      mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N)),legend[2]) 
+      mvimodel1 <- as.vector((apply(model1, 2, mean))/log2(N))
+      mvimodel2 <- as.vector((apply(model2, 2, mean))/log2(N))
     } else if(measure=="split.join") {
       N <- igraph::vcount(graph)
-      mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))/(2*N)),legend[1])
-      mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))/(2*N)),legend[2])     
+      mvimodel1 <- as.vector((apply(model1, 2, mean))/(2*N))
+      mvimodel2 <- as.vector((apply(model2, 2, mean))/(2*N))     
     } else {
-      mvimodel1 <- cbind(as.vector((apply(model1, 2, mean))), legend[1])
-      mvimodel2 <- cbind(as.vector((apply(model2, 2, mean))), legend[2])
+      mvimodel1 <- as.vector((apply(model1, 2, mean)))
+      mvimodel2 <- as.vector((apply(model2, 2, mean)))
     }
     
     percPert <- rep((seq(0,60,5)/100), 2)
-    mvi <- rbind(mvimodel1, mvimodel2)
-    colnames(mvi) <- c("mvi", "model")
-    dataFrame <- data.frame(percPert, mvi)
+    mvi <- c(mvimodel1, mvimodel2)
+    model <-c(rep(legend[1],13),rep(legend[2],13))
+    dataFrame <- data.frame(percPert, mvi, model)
     plot <- ggplot2::ggplot(dataFrame, aes(x = percPert, y = as.numeric(as.character(mvi)), 
                                            colour = model, group = factor(model))) + 
                      geom_line() + 
