@@ -883,6 +883,7 @@ robinCompare <- function(graph,
     count <- 1
     nRewire <- seq(0,60,5)
     if(verbose) cat("Detected robin method ", type, " type\n")
+    #independent
     if(type == "independent") 
     {
         measureReal1 <- matrix(0, nrep^2, length(nRewire))
@@ -984,7 +985,7 @@ robinCompare <- function(graph,
             }
             if(verbose) cat("Perturbed ", z, " edges\n")
         }
-        
+    #dependent    
     }else{
         z <- round((5*de)/100, 0)
         measureReal1 <- rep(0, nrep^2)

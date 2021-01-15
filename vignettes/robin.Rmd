@@ -32,6 +32,20 @@ perturbations of the original graph;
 3) a routine to choose among different community detection algorithms the one that better fits the network of interest;
 4) a graphical interactive representation.
 
+# Installation
+```{r}
+#install.packages("robin")
+```
+
+If there are problems with the installation try:
+```{r}
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install("gprege")
+# 
+# install.packages("robin")
+```
+
 # Loading package
 ```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 library("robin")
