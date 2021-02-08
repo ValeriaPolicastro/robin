@@ -42,6 +42,14 @@ This function reads graphs from a file and
 prepares them for the analysis.
 }
 \examples{
+#install.packages("robin")
+
+#If there are problems with the installation try:
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install("gprege")
+# install.packages("robin")   
+                     
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
 }

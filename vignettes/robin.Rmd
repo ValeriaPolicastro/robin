@@ -25,12 +25,15 @@ However,their applications leave unaddressed one important question:
 detection. It has a double aim: **to study the robustness** of a community 
 detection algorithm and **to compare** the robustness of **different community detection algorithms** on the same network. 
 
+Reference in Policastro V., Righelli D., Carissimo A., Cutillo L., De Feis I. (2021) <https://arxiv.org/abs/2102.03106>.
+
+
 It provides:
-1) a procedure to examine the robustness of a community detection algorithm against random 
+**1)** a procedure to examine the robustness of a community detection algorithm against random 
 perturbations of the original graph; 
-2) two tests to determine the statistical difference between stability measure curves;
-3) a routine to choose among different community detection algorithms the one that better fits the network of interest;
-4) a graphical interactive representation.
+**2)** two tests to determine the statistical difference between stability measure curves;
+**3)** a routine to choose among different community detection algorithms the one that better fits the network of interest;
+**4)** a graphical interactive representation.
 
 # Installation
 ```{r}
