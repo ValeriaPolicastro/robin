@@ -2,7 +2,6 @@
  Available on CRAN https://CRAN.R-project.org/package=robin
 
 
-**Reference:** ROBustness In Network (robin): an R package for Comparison and Validation of communities Valeria Policastro, Dario Righelli, Annamaria Carissimo, Luisa Cutillo, Italia De Feis	https://arxiv.org/abs/2102.03106
 <br/><br>
 
 **_ROBIN (ROBustness In Network)_** is an R package for the validation of community detection. It has a double aim: it **studies the robustness** of a community detection algorithm and it **compares** the robustness of **two community detection algorithms**. 
@@ -68,6 +67,9 @@ In this example, the Louvain algorithm fits better the network of interest, as t
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 robinGPTest(model1=comp$Mean1, model2=comp$Mean2)
 ```
+## Reference:
+ROBustness In Network (robin): an R package for Comparison and Validation of communities Valeria Policastro, Dario Righelli, Annamaria Carissimo, Luisa Cutillo, Italia De Feis	https://arxiv.org/abs/2102.03106
+
 
 ## License
 [Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.](https://github.com/ValeriaPolicastro/robin/blob/master/LICENSE)
