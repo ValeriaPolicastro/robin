@@ -444,7 +444,7 @@ robinRobust <- function(graph, graphRandom,
                 FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
                 type=c("independent","dependent"), directed=FALSE, weights=NULL, 
                 steps=4, spins=25, e.weights=NULL, v.weights=NULL, 
-                nb.trials=10, verbose=FALSE) 
+                nb.trials=10, verbose=TRUE) 
 {   
     measure <- match.arg(measure)
     type<- match.arg(type)
@@ -857,7 +857,7 @@ robinCompare <- function(graph,
                       type=c("independent", "dependent"),
                       directed=FALSE, weights=NULL, steps=4, 
                       spins=25, e.weights=NULL, v.weights=NULL, 
-                      nb.trials=10, verbose=FALSE)
+                      nb.trials=10, verbose=TRUE)
 {   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
