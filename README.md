@@ -1,6 +1,5 @@
 # robin <img align= "right" src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Logo2.png" width="100" height="100" /> 
-### Available on CRAN https://CRAN.R-project.org/package=robin
-
+ Available on CRAN https://CRAN.R-project.org/package=robin
 <br/><br>
 
 **_ROBIN (ROBustness In Network)_** is an R package for the validation of community detection. It has a double aim: it **studies the robustness** of a community detection algorithm and it **compares** the robustness of **two community detection algorithms**. 
@@ -37,7 +36,7 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"), measure="vi")
 ```
 <p align="center">
-<img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Schermata%20del%202019-09-23%2012-24-29.png" width="500" height="350" />
+<img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotRobin.png" width="500" height="500" />
 </p>
 
 ```{r}
@@ -57,7 +56,7 @@ plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi",
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 ```
 <p align="center">
-<img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Schermata%20del%202019-09-23%2012-34-23.png" width="500" height="350"/>
+<img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotCompare.png" width="500" height="500"/>
 </p>
 In this example, the Louvain algorithm fits better the network of interest, as the curve of the stability measure varies less than the one obtained by the Fast greedy method.
 
@@ -66,6 +65,8 @@ In this example, the Louvain algorithm fits better the network of interest, as t
 robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
 robinGPTest(model1=comp$Mean1, model2=comp$Mean2)
 ```
+## Reference
+ROBustness In Network (robin): an R package for Comparison and Validation of communities Valeria Policastro, Dario Righelli, Annamaria Carissimo, Luisa Cutillo, Italia De Feis. The R Journal (2021) https://journal.r-project.org/archive/2021/RJ-2021-040/index.html
 
 ## License
 [Copyright (c) 2019 V. Policastro,  A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.](https://github.com/ValeriaPolicastro/robin/blob/master/LICENSE)
