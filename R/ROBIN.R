@@ -1139,6 +1139,7 @@ robinCompare <- function(graph,
 #' @keywords internal
 #' 
 #' 
+
 createITPSplineResult <- function(graph, model1, model2,
                                 measure= c("vi", "nmi","split.join", 
                                            "adjusted.rand"),
