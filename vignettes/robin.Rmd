@@ -28,6 +28,8 @@ detection algorithm and **to compare** the robustness of **different community d
 Reference in Policastro V., Righelli D., Carissimo A., Cutillo L., De Feis I. (2021) <https://arxiv.org/abs/2102.03106>.
 
 
+
+
 It provides:
 **1)** a procedure to examine the robustness of a community detection algorithm against random 
 perturbations of the original graph; 
