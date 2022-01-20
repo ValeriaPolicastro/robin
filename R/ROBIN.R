@@ -472,6 +472,7 @@ robinRobust <- function(graph, graphRandom,
     #stopifnot(length(table(comRandom))>1)
     #if(length(table(comRandom))==1) {stop("Not random graph")}
     de <- igraph::gsize(graph)
+    N <- igraph::vcount(graph)
     Measure <- NULL
     vector <- NULL
     vectRandom <- NULL
@@ -513,11 +514,12 @@ robinRobust <- function(graph, graphRandom,
                                     e.weights=e.weights, 
                                     v.weights=v.weights, 
                                     nb.trials=nb.trials)
-                if((measure=="vi")|(measure=="split.join"))
+                if (measure=="vi")
                 {
-                    vector[k] <- Real$Measure
-                } 
-                else {
+                    vector[k] <- (Real$Measure)/log2(N)
+                } else if(measure=="split.join"){
+                     vector[k] <- (Real$Measure)/(2*N)
+                } else {
                     vector[k] <- 1-(Real$Measure)
                 }
                 measureReal[count2, count] <- vector[k]
@@ -536,9 +538,12 @@ robinRobust <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                if((measure=="vi")|(measure=="split.join"))
+                if (measure=="vi")
                 {
-                    vectRandom[k] <- Random$Measure
+                    vectRandom[k] <- (Random$Measure)/log2(N)
+                } else if(measure=="split.join")
+                {
+                    vectRandom[k] <- (Random$Measure)/(2*N)
                 } else {
                     vectRandom[k] <- 1-(Random$Measure)
                 }
@@ -559,9 +564,12 @@ robinRobust <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                    if((measure=="vi")|(measure=="split.join"))
+                    if (measure=="vi")
                     {
-                        vector[k] <- Real$Measure
+                        vector[k] <- (Real$Measure)/log2(N)
+                    } else if(measure=="split.join")
+                    {
+                        vector[k] <- (Real$Measure)/(2*N)
                     } else {
                         vector[k] <- 1-(Real$Measure)
                     }
@@ -578,9 +586,12 @@ robinRobust <- function(graph, graphRandom,
                                           e.weights=e.weights, 
                                           v.weights=v.weights, 
                                           nb.trials=nb.trials)
-                    if((measure=="vi")|(measure=="split.join"))
+                    if (measure=="vi")
                     {
-                        vectRandom[k] <- Random$Measure
+                        vectRandom[k] <- (Random$Measure)/log2(N)
+                    } else if(measure=="split.join")
+                    {
+                        vectRandom[k] <- (Random$Measure)/(2*N)
                     } else {
                         vectRandom[k] <- 1-(Random$Measure)
                     }
@@ -628,9 +639,12 @@ robinRobust <- function(graph, graphRandom,
                                         nb.trials=nb.trials,
                                         FUN=FUN)
                 Measure <- igraph::compare(comReal, comr, method=measure)
-                if((measure=="vi")|(measure=="split.join"))
+                if (measure=="vi")
                 {
-                    vector[k] <- Measure
+                    vector[k] <- Measure/log2(N)
+                } else if(measure=="split.join")
+                {
+                    vector[k] <- Measure/(2*N)
                 } else {
                     vector[k] <- 1-Measure
                 }
@@ -652,10 +666,13 @@ robinRobust <- function(graph, graphRandom,
                                         FUN=FUN)
                 Measure <- igraph::compare(comRandom, comr,
                                            method=measure)
-                if((measure=="vi")|(measure=="split.join"))
+                if(measure=="vi")
                 {
-                    vectRandom[k] <- Measure
-                } else {
+                    vectRandom[k] <- Measure/log2(N)
+                } else if(measure=="split.join")
+                {
+                    vectRandom[k] <- Measure/(2*N)
+                } else{
                     vectRandom[k] <- 1-Measure
                 }
                 
@@ -677,10 +694,13 @@ robinRobust <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials)
-                    if((measure=="vi")|(measure=="split.join"))
+                    if(measure=="vi")
                     {
-                        vector[k] <- Real$Measure
-                    } else {
+                        vector[k] <- (Real$Measure)/log2(N)
+                    } else if(measure=="split.join")
+                    {
+                        vector[k] <- (Real$Measure)/(2*N)
+                    } else{
                         vector[k] <- 1-(Real$Measure)
                     }
                     measureReal1[count2] <- vector[k]
@@ -698,10 +718,13 @@ robinRobust <- function(graph, graphRandom,
                                             e.weights=e.weights, 
                                             v.weights=v.weights, 
                                             nb.trials=nb.trials)
-                    if((measure=="vi")|(measure=="split.join"))
+                    if(measure=="vi")
                     {
-                        vectRandom[k] <- Random$Measure
-                    } else {
+                        vectRandom[k] <- (Random$Measure)/log2(N)
+                    } else if(measure=="split.join")
+                    {
+                        vectRandom[k] <- (Random$Measure)/(2*N)
+                    } else{
                         vectRandom[k] <- 1-(Random$Measure)
                     }
                     measureRandom1[count2] <- vectRandom[k]
@@ -746,8 +769,6 @@ robinRobust <- function(graph, graphRandom,
 #' output of robinCompare.
 #' @param model2 The MeanRandom output of the robinRobust function or the Mean2 
 #' output of robinCompare.
-#' @param measure The stability measure: one of "vi", "nmi", "split.join", 
-#' "adjusted.rand".
 #' @param legend The legend for the graph. The default is c("model1", 
 #' "model2"). If using robinRobust is recommended c("real data", "null model"), 
 #' if using robinCompare, enter the names of the community detection 
@@ -763,29 +784,18 @@ robinRobust <- function(graph, graphRandom,
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-#' type="independent")
-#' plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,
-#' measure="vi", legend=c("real data", "null model"))
+#' measure="vi", type="independent")
+#' plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom
+#' , legend=c("real data", "null model"))
 #' 
 plotRobin <- function(graph, model1, model2,
-                      measure= c("vi", "nmi","split.join", "adjusted.rand"),
                       legend=c("model1", "model2"),
                       title="Robin plot")
 {   
-    measure <- match.arg (measure)
-    if(measure=="vi")
-    {
-      N <- igraph::vcount(graph)
-      mvimodel1 <- as.vector((apply(model1, 2, mean))/log2(N))
-      mvimodel2 <- as.vector((apply(model2, 2, mean))/log2(N))
-    } else if(measure=="split.join") {
-      N <- igraph::vcount(graph)
-      mvimodel1 <- as.vector((apply(model1, 2, mean))/(2*N))
-      mvimodel2 <- as.vector((apply(model2, 2, mean))/(2*N))     
-    } else {
-      mvimodel1 <- as.vector((apply(model1, 2, mean)))
-      mvimodel2 <- as.vector((apply(model2, 2, mean)))
-    }
+    
+     mvimodel1 <- as.vector((apply(model1, 2, mean)))
+     mvimodel2 <- as.vector((apply(model2, 2, mean)))
+    
     
     percPert <- rep((seq(0,60,5)/100), 2)
     mvi <- c(mvimodel1, mvimodel2)
@@ -930,12 +940,18 @@ robinCompare <- function(graph,
                                                e.weights=e.weights, 
                                                v.weights=v.weights, 
                                                nb.trials=nb.trials)
-                if((measure=="vi")|(measure=="split.join"))
+                if (measure=="vi")
                 {
                     vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                  method=measure)
+                                                  method=measure)/log2(N)
                     vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                  method=measure)
+                                                  method=measure)/log2(N)
+                } else if (measure=="split.join")
+                {
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method=measure)/(2*N)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method=measure)/(2*N)
                 } else {
                     vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
                                                      method=measure))
@@ -970,13 +986,19 @@ robinCompare <- function(graph,
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
                                                    nb.trials=nb.trials)
-                    if((measure=="vi")|(measure=="split.join"))
+                    if(measure=="vi")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                      method=measure)
+                                                      method=measure)/log2(N)
                         vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                      method=measure)
-                    } else {
+                                                      method=measure)/log2(N)
+                    } else if(measure=="split.join")
+                    {
+                        vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                      method=measure)/(2*N)
+                        vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                      method=measure)/(2*N)
+                    } else{
                         vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
                                                          method=measure))
                         vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
@@ -1038,13 +1060,19 @@ robinCompare <- function(graph,
                                                e.weights=e.weights, 
                                                v.weights=v.weights, 
                                                nb.trials=nb.trials)
-                if((measure=="vi")|(measure=="split.join"))
+                if(measure=="vi")
                 {
                     vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                  method= measure)
+                                                  method= measure)/log2(N)
                     vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                  method= measure)
-                } else {
+                                                  method= measure)/log2(N)
+                } else if(measure=="split.join")
+                {
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method= measure)/(2*N)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method= measure)/(2*N)
+                } else{
                     vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
                                                      method= measure))
                     vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
@@ -1080,13 +1108,19 @@ robinCompare <- function(graph,
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
                                                    nb.trials=nb.trials)
-                    if((measure=="vi")|(measure=="split.join"))
+                    if(measure=="vi")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                      method=measure)
+                                                      method=measure)/log2(N)
                         vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                      method=measure)
-                    } else {
+                                                      method=measure)/log2(N)
+                    } else  if(measure=="split.join")
+                    {
+                        vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                      method=measure)/(2*N)
+                        vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                      method=measure)/(2*N)
+                    } else{
                         vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
                                                          method=measure))
                         vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
@@ -1141,25 +1175,13 @@ robinCompare <- function(graph,
 #' 
 
 createITPSplineResult <- function(graph, model1, model2,
-                                measure= c("vi", "nmi","split.join", 
-                                           "adjusted.rand"),
                                 muParam=0, orderParam=4, nKnots=7, 
                                 BParam=10000, isPaired=TRUE) 
 {
-    measure <- match.arg (measure)
-    if(measure=="vi")
-    {
-    nOrder <- log2(igraph::gorder(graph))
-    modeled1 <- as.matrix(model1)/nOrder
-    modeled2 <- as.matrix(model2)/nOrder
-    }else if(measure=="split.join")
-    {N <- igraph::vcount(graph)
-     modeled1 <- as.matrix(model1)/(2*N)
-     modeled2 <- as.matrix(model2)/(2*N)
-    }else{
+
     modeled1 <- as.matrix(model1)
     modeled2 <- as.matrix(model2)   
-    }
+    
    
     
     ## Two populations Interval Testing Procedure with B-spline basis
@@ -1202,7 +1224,7 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
    res <- as.vector(ratios)
 
    nRewire <- seq(0,60,5)
-   nrep <- 10
+   nrep <- dim(model1)[1]
    names(res) <- rep(nRewire, each=nrep)
 
    ratio <- t(res)#la trasposta del rapporto
@@ -1278,12 +1300,11 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #' measure="vi",type="independent")
 #' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
 #' measure="vi",legend=c("real data", "null model"))
-robinFDATest <- function(graph,model1,model2, measure= c("vi", "nmi",
-                        "split.join", "adjusted.rand"),
+robinFDATest <- function(graph,model1,model2,
                         legend=c("model1", "model2"), verbose=FALSE)
 {
     if(verbose) cat("Computing Interval testing procedure.\n")
-    object <- createITPSplineResult(graph, model1, model2, measure)
+    object <- createITPSplineResult(graph, model1, model2)
     
     
     #Functional Data plot
