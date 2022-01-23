@@ -1371,8 +1371,6 @@ robinFDATest <- function(graph,model1,model2,
 #' output of the robinCompare function).
 #' @param model2 The MeanRandom output of the robinRobust function (or the 
 #' Mean2 output of the robinCompare function).
-#' @param measure The stability measure "vi", "nmi", "split.join", 
-#' "adjusted.rand".
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return A list
@@ -1387,27 +1385,14 @@ robinFDATest <- function(graph,model1,model2,
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
 #' robinAUC(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
-robinAUC <- function(graph, model1, model2, 
-                        measure= c("vi", "nmi","split.join", "adjusted.rand"),
+robinAUC <- function(graph, model1, model2,
                         verbose=FALSE)
 {
     if(verbose) cat("Computing area under the curve (AUC).\n")
-    measure <- match.arg (measure)
-    if(measure=="vi")
-    {
-        N <- igraph::vcount(graph)
-        mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))/log2(N)))
-        mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))/log2(N))) 
-    }else if(measure=="split.join")
-    {
-        N <- igraph::vcount(graph)
-        mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))/(2*N)))
-        mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))/(2*N)))     
-    }else
-    {
+    
         mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))))
         mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))))
-    }
+    
     area1 <- DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel1, 
                           method ="spline")
     area2 <- DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel2, 
