@@ -140,7 +140,7 @@ The arguments of *model1* and *model2* must be the measures for the real graph a
 *We will expect that with a robust algorithm the behavior of the two curves is different.We expect that the curve of the real graph vary less than the curve of the random graph, this visually means that the curve of the real graph is lower than the one of the random graph, so it is more stable than a random graph.*  
 
 ```{r}
-plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, measure="vi",
+plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"))
 ```
 The procedure implemented depends on the network of interest. In this example, the Louvain algorithm fits good the network of interest,as the curve of the stability measure assumes lower values than the one obtained by the null model. 
@@ -159,7 +159,7 @@ very close the Area Under the Curves (AUC) are evaluated.
 It implements Interval Testing Procedure for testing the difference between two functional populations. 
 ```{r}
 robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
-             measure="vi",legend=c("real graph", "random graph"))
+            legend=c("real graph", "random graph"))
 ```
 
 The first figure represents the stability measure plot using Louvain algorithm for detecting communities. The second one represents the corresponding adjusted p-values of the Interval Testing procedure. Horizontal red line corresponds to the critical value 0.05. 
@@ -208,7 +208,7 @@ Thirdly, we plot the curves of the compared methods.
 
 
 ```{r}
-plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, 
 legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 ```
 
@@ -220,7 +220,7 @@ the Fast greedy method.
 
 The following procedures test the statistical differences between the two curves using two different methods
 ```{r}
-robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
+robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2)
 
 ```
 

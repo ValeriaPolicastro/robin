@@ -1280,8 +1280,6 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #' output of the robinCompare function).
 #' @param model2 The MeanRandom output of the robinRobust function (or the 
 #' Mean2 output of the robinCompare function).
-#' @param measure The stability measure "vi", "nmi", "split.join", 
-#' "adjusted.rand".
 #' @param legend The legend for the graph. The default is c("model1", 
 #' "model2"). If using robinRobust is recommended c("real data", "null model"), 
 #' if using robinCompare, enter the names of the community detection 
@@ -1299,7 +1297,7 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
 #' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
-#' measure="vi",legend=c("real data", "null model"))
+#' legend=c("real data", "null model"))
 robinFDATest <- function(graph,model1,model2,
                         legend=c("model1", "model2"), verbose=FALSE)
 {
