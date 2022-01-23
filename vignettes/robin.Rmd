@@ -155,14 +155,15 @@ Moreover to quantify the differences between the curves when they are
 very close the Area Under the Curves (AUC) are evaluated.
 
 
-**robinFDATest** function implements the FDA testing giving a p-value for different intervals of the curves. It tests where the curve of the real graph and of the random graph are different.
-
+**robinFDATest** function implements the FDA testing giving a p-value for different intervals of the curves. It  tests where the curve of the real graph and of the random graph are different.
+It implements Interval Testing Procedure for testing the difference between two functional populations. 
 ```{r}
 robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
              measure="vi",legend=c("real graph", "random graph"))
 ```
 
 The first figure represents the stability measure plot using Louvain algorithm for detecting communities. The second one represents the corresponding adjusted p-values of the Interval Testing procedure. Horizontal red line corresponds to the critical value 0.05. 
+
 
 **robinGPTest** function implements the GP testing.
 ```{r message=FALSE, warning=FALSE}
