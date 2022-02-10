@@ -1223,7 +1223,7 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
    #e la media delle distanze tra il random e la sua perturbazione
    res <- as.vector(ratios)
 
-   nRewire <- seq(0,60,5)
+   nRewire <- seq(0,60,5)# modificare questo per farlo diventare generico anche se faccio un rewire fino al 40%
    nrep <- dim(model1)[1]
    names(res) <- rep(nRewire, each=nrep)
 
