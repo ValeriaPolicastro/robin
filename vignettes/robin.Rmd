@@ -23,14 +23,14 @@ However,their applications leave unaddressed one important question:
 
 *robin* (ROBustness in Network) has a double aim: **tests the robustness** of a community detection algorithm to  detects if the community structure found is statistically significant and **compares two detection algorithms** to choose the one that better fits the network of interest.
 
-Reference in Policastro V., Righelli D., Carissimo A., Cutillo L., De Feis I. (2021) <https://journal.r-project.org/archive/2021/RJ-2021-040/index.html>.
+**Reference in Policastro V., Righelli D., Carissimo A., Cutillo L., De Feis I. (2021) <https://journal.r-project.org/archive/2021/RJ-2021-040/index.html>.**
 
 
-It provides:
+It provides:<br>
 **1)** a procedure to examine the robustness of a community detection algorithm against random 
-perturbations of the original graph; 
-**2)** two tests to determine the statistical difference between stability measure curves;
-**3)** a routine to choose among different community detection algorithms the one that better fits the network of interest;
+perturbations of the original graph; <br>
+**2)** two tests to determine the statistical difference between stability measure curves;<br>
+**3)** a routine to choose among different community detection algorithms the one that better fits the network of interest;<br>
 **4)** a graphical interactive representation.
 
 # Installation
@@ -143,6 +143,7 @@ The arguments of *model1* and *model2* must be the measures for the real graph a
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
 legend=c("real data", "null model"))
 ```
+<br>
 The procedure implemented depends on the network of interest. In this example, the Louvain algorithm fits good the network of interest,as the curve of the stability measure assumes lower values than the one obtained by the null model. 
   
 
@@ -170,6 +171,22 @@ The first figure represents the stability measure plot using Louvain algorithm f
 robinGPTest(model1=proc$Mean, model2=proc$MeanRandom)
 ```
 The output is the Bayes Factor.
+
+
+A Bayes Factor can be any positive number. One of the most common interpretations is this one—first proposed by Harold Jeffereys (1961) and slightly modified by Lee and Wagenmakers in 2013: <br>
+**IF B10 IS…	THEN YOU HAVE…<br>**
+° > 100	Extreme evidence for H1 <br>
+° 30 – 100	Very strong evidence for H1 <br>
+° 10 – 30	Strong evidence for H1<br>
+° 3 – 10	Moderate evidence for H1<br>
+° 1 – 3	Anecdotal evidence for H0<br>
+° 1	No evidence<br>
+° 1/3 – 1	Anecdotal evidence for H0<br>
+° 1/3 – 1/10	Moderate evidence for H0<br>
+° 1/10 – 1/30	Strong evidence for H0<br>
+° 1/30 – 1/100	Very strong evidence for H0<br>
+° < 1/100	Extreme evidence for H0<br>
+
 
 **robinAUC** function implements the AUC.
 
