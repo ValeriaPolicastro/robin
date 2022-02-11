@@ -874,6 +874,7 @@ robinCompare <- function(graph,
     type <- match.arg(type)
     measure <-match.arg(measure)
     nrep <- 10
+    N <- igraph::vcount(graph)
     comReal1 <- membershipCommunities(graph=graph, method=method1,
                                       FUN=FUN1,
                                       directed=directed,
@@ -1223,7 +1224,7 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
    #e la media delle distanze tra il random e la sua perturbazione
    res <- as.vector(ratios)
 
-   nRewire <- seq(0,60,5)# modificare questo per farlo diventare generico anche se faccio un rewire fino al 40%
+   nRewire <- as.numeric(colnames(model1)) # generico anche se faccio un rewire fino al 40%
    nrep <- dim(model1)[1]
    names(res) <- rep(nRewire, each=nrep)
 
