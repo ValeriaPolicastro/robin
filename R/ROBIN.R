@@ -43,7 +43,11 @@ prepGraph <- function(file, file.format=c("edgelist", "pajek", "ncol", "lgl",
     if(verbose) cat("Detected file format: ", file.format, "\n")
     if (file.format =="igraph")
     { 
-        graph <- igraph::simplify(file) 
+        net <- file
+        ind <- igraph::V(net)[degree(net) == 0] #isolate node
+        graph <- igraph::delete.vertices(net, ind)
+        graph <- igraph::simplify(graph)
+        
     }else if (file.format == "gml") {
         net <- igraph::read_graph(file=file, format=file.format)
         ind <- igraph::V(net)[degree(net) == 0] #isolate node
@@ -54,7 +58,9 @@ prepGraph <- function(file, file.format=c("edgelist", "pajek", "ncol", "lgl",
         edge <- utils::read.table(file,colClasses = "character", quote="\"",
                                   header=header)
         edge <- as.matrix(edge)
-        graph <- igraph::graph_from_edgelist(edge, directed=directed)
+        net <- igraph::graph_from_edgelist(edge, directed=directed)
+        ind <- igraph::V(net)[degree(net) == 0] #isolate node
+        graph <- igraph::delete.vertices(net, ind)
         graph <- igraph::simplify(graph)
     }else
     {
