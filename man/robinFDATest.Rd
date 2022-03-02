@@ -8,7 +8,6 @@ robinFDATest(
   graph,
   model1,
   model2,
-  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   legend = c("model1", "model2"),
   verbose = FALSE
 )
@@ -21,9 +20,6 @@ output of the robinCompare function).}
 
 \item{model2}{The MeanRandom output of the robinRobust function (or the 
 Mean2 output of the robinCompare function).}
-
-\item{measure}{The stability measure "vi", "nmi", "split.join", 
-"adjusted.rand".}
 
 \item{legend}{The legend for the graph. The default is c("model1", 
 "model2"). If using robinRobust is recommended c("real data", "null model"), 
@@ -46,5 +42,5 @@ graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 measure="vi",type="independent")
 robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
-measure="vi",legend=c("real data", "null model"))
+legend=c("real data", "null model"))
 }

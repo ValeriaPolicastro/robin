@@ -8,7 +8,6 @@ createITPSplineResult(
   graph,
   model1,
   model2,
-  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   muParam = 0,
   orderParam = 4,
   nKnots = 7,
@@ -25,9 +24,6 @@ output of the comparison function).}
 \item{model2}{The MeanRandom output of the robinRobust function (or the 
 Mean2 output of the comparison function).}
 
-\item{measure}{The measure for the comparison of the communities "vi", "nmi",
-"split.join", "adjusted.rand".}
-
 \item{muParam}{the mu parameter for ITP2bspline (default 0).}
 
 \item{orderParam}{the order parameter for ITP2bspline (default 4).}
@@ -37,6 +33,9 @@ Mean2 output of the comparison function).}
 \item{BParam}{the B parameter for ITP2bspline (default 10000).}
 
 \item{isPaired}{the paired parameter for ITP2bspline (default TRUE).}
+
+\item{measure}{The measure for the comparison of the communities "vi", "nmi",
+"split.join", "adjusted.rand".}
 }
 \description{
 creates an fdatest::ITP2 class object

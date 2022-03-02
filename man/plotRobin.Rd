@@ -8,7 +8,6 @@ plotRobin(
   graph,
   model1,
   model2,
-  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   legend = c("model1", "model2"),
   title = "Robin plot"
 )
@@ -21,9 +20,6 @@ output of robinCompare.}
 
 \item{model2}{The MeanRandom output of the robinRobust function or the Mean2 
 output of robinCompare.}
-
-\item{measure}{The stability measure: one of "vi", "nmi", "split.join", 
-"adjusted.rand".}
 
 \item{legend}{The legend for the graph. The default is c("model1", 
 "model2"). If using robinRobust is recommended c("real data", "null model"), 
@@ -44,8 +40,8 @@ my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-type="independent")
-plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom,
-measure="vi", legend=c("real data", "null model"))
+measure="vi", type="independent")
+plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom
+, legend=c("real data", "null model"))
 
 }

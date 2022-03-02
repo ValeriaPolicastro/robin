@@ -85,14 +85,14 @@ robinCompareFast <- function(graph,
                     time it depends on the size of the network")
     vet1 <- seq(5, 60, 5) 
     vet <- round(vet1*de/100, 0)
-    ncores <- detectCores(logical = FALSE) - 1
-    cl <- makeCluster(ncores)
-    clusterExport(cl,varlist =c("graph","method1","method2","directed",
+    ncores <- parallel::detectCores(logical = FALSE) - 1
+    cl <- parallel::makeCluster(ncores)
+    parallel::clusterExport(cl,varlist =c("graph","method1","method2","directed",
                                 "weights","steps","spins", "e.weights", 
                                 "v.weights", "nb.trials","measure","comReal1",
                                 "comReal2","N","verbose","FUN1","FUN2"), 
                   envir=environment())
-    zlist <- clusterApply(cl,vet, function(z) 
+    zlist <- parallel::clusterApply(cl,vet, function(z) 
     {
         
         

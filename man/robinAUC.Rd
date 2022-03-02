@@ -4,13 +4,7 @@
 \alias{robinAUC}
 \title{robinAUC}
 \usage{
-robinAUC(
-  graph,
-  model1,
-  model2,
-  measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  verbose = FALSE
-)
+robinAUC(graph, model1, model2, verbose = FALSE)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
@@ -20,9 +14,6 @@ output of the robinCompare function).}
 
 \item{model2}{The MeanRandom output of the robinRobust function (or the 
 Mean2 output of the robinCompare function).}
-
-\item{measure}{The stability measure "vi", "nmi", "split.join", 
-"adjusted.rand".}
 
 \item{verbose}{flag for verbose output (default as FALSE).}
 }

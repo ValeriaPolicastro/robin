@@ -19,7 +19,7 @@ robinRobust(
   e.weights = NULL,
   v.weights = NULL,
   nb.trials = 10,
-  verbose = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
@@ -37,9 +37,11 @@ The personal parameter has to take as input the @graph and the @weights
 (that can be NULL), and has to return a community object.}
 
 \item{measure}{The stability measure, one of "vi", "nmi", "split.join", 
-"adjusted.rand".}
+"adjusted.rand" all normalized and used as distances.
+"nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
-\item{type}{The type of robin costruction, dependent or independent data}
+\item{type}{The type of robin construction, dependent or independent 
+procedure.}
 
 \item{directed}{This argument is settable only for "edgeBetweenness" method.}
 
@@ -56,7 +58,7 @@ method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
-\item{verbose}{flag for verbose output (default as FALSE).}
+\item{verbose}{flag for verbose output (default as TRUE).}
 }
 \value{
 A list object with two matrices:
