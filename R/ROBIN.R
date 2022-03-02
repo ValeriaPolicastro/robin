@@ -417,8 +417,10 @@ rewireOnl <- function(data, number)
 #' The personal parameter has to take as input the @graph and the @weights 
 #' (that can be NULL), and has to return a community object.
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
-#' "adjusted.rand".
-#' @param type The type of robin costruction, dependent or independent data
+#' "adjusted.rand" all normalized and used as distances.
+#' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
+#' @param type The type of robin construction, dependent or independent 
+#' procedure.
 #' @param weights this argument is not settable for "infomap" method.
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
 #' method.
@@ -427,7 +429,7 @@ rewireOnl <- function(data, number)
 #' @param v.weights This argument is settable only for "infomap" method.
 #' @param nb.trials This argument is settable only for "infomap" method.
 #' @param directed This argument is settable only for "edgeBetweenness" method.
-#' @param verbose flag for verbose output (default as FALSE).
+#' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
 #' - the matrix "Mean" with the means of the procedure for the graph
@@ -837,8 +839,9 @@ plotRobin <- function(graph, model1, model2,
 #' @param FUN2 personal designed function when method2 is "others". 
 #' see \code{\link{methodCommunity}}.
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
-#' "adjusted.rand".
-#' @param type The type of robin costruction, dependent or independent.
+#' "adjusted.rand" all normalized and used as distances.
+#' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
+#' @param type The type of robin construction, dependent or independent.
 #' @param weights This argument is not settable for "infomap" method.
 #' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
 #' method.
@@ -847,11 +850,11 @@ plotRobin <- function(graph, model1, model2,
 #' @param v.weights This argument is settable only for "infomap" method.
 #' @param nb.trials This argument is settable only for "infomap" method.
 #' @param directed This argument is settable only for "edgeBetweenness" method.
-#' @param verbose flag for verbose output (default as FALSE).
+#' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
 #' - the matrix "Mean1" with the means of the procedure for the first method 
-#' - the matrix "Mean2" with the means of the procedure for the second method.
+#' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
 #' @import igraph
 #' @export
