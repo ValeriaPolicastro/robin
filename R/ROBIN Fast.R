@@ -1,7 +1,7 @@
 #' robinCompareFast
 #'
 #' @description This function compares two community detection algorithms.
-#' Is the parallelized version of \code{\link{robinCompare}}
+#' Is the parallelized and faster version of \code{\link{robinCompare}}
 #' @param graph The output of prepGraph.
 #' @param method1 The first clustering method, one of "walktrap", 
 #' "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
