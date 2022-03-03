@@ -30,7 +30,7 @@
 #' - the matrix "Mean1" with the means of the procedure for the first method 
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
-#' @import igraph
+#' @import igraph parallel
 #' @export
 #'
 #' @examples 
