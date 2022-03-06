@@ -41,6 +41,6 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 measure="vi",type="independent")
-robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
-legend=c("real data", "null model"))
+\donttest{robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
+legend=c("real data", "null model"))}
 }

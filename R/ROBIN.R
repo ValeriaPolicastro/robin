@@ -1297,7 +1297,7 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return Two plots: the fitted curves and the adjusted p-values. A vector of the adjusted p-values. 
-#' @import igraph ggplot2 fdatest graphics qpdf
+#' @import qpdf igraph ggplot2 fdatest graphics
 #' @export
 #'
 #' @examples 
@@ -1306,8 +1306,8 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
-#' robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
-#' legend=c("real data", "null model"))
+#' \donttest{robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
+#' legend=c("real data", "null model"))}
 robinFDATest <- function(graph,model1,model2,
                         legend=c("model1", "model2"), verbose=FALSE)
 {
@@ -1332,12 +1332,10 @@ robinFDATest <- function(graph,model1,model2,
     plot1 <- ggplot2::ggplot(dataFrame, ggplot2::aes(x=as.numeric(percPert),
                  y=as.numeric(measures), color= model, group=s)) +
              ggplot2::geom_line() +
-             ggplot2::ylim(0,1)+
              ggplot2::xlab("Percentage of perturbation") +
              ggplot2::ylab("Measure")+
              ggplot2::ggtitle("Functional Data Analysis")+
              ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6))
-             
       
     
      
@@ -1349,24 +1347,24 @@ robinFDATest <- function(graph,model1,model2,
      abscissa.pval <- rep(seq(xmin,xmax,len=p),time=2)
      pvalue <- c(object$pval,object$corrected.pval)
      type <- c(rep("pvalue",p),rep("pvalue.adj",p))
-     PdataFrame<-data.frame(cbind(abscissa.pval,pvalue,type))
+     PdataFrame <- data.frame(cbind(abscissa.pval,pvalue,type))
      plot2 <- ggplot2::ggplot(PdataFrame, ggplot2::aes(x=as.numeric(abscissa.pval),
                                                     y=as.numeric(pvalue), color= type)) +
               ggplot2::geom_point() +
-              ggplot2::ylim(0,1) +
               ggplot2::xlab("Percentage of perturbation") +
               ggplot2::ylab("p_value")+
               ggplot2::ggtitle("P-values")+
               ggplot2::scale_x_continuous(breaks = c(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6))+
-              ggplot2::geom_hline(yintercept = 0.05,color = "red")
+              ggplot2::geom_hline(yintercept = 0.05,color = "red")+
+              ggplot2::lims(y=c(0,1))
      
     
     plot <- gridExtra::grid.arrange(plot1,plot2, ncol=2)
     print(plot)
    
-    adj.pvalue<-object$corrected.pval
-    pvalue<-object$pval
-    output<-list(adj.pvalue=adj.pvalue,
+    adj.pvalue <- object$corrected.pval
+    pvalue <- object$pval
+    output <- list(adj.pvalue=adj.pvalue,
                  pvalues=pvalue)
     
     return(output)

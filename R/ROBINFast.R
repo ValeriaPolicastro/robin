@@ -9,13 +9,15 @@
 #' @param method2 The second custering method one of "walktrap",
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal".
+#' @param measure The stability measure, one of "vi", "nmi", "split.join", 
+#' "adjusted.rand" all normalized and used as distances.
+#' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
+#' @param ncores number of CPU cores to use.(default is 2) For a faster 
+#' execution we suggest to use ncores=(detectCores(logical = FALSE)-1) 
 #' @param FUN1 personal designed function when method1 is "others". 
 #' see \code{\link{methodCommunity}}.
 #' @param FUN2 personal designed function when method2 is "others". 
 #' see \code{\link{methodCommunity}}.
-#' @param measure The stability measure, one of "vi", "nmi", "split.join", 
-#' "adjusted.rand" all normalized and used as distances.
-#' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param weights This argument is not settable for "infomap" method.
 #' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
 #' method.
@@ -46,15 +48,16 @@ robinCompareFast <- function(graph,
                          method2=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen","louvain","spinglass",
                                    "labelProp","infomap","optimal", "other"),
-                         FUN1=NULL, FUN2=NULL,
                          measure= c("vi", "nmi","split.join", "adjusted.rand"),
+                         ncores=2,
+                         FUN1=NULL, FUN2=NULL,
                          directed=FALSE, weights=NULL, steps=4, 
                          spins=25, e.weights=NULL, v.weights=NULL, 
                          nb.trials=10, verbose=TRUE)
 {   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
-    measure <-match.arg(measure)
+    measure <- match.arg(measure)
     comReal1 <- membershipCommunities(graph=graph, method=method1,
                                       FUN=FUN1,
                                       directed=directed,
@@ -81,11 +84,9 @@ robinCompareFast <- function(graph,
     graphRewire <- NULL
     count <- 1
     nRewire <- seq(0,60,5)
-    if(verbose) cat("Detecting robin method independent type, wait it can take
-                    time it depends on the size of the network")
+    if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
     vet <- round(vet1*de/100, 0)
-    ncores <- parallel::detectCores(logical = FALSE) - 1
     cl <- parallel::makeCluster(ncores)
     parallel::clusterExport(cl,varlist =c("graph","method1","method2","directed",
                                 "weights","steps","spins", "e.weights", 
@@ -174,7 +175,7 @@ robinCompareFast <- function(graph,
         
         return(list("Measure1"=m1,"Measure2"=m2))
     })
-    stopCluster(cl)
+    parallel::stopCluster(cl)
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     
