@@ -14,12 +14,12 @@ function(model, display=TRUE, iters=2000, gradcheck=FALSE) {
   options$maxit = iters
 
   if ("optimiser" %in% names(model))
-    optim = get(paste(model$optimiser, "optim", sep=""), mode="function")
+    optim = get(paste(".", model$optimiser, "optim", sep=""), mode="function")
   else
-    optim = get("CGoptim", mode="function")
+    optim = get(".CGoptim", mode="function")
 
-  fn = get('gpObjective', mode="function")
-  grad = get('gpGradient', mode="function")
+  fn = get('.gpObjective', mode="function")
+  grad = get('.gpGradient', mode="function")
 
 #   strcmp(func2str(optim), 'optimiMinimize')
 #     ## Carl Rasmussen's minimize function 

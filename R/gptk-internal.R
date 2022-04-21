@@ -148,14 +148,14 @@ function (kern, factorType) {
   factors <- list()
 
   if ( length(kern$transforms) > 0 ) {
-    funcName <- paste(kern$type, "KernExtractParam", sep="")
+    funcName <- paste(".", kern$type, "KernExtractParam", sep="")
     func <- get(funcName, mode="function")
     params <- func(kern)
 
     for (i in seq(along=kern$transforms)) {
       factors[[i]] <- list()
       factors[[i]]$index <- kern$transforms[[i]]$index
-      funcName <- optimiDefaultConstraint(kern$transforms[[i]]$type)
+      funcName <- .optimiDefaultConstraint(kern$transforms[[i]]$type)
       func <- get(funcName$func, mode="function")
       if (funcName$hasArgs)
         factors[[i]]$val <- func(params[factors[[i]]$index], factorType, kern$transformArgs[[i]])
@@ -168,9 +168,9 @@ function (kern, factorType) {
 .kernTestCombinationFunction <-
 function (kern1, kern2) {
   if (kern1$type == "selproj" && kern2$type == "selproj")
-    funcName <- paste(kern1$comp[[1]]$type, "X", kern2$comp[[1]]$type, "KernCompute", sep="")
+    funcName <- paste(".", kern1$comp[[1]]$type, "X", kern2$comp[[1]]$type, "KernCompute", sep="")
   else
-    funcName <- paste(kern1$type, "X", kern2$type, "KernCompute", sep="")
+    funcName <- paste(".", kern1$type, "X", kern2$type, "KernCompute", sep="")
 
   if ( !exists(funcName, mode="function") ) {
     return (FALSE)
@@ -219,7 +219,7 @@ function(kern, fhandle, i, j, x1, x2=NULL, arg1, arg2=NULL) {
 .multiKernComputeBlock <-
 function (kern, i, j, x1, x2=NULL) {
   if ( i==j ) {
-    funcName <- paste(kern$comp[[i]]$type, "KernCompute", sep="")
+    funcName <- paste(".", kern$comp[[i]]$type, "KernCompute", sep="")
     transpose <- 0
     arg1 <- kern$comp[[i]]
 
@@ -236,10 +236,10 @@ function (kern, i, j, x1, x2=NULL) {
   } else {
 
     if ( j<i ) {
-      funcName <- paste(kern$block[[i]]$cross[j], "KernCompute", sep="")
+      funcName <- paste(".", kern$block[[i]]$cross[j], "KernCompute", sep="")
       transpose <- kern$block[[i]]$transpose[j]
     } else {
-      funcName <- paste(kern$block[[j]]$cross[i], "KernCompute", sep="")
+      funcName <- paste(".", kern$block[[j]]$cross[i], "KernCompute", sep="")
       transpose <- !kern$block[[j]]$transpose[i]
     }
 
@@ -281,7 +281,7 @@ function (kern, x, x2, covGrad, i, j) {
   }
 
   if ( i==j ) {
-    funcName <- paste(kern$comp[[i]]$type, "KernGradient", sep="")
+    funcName <- paste(".", kern$comp[[i]]$type, "KernGradient", sep="")
     transpose <- 0
     arg1 <- kern$comp[[i]]
     factors <- .kernFactors(kern$comp[[i]], "gradfact")
@@ -298,10 +298,10 @@ function (kern, x, x2, covGrad, i, j) {
     
   } else {
     if ( j<i ) {
-      funcName <- paste(kern$block[[i]]$cross[j], "KernGradient", sep="")
+      funcName <- paste(".", kern$block[[i]]$cross[j], "KernGradient", sep="")
       transpose <- kern$block[[i]]$transpose[j]
     } else {
-      funcName <- paste(kern$block[[j]]$cross[i], "KernGradient", sep="")
+      funcName <- paste(".", kern$block[[j]]$cross[i], "KernGradient", sep="")
       transpose <- kern$block[[j]]$transpose[i]
     }
 

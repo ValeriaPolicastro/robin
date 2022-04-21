@@ -3,7 +3,7 @@ function (model, only.values=TRUE, untransformed.values=FALSE) {
 #   if (any(.packages(all.available=TRUE)=="tigre") && is.GPModel(model))
 #     model <- modelStruct(model)
   
-  funcName <- paste(model$type, "ExtractParam", sep="")
+  funcName <- paste(".", model$type, "ExtractParam", sep="")
   func <- get(funcName, mode="function")
   params <- func(model, only.values=only.values, untransformed.values=untransformed.values)
 

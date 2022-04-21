@@ -17,7 +17,8 @@ URL: https://github.com/ValeriaPolicastro/robin
 Depends: 
     R (>= 3.5),
     igraph,
-    qpdf
+    qpdf,
+    Matrix
 Imports:
     ggplot2,
     networkD3,
