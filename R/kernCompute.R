@@ -1,4 +1,4 @@
-kernCompute <-
+.kernCompute <-
 function (kern, x, x2) {
 
   funcName <- paste(kern$type, "KernCompute", sep="")
