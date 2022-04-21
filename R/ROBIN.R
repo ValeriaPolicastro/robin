@@ -255,7 +255,7 @@ methodCommunity <- function(graph,
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' membershipCommunities (graph=graph, method="louvain")
 
-membershipCommunities<- function(graph,
+membershipCommunities <- function(graph,
                                  method=c("walktrap", "edgeBetweenness", 
                                         "fastGreedy", "louvain", "spinglass", 
                                         "leadingEigen", "labelProp", "infomap",
