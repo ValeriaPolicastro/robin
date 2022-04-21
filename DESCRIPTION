@@ -17,7 +17,6 @@ URL: https://github.com/ValeriaPolicastro/robin
 Depends: 
     R (>= 3.5),
     igraph,
-    gprege,
     qpdf
 Imports:
     ggplot2,

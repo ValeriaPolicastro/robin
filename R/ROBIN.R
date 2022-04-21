@@ -1269,7 +1269,7 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
     rownames(dd) <- 'Measure'
     colnames(dd) <- dvet
     datadum <- rbind(dd, dd)
-    gpregeOutput <- gprege::gprege(data=datadum, inputs=dvet,
+    gpregeOutput <- .gprege(data=datadum, inputs=dvet,
                                   gpregeOptions=gpregeOptions)
     bf <- gpregeOutput$rankingScores[1]
 
