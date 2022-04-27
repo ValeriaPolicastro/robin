@@ -2,7 +2,7 @@
 function(model, X, varsigma.return=FALSE) {
 # browser()
   if (!"alpha" %in% names(model))
-    model = gpComputeAlpha(model)
+    model = .gpComputeAlpha(model)
 
   maxMemory = 1000000
 
@@ -26,10 +26,10 @@ function(model, X, varsigma.return=FALSE) {
     ## Compute kernel for new point.
     if (model$approx == "ftc") {
 # browser()
-      KX_star = kernCompute(model$kern, model$X, X[indices, ,drop=FALSE])
+      KX_star = .kernCompute(model$kern, model$X, X[indices, ,drop=FALSE])
     }
     else if (model$approx %in% c("dtc", "dtcvar", "fitc", "pitc"))
-      KX_star = kernCompute(model$kern, model$X_u, X[indices, ,drop=FALSE])
+      KX_star = .kernCompute(model$kern, model$X_u, X[indices, ,drop=FALSE])
     
     ## Compute mean, using precomputed alpha vector.
     if ((!"isMissingData" %in% names(model)) || !model$isMissingData || model$approx != "ftc")
@@ -45,7 +45,7 @@ function(model, X, varsigma.return=FALSE) {
       varsigma = matrix(0, dim(X)[1], model$d)
       if (!("isSpherical" %in% names(model)) || model$isSpherical) {
 	## Compute diagonal of kernel for new point.
-	diagK = kernDiagCompute(model$kern, X[indices, ,drop=FALSE])
+	diagK = .kernDiagCompute(model$kern, X[indices, ,drop=FALSE])
 	if (model$approx == "ftc")
 # browser()
 	  Kinvk = model$invK_uu %*% KX_star
@@ -57,7 +57,7 @@ function(model, X, varsigma.return=FALSE) {
 	}
 	varsigma[indices, ] = kronecker(matrix(1,1,model$d), varsig)
       } else {
-	diagK = kernDiagCompute(model$kern, X[indices, ,drop=FALSE])
+	diagK = .kernDiagCompute(model$kern, X[indices, ,drop=FALSE])
 	for (i in 1:model$d) {
 	  ind = model$indexPresent[[i]]
 	  if (model$approx == "ftc")
@@ -79,7 +79,7 @@ function(model, X, varsigma.return=FALSE) {
     mu[indices,] = mu[indices, ,drop=FALSE] + kronecker(matrix(1,length(indices),1), model$bias)
     ## If the mean function is present, add it it.
     if (("meanFunction" %in% names(model)) && length(model$meanFunction)>0) {
-      mu[indices,] = mu[indices, ,drop=FALSE] + modelOut(model$meanFunction, X[indices, ,drop=FALSE])
+      mu[indices,] = mu[indices, ,drop=FALSE] + .modelOut(model$meanFunction, X[indices, ,drop=FALSE])
     }
     ## rescale the variances
     if (varsigma.return) { #if (nargout > 1)

@@ -46,7 +46,7 @@ function (model, X=model$X) {
 
       model$innerProducts = matrix(0, 1, model$d)
       for (i in 1:model$d) {
-	ind = gpDataIndices(model, i)
+	ind = .gpDataIndices(model, i)
 	## Compute A = invBetaK_uu + K_uf%*%K_uf'
 	if (model$isMissingData)
 	  K_uf2 = model$K_uf[, ind,drop=FALSE]%*%t(model$K_uf[, ind,drop=FALSE])
@@ -72,7 +72,7 @@ function (model, X=model$X) {
       model$diagD = 1 + (model$beta)*model$diagK
 	  - model$beta*t(colSums(model$K_uf * (model$invK_uu%*%model$K_uf)))
 
-      model$Dinv = diag.spam(drop(1/model$diagD)) #sparseDiag(1/model$diagD)
+      model$Dinv = spam::diag.spam(drop(1/model$diagD)) #sparseDiag(1/model$diagD)
       K_ufDinvK_uf = model$K_uf%*%model$Dinv%*%t(model$K_uf)
       model$A = 1/model$beta*model$K_uu + K_ufDinvK_uf
       ## This can become unstable when K_ufDinvK_uf is low rank.
@@ -105,10 +105,10 @@ function (model, X=model$X) {
       model$V=list(); model$Am=list(); model$Lm=list(); model$invLmV=list()
       model$scaledM=list(); model$bet=list()
       for (i in 1:model$d) {
-	ind = gpDataIndices(model, i)
+	ind = .gpDataIndices(model, i)
 	model$diagD[[i]] = 1 + model$beta*model$diagK[ind]
 	  - model$beta*t(colSums(model$K_uf[, ind,drop=FALSE] * (model$invK_uu%*%model$K_uf[, ind,drop=FALSE])))
-	model$Dinv[[i]] = diag.spam(drop(1/model$diagD[[i]]))
+	model$Dinv[[i]] = spam::diag.spam(drop(1/model$diagD[[i]]))
 	K_ufDinvK_uf = model$K_uf[, ind,drop=FALSE]%*%model$Dinv[[i]]%*%t(model$K_uf[, ind,drop=FALSE])
 	model$A[[i]] = 1 / model$beta*model$K_uu + K_ufDinvK_uf
 	## This can become unstable when K_ufDinvK_uf is low rank.
@@ -203,7 +203,7 @@ function (model, X=model$X) {
 
       for (i in 1:length(model$blockEnd)) {
 	for (j in 1:model$d) {
-	  ind = gpDataIndices(model, j, i)
+	  ind = .gpDataIndices(model, j, i)
 	  model$innerProducts[1, j] = model$innerProducts[1, j]
 				    + model$beta*t(Dinvm[[i]][ind, j,drop=FALSE])%*%model$m[ind, j,drop=FALSE]
 	}

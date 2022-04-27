@@ -1215,7 +1215,6 @@ createITPSplineResult <- function(graph, model1, model2,
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return A numeric value, the Bayes factor
-#' @import gprege 
 #' @importFrom stats sd var
 #' @export
 #'

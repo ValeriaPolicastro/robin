@@ -37,7 +37,7 @@ function(model) {
     } else {
       ll = 0
       for (i in 1:model$d) {
-	ind = gpDataIndices(model, i)
+	ind = .gpDataIndices(model, i)
 	e = model$K_uf[, ind,drop=FALSE]%*%model$m[ind, i,drop=FALSE]
 	if (length(model$beta)==1) {
 	  ll = ll - 0.5*((-(model$N-model$k)*log(model$beta)
@@ -82,7 +82,7 @@ function(model) {
 	if (FALSE) {
 	  ll = 0
 	  for (i in 1:model$d) {
-	    ind = gpDataIndices(model, i)
+	    ind = .gpDataIndices(model, i)
 	    Dinvm = model$Dinv[[i]]%*%model$m[ind, i,drop=FALSE]
 	    K_ufDinvm = model$K_uf[, ind,drop=FALSE]%*%Dinvm
 	    ll = ll -0.5*(sum(log(model$diagD[[i]]))
@@ -95,7 +95,7 @@ function(model) {
 	  ## This is objective to match Ed Snelson's code
 	  ll = 0
 	  for (i in 1:model$d) {
-	    ind = gpDataIndices(model, i)
+	    ind = .gpDataIndices(model, i)
 	    ll =  ll - (sum(log(diag(model$Lm[[i]])))
 		      + 0.5*(-(length(ind) - model$k)*log(model$beta)
 		      +(length(ind)*log(2*pi)+sum(log(model$diagD[[i]])))))
@@ -115,14 +115,14 @@ function(model) {
 	K_ufDinvm = matrix(0, model$k, model$d)
 	Dinvm = list()
 	for (i in 1:length(model$blockEnd)) {
-	  ind = gpBlockIndices(model, i)
+	  ind = .gpBlockIndices(model, i)
 	  Dinvm[[i]] = model$Dinv[[i]]%*%model$m[ind, ,drop=FALSE]
 	  K_ufDinvm = K_ufDinvm + model$K_uf[, ind,drop=FALSE]%*%Dinvm[[i]]
 	}
 	ll = ll - model$beta*sum((model$Ainv%*%K_ufDinvm) * K_ufDinvm)
 	
 	for (i in 1:length(model$blockEnd)) {
-	  ind = gpBlockIndices(model, i)
+	  ind = .gpBlockIndices(model, i)
 	  ll = ll + model$d*(model$logDetD[i] - length(ind)*log(model$beta))
 		  + model$beta*sum(Dinvm[[i]] * model$m[ind, ,drop=FALSE])
 	}
@@ -140,14 +140,14 @@ function(model) {
 	  ## Loop through the blocks computing each part to be added.
 	  K_ufDinvm = matrix(0, model$k, 1)
 	  for (i in 1:length(model$blockEnd)) {
-	    ind = gpDataIndices(model, j, i)
+	    ind = .gpDataIndices(model, j, i)
 	    Dinvm[[i]][[j]] = model$Dinv[[i]][[j]]%*%model$m[ind, j,drop=FALSE]
 	    K_ufDinvm = K_ufDinvm + model$K_uf[, ind]%*%Dinvm[[i]][[j]]
 	  }
 	  ll = ll - model$beta*sum((model$Ainv[[i]]%*%K_ufDinvm) * K_ufDinvm)
 
 	  for (i in 1:length(model$blockEnd)) {
-	    ind = gpDataIndices(model, j, i)
+	    ind = .gpDataIndices(model, j, i)
 	    ll = ll + model$logDetD[i, j] - length(ind)*log(model$beta)
 		    + model$beta*sum(Dinvm[[i]][[j]] * model$m[ind, j,drop=FALSE])
 	    ll = ll + length(ind)*log(2*pi)

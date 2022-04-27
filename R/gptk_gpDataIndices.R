@@ -1,4 +1,4 @@
-gpDataIndices <-
+.gpDataIndices <-
 function(model, dimNo, blockNo) {
   if (nargs() > 2) {
     if (model$approx != "pitc")

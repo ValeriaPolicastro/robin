@@ -177,7 +177,7 @@
             
             if (gpregeOptions$explore) { ## Plot the regression...
                 screen(h); erase.screen(h) ## ...in sub-figure #h. Clear screen.
-                gpPlot(models[[h]], xstar, col='blue', xlim=range(xstar), ylim=c(datamin, datamax),
+                .gpPlot(models[[h]], xstar, col='blue', xlim=range(xstar), ylim=c(datamin, datamax),
                        title=paste("Init. length-scale = ", as.character(1/exp(inithypers[1,h]/2)), sep=""),
                        xlab='time(mins)', ylab=bquote(paste(log[2]~expression~(centred))))
             }
@@ -225,7 +225,7 @@
             #     dev.set(3)
             dev.off()
             pdf(file=paste('exhaustivePlot',ix,'.pdf',sep=''), paper="special", width=6, height=6)  
-            C = exhaustivePlot(y, x, xstar, options, gpregeOptions$exhaustPlotMaxWidth, gpregeOptions$exhaustPlotRes, gpregeOptions$exhaustPlotLevels)
+            C = .exhaustivePlot(y, x, xstar, options, gpregeOptions$exhaustPlotMaxWidth, gpregeOptions$exhaustPlotRes, gpregeOptions$exhaustPlotLevels)
             dev.off()
             #     dev.copy(pdf, file = paste('exhaustivePlot',ix,'.pdf', sep=''))
             readline(prompt='ENTER to continue')
