@@ -1,3 +1,5 @@
+robin v1.1.1
+-imported gptk and gprege functions for dependency problems
 robin v1.1.0
 -robinCompareFast parallelized function
 robin v1.0.3

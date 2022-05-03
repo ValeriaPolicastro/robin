@@ -30,6 +30,7 @@
 #'@importFrom grDevices dev.off dev.set gray.colors pdf rgb
 #'@importFrom stats optim optimize qgamma qnorm rnorm
 #'@importFrom utils tail
+#'@importFrom graphics image
 
 .gpComputeAlpha <-
 function(model, m) {

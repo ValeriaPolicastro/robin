@@ -9,7 +9,7 @@ function (kern, x, covDiag) {
   } else {
     fhandle = get(paste(kern$type, 'KernGradient', sep=""))
     g = matrix(0, 1, kern$nParams)
-    for (i in 1:tail(dim(x),1)) {
+    for (i in 1:utils::tail(dim(x),1)) {
       g = g + fhandle(kern, x[i, ], covDiag[i])
     }
   }
