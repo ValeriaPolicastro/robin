@@ -1224,7 +1224,7 @@ createITPSplineResult <- function(graph, model1, model2,
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, 
 #' method="louvain", measure="vi",type="independent")
-#' robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)
+#' \donttest{robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)}
 robinGPTest <- function(model1, model2, verbose=FALSE)
 { 
    ratios <- log2((model1+0.001)/(model2+0.001))

@@ -1,3 +1,4 @@
+#AGPL-3 License
 .gprege <- function(data, inputs, gpregeOptions) {
     
     ## GPREGE Gaussian process ranking and estimation of gene expression time-series.

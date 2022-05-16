@@ -28,5 +28,5 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, 
 method="louvain", measure="vi",type="independent")
-robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)
+\donttest{robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)}
 }
