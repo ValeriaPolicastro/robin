@@ -561,7 +561,7 @@ robinRobust <- function(graph, graphRandom,
                 {
                     count2 <- count2+1
                     Real <- rewireCompl(data=graphRewire, 
-                                        number=round(0.01*z), 
+                                        number=round(0.01*de), 
                                         community=comReal, 
                                         method=method,
                                         measure=measure,
@@ -583,7 +583,7 @@ robinRobust <- function(graph, graphRandom,
                     }
                     measureReal[count2, count] <- vector[k]
                     Random <- rewireCompl(data=graphRewireRandom, 
-                                          number=round(0.01*z),
+                                          number=round(0.01*de),
                                           community=comRandom,
                                           method=method,
                                           measure=measure,
@@ -691,7 +691,7 @@ robinRobust <- function(graph, graphRandom,
                 {
                     count2 <- count2+1
                     ##REAL
-                    Real <- rewireCompl(data=graphRewire, number=round(0.01*z),
+                    Real <- rewireCompl(data=graphRewire, number=round(0.01*de),
                                         method=method,
                                         measure=measure,
                                         community=comReal,
@@ -717,7 +717,7 @@ robinRobust <- function(graph, graphRandom,
                     Random <- rewireCompl(data=graphRewireRandom,
                                             method=method,
                                             measure=measure,
-                                            number=round(0.01*z),
+                                            number=round(0.01*de),
                                             community=comRandom,
                                             directed=directed,
                                             weights=weights,
@@ -975,7 +975,7 @@ robinCompare <- function(graph,
                 {
                     count2 <- count2+1
                     graphRewire <- rewireOnl(data=graphRewire,
-                                             number=round(0.01*z))
+                                             number=round(0.01*de))
                     comr1 <- membershipCommunities(graph=graphRewire,
                                                    method=method1,
                                                    FUN=FUN1,
@@ -1097,7 +1097,7 @@ robinCompare <- function(graph,
                 {
                     count2 <- count2+1
                     graphRewire <- rewireOnl(data=graphRewire,
-                                             number=round(0.01*z))
+                                             number=round(0.01*de))
                     comr1 <- membershipCommunities(graph=graphRewire,
                                                    method=method1,
                                                    FUN=FUN1,
