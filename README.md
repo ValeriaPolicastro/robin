@@ -39,8 +39,7 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, legend=c("real 
 
 ```{r}
 #For the testing:
-robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
-             measure="vi")
+robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom)
 robinGPTest(model1=proc$Mean, model2=proc$MeanRandom)
 ```
 
