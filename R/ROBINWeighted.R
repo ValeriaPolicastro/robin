@@ -459,3 +459,11 @@ robinRobustWeighted <- function(graph, graphRandom,
   return(output)
   
 }
+
+read_nsl=function(file){
+  df=read.table(file,skip=1)
+  colnames(df)=c('V1','V2','weight')
+  gg=graph_from_data_frame(df,directed = FALSE)
+ # gg <- set_edge_attr(gg, "weight", value= df$weights)
+  return(gg)
+} 
