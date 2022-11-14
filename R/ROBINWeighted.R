@@ -1,3 +1,38 @@
+####### GRAPH RANDOM WEIGHTED#########
+#' randomWeight
+#'
+#' @description This function randomly rewires the edges while preserving the original graph's 
+#' degree distribution.
+#' @param graph The output of prepGraph.
+#' @param verbose flag for verbose output (default as FALSE)
+#' 
+#' @return An igraph object, a randomly rewired graph.
+#' @import igraph
+#' @export
+#'
+#' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- randomWeight(graph=graph)
+randomWeight <- function(graph, distribution = "NegBinom",verbose=FALSE)
+{
+    if(verbose) cat("Randomizing the graph edges.\n")
+    v <- igraph::vcount(graph) ## number of vertex
+    numberPerturbAll <- round((v*(v-1))/2, 0) 
+    adj <- as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
+    graphRandom <- as.matrix(perturbR::rewireR(sym.matrix=adj, nperturb=numberPerturbAll, dist = distribution))
+    #rewiring for z all the edges
+    graphRandom <- graph_from_adjacency_matrix(graphRandom,weighted = TRUE, mode="undirected")
+    return(graphRandom)
+}
+
+
+
+
+
+
+########## ROBIN COMPARE WEIGHTED#############
+
 #' robinCompareFastWeight
 #'
 #' @description This function compares two community detection algorithms, from 
@@ -242,7 +277,7 @@ rewireComplWeight <- function(data, number, community,
   return(output)
 }
 
-
+########### ROBIN ROBUST WEIGHTED #########
 
 #' robinRobustWeighted
 #'
