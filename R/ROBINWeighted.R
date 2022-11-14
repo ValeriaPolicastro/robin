@@ -296,8 +296,6 @@ rewireComplWeight <- function(data, number, community,
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
-#' @param type The type of robin construction, dependent or independent 
-#' procedure.
 #' @param weights this argument is not settable for "infomap" method.
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
 #' method.
@@ -322,12 +320,11 @@ robinRobustWeighted <- function(graph, graphRandom,
                                          "leadingEigen", "labelProp", "infomap",
                                          "optimal", "other"),
                                 FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                                type=c("independent","dependent"), directed=FALSE, weights=NULL, 
+                                directed=FALSE, weights=NULL, 
                                 steps=4, spins=25, e.weights=NULL, v.weights=NULL, 
                                 nb.trials=10, verbose=TRUE) 
 {   
   measure <- match.arg(measure)
-  type<- match.arg(type)
   method <- match.arg(method)
   nrep <- 10
   comReal <- membershipCommunities(graph=graph, method=method, 
