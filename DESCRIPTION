@@ -1,6 +1,6 @@
 Package: robin
 Title: ROBustness in Network
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
     person("Valeria", "Policastro", role=c("aut", "cre"), email="valeria.policastro@gmail.com"),
     person("Dario", "Righelli", role=c("aut"), email="dario.righelli@gmail.com"),
@@ -9,16 +9,14 @@ Authors@R: c(
     person("Annamaria", "Carissimo", role=c("aut"), email="a.carissimo@na.iac.cnr.it"))
 Maintainer: Valeria Policastro <valeria.policastro@gmail.com>
 Description: Assesses the robustness of the community structure of a network found by one or more community detection algorithm to give indications about their reliability. It detects if the community structure found by a set of algorithms is statistically significant and compares the different selected detection algorithms on the same network. robin helps to choose among different community detection algorithms the one that better fits the network of interest. Reference in Policastro V., Righelli D., Carissimo A., Cutillo L., De Feis I. (2021) <https://journal.r-project.org/archive/2021/RJ-2021-040/index.html>.
-License: MIT + file LICENSE
+License: MIT + 	file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 URL: https://github.com/ValeriaPolicastro/robin
 Depends: 
     R (>= 3.5),
-    igraph,
-    gprege,
-    qpdf
+    igraph
 Imports:
     ggplot2,
     networkD3,
@@ -26,7 +24,10 @@ Imports:
     fdatest,
     methods,
     gridExtra,
-    parallel
+    parallel,
+    spam,
+    qpdf,
+    Matrix
 VignetteBuilder: knitr
 Suggests:
     devtools,

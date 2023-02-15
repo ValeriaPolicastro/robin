@@ -574,7 +574,7 @@ robinRobust <- function(graph, graphRandom,
                 {
                     count2 <- count2+1
                     Real <- rewireCompl(data=graphRewire, 
-                                        number=round(0.01*z), 
+                                        number=round(0.01*de), 
                                         community=comReal, 
                                         method=method,
                                         measure=measure,
@@ -596,7 +596,7 @@ robinRobust <- function(graph, graphRandom,
                     }
                     measureReal[count2, count] <- vector[k]
                     Random <- rewireCompl(data=graphRewireRandom, 
-                                          number=round(0.01*z),
+                                          number=round(0.01*de),
                                           community=comRandom,
                                           method=method,
                                           measure=measure,
@@ -704,7 +704,7 @@ robinRobust <- function(graph, graphRandom,
                 {
                     count2 <- count2+1
                     ##REAL
-                    Real <- rewireCompl(data=graphRewire, number=round(0.01*z),
+                    Real <- rewireCompl(data=graphRewire, number=round(0.01*de),
                                         method=method,
                                         measure=measure,
                                         community=comReal,
@@ -730,7 +730,7 @@ robinRobust <- function(graph, graphRandom,
                     Random <- rewireCompl(data=graphRewireRandom,
                                             method=method,
                                             measure=measure,
-                                            number=round(0.01*z),
+                                            number=round(0.01*de),
                                             community=comRandom,
                                             directed=directed,
                                             weights=weights,
@@ -1396,7 +1396,6 @@ createITPSplineResult <- function(graph, model1, model2,
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return A numeric value, the Bayes factor
-#' @import gprege 
 #' @importFrom stats sd var
 #' @export
 #'
@@ -1406,7 +1405,7 @@ createITPSplineResult <- function(graph, model1, model2,
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, 
 #' method="louvain", measure="vi",type="independent")
-#' robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)
+#' \donttest{robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)}
 robinGPTest <- function(model1, model2, verbose=FALSE)
 { 
    ratios <- log2((model1+0.001)/(model2+0.001))
@@ -1450,7 +1449,7 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
     rownames(dd) <- 'Measure'
     colnames(dd) <- dvet
     datadum <- rbind(dd, dd)
-    gpregeOutput <- gprege::gprege(data=datadum, inputs=dvet,
+    gpregeOutput <- .gprege(data=datadum, inputs=dvet,
                                   gpregeOptions=gpregeOptions)
     bf <- gpregeOutput$rankingScores[1]
 
