@@ -1141,7 +1141,7 @@ robinCompare <- function(graph,
                     {
                         count2 <- count2+1
                         graphRewire <- rewireOnl(data=graphRewire,
-                                                 number=round(0.01*z))
+                                                 number=round(0.01*de))
                         comr1 <- membershipCommunities(graph=graphRewire,
                                                        method=method1,
                                                        FUN=FUN1,
@@ -1267,7 +1267,7 @@ robinCompare <- function(graph,
                     {
                         count2 <- count2+1
                         graphRewire <- rewireOnl(data=graphRewire,
-                                                 number=round(0.01*z))
+                                                 number=round(0.01*de))
                         comr1 <- membershipCommunities(graph=graphRewire,
                                                        method=method1,
                                                        FUN=FUN1,
