@@ -30,10 +30,8 @@ of chance, merely due to edge positions in the network.
 my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
-proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
-                  method="louvain", type="independent")               
-plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
-legend=c("real data", "null model"), measure="vi")
+proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", method="louvain", type="independent")               
+plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, legend=c("real data", "null model"))
 ```
 <p align="center">
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotRobin.png" width="500" height="500" />
@@ -41,8 +39,7 @@ legend=c("real data", "null model"), measure="vi")
 
 ```{r}
 #For the testing:
-robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
-             measure="vi")
+robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom)
 robinGPTest(model1=proc$Mean, model2=proc$MeanRandom)
 ```
 
@@ -50,10 +47,8 @@ robinGPTest(model1=proc$Mean, model2=proc$MeanRandom)
 ```{r}
 my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
-comp <- robinCompare(graph=graph, method1="fastGreedy",
-                method2="louvain", measure="vi", type="independent")                
-plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi", 
-legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
+comp <- robinCompare(graph=graph, method1="fastGreedy", method2="louvain", measure="vi", type="independent")                
+plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 ```
 <p align="center">
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotCompare.png" width="500" height="500"/>
@@ -62,7 +57,7 @@ In this example, the Louvain algorithm fits better the network of interest, as t
 
 ```{r}
 #For the testing:
-robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2, measure="vi")
+robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2)
 robinGPTest(model1=comp$Mean1, model2=comp$Mean2)
 ```
 ## Reference
