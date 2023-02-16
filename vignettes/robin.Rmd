@@ -216,7 +216,7 @@ Secondly, we compare them with **robinCompare** function.
 
 ```{r}
 comp <- robinCompare(graph=graph, method1="fastGreedy",
-                method2="louvain", measure="vi", type="independent")
+                method2="louvain", measure="vi")
 ```
 A parallelized and faster version of this function is **robinCompareFast** function. 
 (we recommend to use it mostly with big size networks)

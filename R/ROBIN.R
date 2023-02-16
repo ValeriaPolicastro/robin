@@ -880,7 +880,7 @@ plotRobin <- function(graph, model1, model2,
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' robinCompare(graph=graph, method1="louvain", 
-#' method2="fastGreedy", measure="vi", type="independent")
+#' method2="fastGreedy", measure="vi")
 robinCompare <- function(graph, 
                       method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                 "leadingEigen","louvain","spinglass",
@@ -1194,7 +1194,7 @@ robinCompare <- function(graph,
                 if(verbose) cat("Perturbed ", z, " edges\n")
             }
             #dependent    
-        }else{
+        }else if(type == 3){
             z <- round((5*de)/100, 0)
             measureReal1 <- rep(0, nrep^2)
             measureReal11 <- NULL
