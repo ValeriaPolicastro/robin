@@ -7,7 +7,7 @@
 methodCommunity(
   graph,
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
-    "leadingEigen", "labelProp", "infomap", "optimal", "other"),
+    "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
   FUN = NULL,
   directed = FALSE,
   weights = NULL,
@@ -16,6 +16,7 @@ methodCommunity(
   e.weights = NULL,
   v.weights = NULL,
   nb.trials = 10,
+  resolution = 1,
   verbose = FALSE
 )
 }
@@ -67,6 +68,11 @@ argument is settable only for "infomap" method.}
 \item{nb.trials}{The number of attempts to partition the network (can be any
 integer value equal or larger than 1). This argument is settable only for
 "infomap" method.}
+
+\item{resolution}{only for "louvain" and "leiden". Optional resolution 
+parameter that allows the user to adjust the resolution parameter of the 
+modularity function that the algorithm uses internally. Lower values 
+typically yield fewer, larger clusters (default is 1).}
 
 \item{verbose}{flag for verbose output (default as FALSE)}
 }

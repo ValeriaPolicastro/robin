@@ -7,13 +7,13 @@
 robinCompare(
   graph,
   method1 = c("walktrap", "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain",
-    "spinglass", "labelProp", "infomap", "optimal", "other"),
+    "spinglass", "labelProp", "infomap", "optimal", "leiden", "other"),
   method2 = c("walktrap", "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain",
-    "spinglass", "labelProp", "infomap", "optimal", "other"),
+    "spinglass", "labelProp", "infomap", "optimal", "leiden", "other"),
   FUN1 = NULL,
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  type = c("independent", "dependent"),
+  type = 1,
   directed = FALSE,
   weights = NULL,
   steps = 4,
@@ -21,7 +21,9 @@ robinCompare(
   e.weights = NULL,
   v.weights = NULL,
   nb.trials = 10,
-  verbose = TRUE
+  verbose = TRUE,
+  resolution = 1,
+  ncores = 2
 )
 }
 \arguments{
@@ -45,7 +47,9 @@ see \code{\link{methodCommunity}}.}
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
-\item{type}{The type of robin construction, dependent or independent.}
+\item{type}{different type of robin construction. Default independent 
+parallelized defined with 1. There are also previous version not parallelized 
+independent(2) and dependent(3).}
 
 \item{directed}{This argument is settable only for "edgeBetweenness" method.}
 
@@ -63,6 +67,9 @@ method.}
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
+
+\item{ncores}{number of CPU cores to use.(default is 2) For a faster 
+execution we suggest to use ncores=(detectCores(logical = FALSE)-1)}
 }
 \value{
 A list object with two matrices:

@@ -7,7 +7,7 @@
 membershipCommunities(
   graph,
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
-    "leadingEigen", "labelProp", "infomap", "optimal", "other"),
+    "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
   FUN = NULL,
   directed = FALSE,
   weights = NULL,
@@ -15,7 +15,8 @@ membershipCommunities(
   spins = 25,
   e.weights = NULL,
   v.weights = NULL,
-  nb.trials = 10
+  nb.trials = 10,
+  resolution = 1
 )
 }
 \arguments{
@@ -23,7 +24,7 @@ membershipCommunities(
 
 \item{method}{The clustering method, one of "walktrap", "edgeBetweenness", 
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-"optimal".}
+"optimal", "leiden","other".}
 
 \item{FUN}{in case the @method parameter is "other" there is the possibility 
 to use a personal function passing its name through this parameter.
@@ -66,6 +67,11 @@ argument is settable only for "infomap" method.}
 \item{nb.trials}{The number of attempts to partition the network (can be any
 integer value equal or larger than 1). This argument is settable only for
 "infomap" method.}
+
+\item{resolution}{only for "louvain" and "leiden". Optional resolution 
+parameter that allows the user to adjust the resolution parameter of the 
+modularity function that the algorithm uses internally. Lower values 
+typically yield fewer, larger clusters (default is 1).}
 }
 \value{
 Returns a numeric vector, one number for each vertex in the graph; 
