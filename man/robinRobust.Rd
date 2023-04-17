@@ -8,7 +8,7 @@ robinRobust(
   graph,
   graphRandom,
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
-    "leadingEigen", "labelProp", "infomap", "optimal", "other"),
+    "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = c("independent", "dependent"),
@@ -19,6 +19,7 @@ robinRobust(
   e.weights = NULL,
   v.weights = NULL,
   nb.trials = 10,
+  resolution = 1,
   verbose = TRUE
 )
 }
@@ -29,7 +30,7 @@ robinRobust(
 
 \item{method}{The clustering method, one of "walktrap", "edgeBetweenness", 
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-"optimal".}
+"leiden","optimal".}
 
 \item{FUN}{in case the @method parameter is "other" there is the possibility 
 to use a personal function passing its name through this parameter.
@@ -57,6 +58,9 @@ method.}
 \item{v.weights}{This argument is settable only for "infomap" method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
+
+\item{resolution}{only for "louvain" and "leiden". Optional resolution 
+parameter, lower values typically yield fewer, larger clusters (default=1).}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 }

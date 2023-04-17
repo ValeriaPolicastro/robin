@@ -18,7 +18,8 @@ rewireCompl(
   spins = 25,
   e.weights = NULL,
   v.weights = NULL,
-  nb.trials = 10
+  nb.trials = 10,
+  resolution = 1
 )
 }
 \arguments{
@@ -50,6 +51,9 @@ method}
 \item{v.weights}{This argument is settable only for "infomap" method}
 
 \item{nb.trials}{This argument is settable only for "infomap" method}
+
+\item{resolution}{only for "louvain" and "leiden". Optional resolution 
+parameter, lower values typically yield fewer, larger clusters (default=1).}
 }
 \description{
 rewires the graph, creates the communities and 

@@ -253,9 +253,7 @@ methodCommunity <- function(graph,
 #' betweenness for directed graphs. This argument is settable only for 
 #' "edgeBetweenness" method.
 #' @param resolution only for "louvain" and "leiden". Optional resolution 
-#' parameter that allows the user to adjust the resolution parameter of the 
-#' modularity function that the algorithm uses internally. Lower values 
-#' typically yield fewer, larger clusters (default is 1).
+#' parameter, lower values typically yield fewer, larger clusters (default=1).
 #' 
 #' @return Returns a numeric vector, one number for each vertex in the graph; 
 #' the membership vector of the community structure.
@@ -310,7 +308,7 @@ plotGraph <- function(graph)
 {
     graph_d3 <- networkD3::igraph_to_networkD3(g=graph)
     plot <- networkD3::simpleNetwork(graph_d3$links, opacity=0.8, zoom=TRUE,
-                                linkColour = "B1AEAE", nodeColour = "#2E66AC",
+                                nodeColour = "#2E66AC",
                                 fontSize=12)
     return(plot)
 }   
@@ -373,6 +371,8 @@ plotComm <- function(graph, members)
 #' @param v.weights This argument is settable only for "infomap" method
 #' @param nb.trials This argument is settable only for "infomap" method
 #' @param directed This argument is settable only for "edgeBetweenness" method
+#' @param resolution only for "louvain" and "leiden". Optional resolution 
+#' parameter, lower values typically yield fewer, larger clusters (default=1).
 #' @keywords internal
 
 rewireCompl <- function(data, number, community, 
@@ -383,7 +383,8 @@ rewireCompl <- function(data, number, community,
                         FUN=NULL,
                         measure= c("vi", "nmi","split.join", "adjusted.rand"),
                         directed=FALSE, weights=NULL, steps=4, spins=25, 
-                        e.weights=NULL, v.weights=NULL, nb.trials=10)
+                        e.weights=NULL, v.weights=NULL, nb.trials=10,
+                        resolution = 1)
 {
     method <- match.arg(method)
     measure <- match.arg (measure)
@@ -392,7 +393,8 @@ rewireCompl <- function(data, number, community,
     comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
                             directed=directed, weights=weights, steps=steps, 
                             spins=spins, e.weights=e.weights, 
-                            v.weights=v.weights, nb.trials=nb.trials)
+                            v.weights=v.weights, nb.trials=nb.trials, 
+                            resolution=resolution)
     Measure <- igraph::compare(community, comR, method=measure)
     output <- list(Measure=Measure, graphRewire=graphRewire)
     
@@ -424,7 +426,7 @@ rewireOnl <- function(data, number)
 #' @param graphRandom The output of random function.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-#' "optimal".
+#' "leiden","optimal".
 #' @param FUN in case the @method parameter is "other" there is the possibility 
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights 
@@ -442,6 +444,8 @@ rewireOnl <- function(data, number)
 #' @param v.weights This argument is settable only for "infomap" method.
 #' @param nb.trials This argument is settable only for "infomap" method.
 #' @param directed This argument is settable only for "edgeBetweenness" method.
+#' @param resolution only for "louvain" and "leiden". Optional resolution 
+#' parameter, lower values typically yield fewer, larger clusters (default=1).
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
@@ -461,11 +465,11 @@ robinRobust <- function(graph, graphRandom,
                 method=c("walktrap", "edgeBetweenness", 
                          "fastGreedy", "louvain", "spinglass", 
                          "leadingEigen", "labelProp", "infomap",
-                         "optimal", "other"),
+                         "optimal","leiden","other"),
                 FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
                 type=c("independent","dependent"), directed=FALSE, weights=NULL, 
                 steps=4, spins=25, e.weights=NULL, v.weights=NULL, 
-                nb.trials=10, verbose=TRUE) 
+                nb.trials=10, resolution=1, verbose=TRUE) 
 {   
     measure <- match.arg(measure)
     type<- match.arg(type)
@@ -479,7 +483,8 @@ robinRobust <- function(graph, graphRandom,
                                     spins=spins, 
                                     e.weights=e.weights, 
                                     v.weights=v.weights, 
-                                    nb.trials=nb.trials) # real network
+                                    nb.trials=nb.trials,
+                                    resolution=resolution) # real network
 
     comRandom <- membershipCommunities(graph=graphRandom, method=method,
                                         FUN=FUN,
@@ -489,7 +494,7 @@ robinRobust <- function(graph, graphRandom,
                                         spins=spins, 
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
-                                        nb.trials=nb.trials) # random network
+                                        nb.trials=nb.trials,resolution=resolution) # random network
     #stopifnot(length(table(comRandom))>1)
     #if(length(table(comRandom))==1) {stop("Not random graph")}
     de <- igraph::gsize(graph)
@@ -534,7 +539,8 @@ robinRobust <- function(graph, graphRandom,
                                     spins=spins, 
                                     e.weights=e.weights, 
                                     v.weights=v.weights, 
-                                    nb.trials=nb.trials)
+                                    nb.trials=nb.trials,
+                                    resolution=resolution)
                 if (measure=="vi")
                 {
                     vector[k] <- (Real$Measure)/log2(N)
@@ -558,7 +564,8 @@ robinRobust <- function(graph, graphRandom,
                                         spins=spins, 
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
-                                        nb.trials=nb.trials)
+                                        nb.trials=nb.trials,
+                                      resolution=resolution)
                 if (measure=="vi")
                 {
                     vectRandom[k] <- (Random$Measure)/log2(N)
@@ -584,7 +591,8 @@ robinRobust <- function(graph, graphRandom,
                                         spins=spins, 
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
-                                        nb.trials=nb.trials)
+                                        nb.trials=nb.trials,
+                                        resolution=resolution)
                     if (measure=="vi")
                     {
                         vector[k] <- (Real$Measure)/log2(N)
@@ -606,7 +614,8 @@ robinRobust <- function(graph, graphRandom,
                                           spins=spins, 
                                           e.weights=e.weights, 
                                           v.weights=v.weights, 
-                                          nb.trials=nb.trials)
+                                          nb.trials=nb.trials,
+                                          resolution=resolution)
                     if (measure=="vi")
                     {
                         vectRandom[k] <- (Random$Measure)/log2(N)
@@ -658,7 +667,8 @@ robinRobust <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
-                                        FUN=FUN)
+                                        FUN=FUN,
+                                        resolution=resolution)
                 Measure <- igraph::compare(comReal, comr, method=measure)
                 if (measure=="vi")
                 {
@@ -684,7 +694,8 @@ robinRobust <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
-                                        FUN=FUN)
+                                        FUN=FUN,
+                                        resolution=resolution)
                 Measure <- igraph::compare(comRandom, comr,
                                            method=measure)
                 if(measure=="vi")
@@ -714,7 +725,8 @@ robinRobust <- function(graph, graphRandom,
                                         spins=spins, 
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
-                                        nb.trials=nb.trials)
+                                        nb.trials=nb.trials,
+                                        resolution=resolution)
                     if(measure=="vi")
                     {
                         vector[k] <- (Real$Measure)/log2(N)
@@ -738,7 +750,8 @@ robinRobust <- function(graph, graphRandom,
                                             spins=spins, 
                                             e.weights=e.weights, 
                                             v.weights=v.weights, 
-                                            nb.trials=nb.trials)
+                                            nb.trials=nb.trials,
+                                          resolution=resolution)
                     if(measure=="vi")
                     {
                         vectRandom[k] <- (Random$Measure)/log2(N)
@@ -854,6 +867,7 @@ plotRobin <- function(graph, model1, model2,
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
+#' @param type The type of robin construction, dependent or independent.
 #' @param weights This argument is not settable for "infomap" method.
 #' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
 #' method.
@@ -863,238 +877,132 @@ plotRobin <- function(graph, model1, model2,
 #' @param nb.trials This argument is settable only for "infomap" method.
 #' @param directed This argument is settable only for "edgeBetweenness" method.
 #' @param verbose flag for verbose output (default as TRUE).
-#' @param ncores number of CPU cores to use.(default is 2) For a faster 
-#' execution we suggest to use ncores=(detectCores(logical = FALSE)-1) 
-#' @param type different type of robin construction. Default independent 
-#' parallelized defined with 1. There are also previous version not parallelized 
-#' independent(2) and dependent(3).
 #' 
 #' @return A list object with two matrices:
 #' - the matrix "Mean1" with the means of the procedure for the first method 
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
-#' @import igraph parallel
+#' @import igraph
 #' @export
 #'
 #' @examples 
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' robinCompare(graph=graph, method1="louvain", 
-#' method2="fastGreedy", measure="vi")
+#' method2="fastGreedy", measure="vi", type="independent")
 robinCompare <- function(graph, 
-                      method1=c("walktrap", "edgeBetweenness", "fastGreedy",
-                                "leadingEigen","louvain","spinglass",
-                                "labelProp","infomap","optimal","leiden",
-                                "other"),
-                      method2=c("walktrap", "edgeBetweenness", "fastGreedy",
-                                "leadingEigen","louvain","spinglass",
-                                "labelProp","infomap","optimal","leiden",
-                                "other"),
-                      FUN1=NULL, FUN2=NULL,
-                      measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                      type=1,
-                      directed=FALSE, weights=NULL, steps=4, 
-                      spins=25, e.weights=NULL, v.weights=NULL, 
-                      nb.trials=10, verbose=TRUE,resolution = 1, ncores=2)
+                         method1=c("walktrap", "edgeBetweenness", "fastGreedy",
+                                   "leadingEigen","louvain","spinglass",
+                                   "labelProp","infomap","optimal", "other"),
+                         method2=c("walktrap", "edgeBetweenness", "fastGreedy",
+                                   "leadingEigen","louvain","spinglass",
+                                   "labelProp","infomap","optimal", "other"),
+                         FUN1=NULL, FUN2=NULL,
+                         measure= c("vi", "nmi","split.join", "adjusted.rand"),
+                         type=c("independent", "dependent"),
+                         directed=FALSE, weights=NULL, steps=4, 
+                         spins=25, e.weights=NULL, v.weights=NULL, 
+                         nb.trials=10, verbose=TRUE)
 {   
+    method1 <- match.arg(method1)
+    method2 <- match.arg(method2)
+    type <- match.arg(type)
+    measure <-match.arg(measure)
+    nrep <- 10
+    N <- igraph::vcount(graph)
+    comReal1 <- membershipCommunities(graph=graph, method=method1,
+                                      FUN=FUN1,
+                                      directed=directed,
+                                      weights=weights,
+                                      steps=steps, 
+                                      spins=spins, 
+                                      e.weights=e.weights, 
+                                      v.weights=v.weights, 
+                                      nb.trials=nb.trials) 
+    comReal2 <- membershipCommunities(graph=graph, method=method2,
+                                      FUN=FUN2,
+                                      directed=directed,
+                                      weights=weights,
+                                      steps=steps, 
+                                      spins=spins, 
+                                      e.weights=e.weights, 
+                                      v.weights=v.weights, 
+                                      nb.trials=nb.trials)
     
-    ####robinFast
-    if(type == 1) 
-    {   
-        method1 <- match.arg(method1)
-        method2 <- match.arg(method2)
-        measure <- match.arg(measure)
-        comReal1 <- membershipCommunities(graph=graph, method=method1,
-                                          FUN=FUN1,
-                                          directed=directed,
-                                          weights=weights,
-                                          steps=steps, 
-                                          spins=spins, 
-                                          e.weights=e.weights, 
-                                          v.weights=v.weights, 
-                                          nb.trials=nb.trials,
-                                          resolution = resolution) 
-        comReal2 <- membershipCommunities(graph=graph, method=method2,
-                                          FUN=FUN2,
-                                          directed=directed,
-                                          weights=weights,
-                                          steps=steps, 
-                                          spins=spins, 
-                                          e.weights=e.weights, 
-                                          v.weights=v.weights, 
-                                          nb.trials=nb.trials,
-                                          resolution = resolution)
-        de <- igraph::gsize(graph)
-        N <- igraph::vcount(graph)
-        Measure <- NULL
-        vector1 <- NULL
-        vector2 <- NULL
-        graphRewire <- NULL
-        count <- 1
-        nRewire <- seq(0,60,5)
-        if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
+    de <- igraph::gsize(graph)
+    Measure <- NULL
+    vector1 <- NULL
+    vector2 <- NULL
+    graphRewire <- NULL
+    count <- 1
+    nRewire <- seq(0,60,5)
+    if(verbose) cat("Detected robin method ", type, " type\n")
+    #independent
+    if(type == "independent") 
+    {
+        measureReal1 <- matrix(0, nrep^2, length(nRewire))
+        measureReal2 <- matrix(0, nrep^2, length(nRewire))
+        Mean1 <- matrix(0, nrep, length(nRewire))
+        Mean2 <- matrix(0, nrep, length(nRewire))
         vet1 <- seq(5, 60, 5) 
         vet <- round(vet1*de/100, 0)
-        cl <- parallel::makeCluster(ncores)
-        parallel::clusterExport(cl,varlist =c("graph","method1","method2","directed",
-                                              "weights","steps","spins", "e.weights", 
-                                              "v.weights", "nb.trials","measure","comReal1",
-                                              "comReal2","N","verbose","FUN1","FUN2","resolution"), 
-                                envir=environment())
-        zlist <- parallel::clusterApply(cl,vet, function(z) 
+        
+        for(z in vet)
         {
-            
-            
-            
-            MeansList <- lapply(1:10, function(s)
+            count2 <- 0
+            count <- count+1
+            for(s in c(1:nrep))
             {
-                
-                graphRList <- igraph::rewire(graph, 
-                                             with=igraph::keeping_degseq(loops=FALSE,
-                                                                         niter=z))
-                
-                comr1 <- robin::membershipCommunities(graph=graphRList,
-                                                      method=method1,
-                                                      FUN=FUN1,
-                                                      directed=directed,
-                                                      weights=weights,
-                                                      steps=steps, 
-                                                      spins=spins, 
-                                                      e.weights=e.weights, 
-                                                      v.weights=v.weights, 
-                                                      nb.trials=nb.trials,
-                                                      resolution = resolution)
-                
-                if(measure=="vi")
+                count2 <- count2+1
+                k <- 1
+                graphRewire <- rewireOnl(data=graph, number=z)
+                comr1 <- membershipCommunities(graph=graphRewire, 
+                                               method=method1,
+                                               FUN=FUN1,
+                                               directed=directed,
+                                               weights=weights,
+                                               steps=steps, 
+                                               spins=spins, 
+                                               e.weights=e.weights, 
+                                               v.weights=v.weights, 
+                                               nb.trials=nb.trials)
+                comr2 <- membershipCommunities(graph=graphRewire, 
+                                               method=method2, 
+                                               FUN=FUN2,
+                                               directed=directed,
+                                               weights=weights,
+                                               steps=steps, 
+                                               spins=spins, 
+                                               e.weights=e.weights, 
+                                               v.weights=v.weights, 
+                                               nb.trials=nb.trials)
+                if (measure=="vi")
                 {
-                    measure1 <- igraph::compare(comr1, comReal1, 
-                                                method=measure)/log2(N)
-                } else if(measure=="split.join")
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method=measure)/log2(N)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method=measure)/log2(N)
+                } else if (measure=="split.join")
                 {
-                    measure1 <- igraph::compare(comr1, comReal1, 
-                                                method=measure)/(2*N)
-                }else{
-                    measure1 <- 1-(igraph::compare(comr1, comReal1, 
-                                                   method=measure))
-                    
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method=measure)/(2*N)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method=measure)/(2*N)
+                } else {
+                    vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
+                                                     method=measure))
+                    vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
+                                                     method=measure))
                 }
+                measureReal1[count2, count] <- vector1[k]
+                measureReal2[count2, count] <- vector2[k]
                 
-                
-                
-                comr2 <- robin::membershipCommunities(graph=graphRList, 
-                                                      FUN=FUN2,
-                                                      method=method2,
-                                                      directed=directed,
-                                                      weights=weights,
-                                                      steps=steps, 
-                                                      spins=spins, 
-                                                      e.weights=e.weights, 
-                                                      v.weights=v.weights, 
-                                                      nb.trials=nb.trials,
-                                                      resolution = resolution)
-                if(measure=="vi")
-                {
-                    
-                    measure2 <-  igraph::compare(comr2, comReal2, 
-                                                 method=measure)/log2(N)
-                } else if (measure=="split.join"){
-                    measure2 <- igraph::compare(comr2, comReal2, 
-                                                method=measure)/(2*N)
-                } else{
-                    
-                    measure2 <- 1-(igraph::compare(comr2, comReal2, 
-                                                   method=measure))
-                }
-                return(list("Measure1"=measure1, "Measure2"=measure2))
-            })
-            
-            
-            m1 <- unlist(lapply(MeansList, function(mm)
-            {
-                mm$Measure1
-            }))
-            
-            m2 <- unlist(lapply(MeansList, function(mm)
-            {
-                mm$Measure2
-            }))
-            
-            
-            
-            
-            
-            return(list("Measure1"=m1,"Measure2"=m2))
-        })
-        parallel::stopCluster(cl)
-        Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
-        Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
-        
-        Measure1 <- cbind(rep(0, 10), Measure1)
-        Measure2 <- cbind(rep(0, 10), Measure2)
-        
-        colnames(Measure1) <- nRewire 
-        colnames(Measure2) <- nRewire 
-        return(list(Mean1=Measure1,
-                    Mean2=Measure2))
-    } else
-        
-    {
-        method1 <- match.arg(method1)
-        method2 <- match.arg(method2)
-        measure <-match.arg(measure)
-        nrep <- 10
-        N <- igraph::vcount(graph)
-        comReal1 <- membershipCommunities(graph=graph, method=method1,
-                                          FUN=FUN1,
-                                          directed=directed,
-                                          weights=weights,
-                                          steps=steps, 
-                                          spins=spins, 
-                                          e.weights=e.weights, 
-                                          v.weights=v.weights, 
-                                          nb.trials=nb.trials,
-                                          resolution = resolution) 
-        comReal2 <- membershipCommunities(graph=graph, method=method2,
-                                          FUN=FUN2,
-                                          directed=directed,
-                                          weights=weights,
-                                          steps=steps, 
-                                          spins=spins, 
-                                          e.weights=e.weights, 
-                                          v.weights=v.weights, 
-                                          nb.trials=nb.trials,
-                                          resolution = resolution)
-        
-        de <- igraph::gsize(graph)
-        Measure <- NULL
-        vector1 <- NULL
-        vector2 <- NULL
-        graphRewire <- NULL
-        count <- 1
-        nRewire <- seq(0,60,5)
-        if(verbose) cat("Detected robin method ", type, " type\n")
-        
-        
-        #independent
-        if(type == 2) 
-        {
-            measureReal1 <- matrix(0, nrep^2, length(nRewire))
-            measureReal2 <- matrix(0, nrep^2, length(nRewire))
-            Mean1 <- matrix(0, nrep, length(nRewire))
-            Mean2 <- matrix(0, nrep, length(nRewire))
-            vet1 <- seq(5, 60, 5) 
-            vet <- round(vet1*de/100, 0)
-            
-            for(z in vet)
-            {
-                count2 <- 0
-                count <- count+1
-                for(s in c(1:nrep))
+                for(k in c(2:nrep))
                 {
                     count2 <- count2+1
-                    k <- 1
-                    graphRewire <- rewireOnl(data=graph, number=z)
-                    comr1 <- membershipCommunities(graph=graphRewire, 
+                    graphRewire <- rewireOnl(data=graphRewire,
+                                             number=round(0.01*z))
+                    comr1 <- membershipCommunities(graph=graphRewire,
                                                    method=method1,
                                                    FUN=FUN1,
                                                    directed=directed,
@@ -1103,122 +1011,120 @@ robinCompare <- function(graph,
                                                    spins=spins, 
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
-                                                   nb.trials=nb.trials,
-                                                   resolution = resolution)
+                                                   nb.trials=nb.trials)
                     comr2 <- membershipCommunities(graph=graphRewire, 
-                                                   method=method2, 
                                                    FUN=FUN2,
+                                                   method=method2,
                                                    directed=directed,
                                                    weights=weights,
                                                    steps=steps, 
                                                    spins=spins, 
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
-                                                   nb.trials=nb.trials,
-                                                   resolution = resolution)
-                    if (measure=="vi")
+                                                   nb.trials=nb.trials)
+                    if(measure=="vi")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 
                                                       method=measure)/log2(N)
                         vector2[k] <- igraph::compare(comr2, comReal2, 
                                                       method=measure)/log2(N)
-                    } else if (measure=="split.join")
+                    } else if(measure=="split.join")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 
                                                       method=measure)/(2*N)
                         vector2[k] <- igraph::compare(comr2, comReal2, 
                                                       method=measure)/(2*N)
-                    } else {
+                    } else{
                         vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
                                                          method=measure))
                         vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
                                                          method=measure))
                     }
+                    
                     measureReal1[count2, count] <- vector1[k]
                     measureReal2[count2, count] <- vector2[k]
                     
-                    for(k in c(2:nrep))
-                    {
-                        count2 <- count2+1
-                        graphRewire <- rewireOnl(data=graphRewire,
-                                                 number=round(0.01*de))
-                        comr1 <- membershipCommunities(graph=graphRewire,
-                                                       method=method1,
-                                                       FUN=FUN1,
-                                                       directed=directed,
-                                                       weights=weights,
-                                                       steps=steps, 
-                                                       spins=spins, 
-                                                       e.weights=e.weights, 
-                                                       v.weights=v.weights, 
-                                                       nb.trials=nb.trials,
-                                                       resolution = resolution)
-                        comr2 <- membershipCommunities(graph=graphRewire, 
-                                                       FUN=FUN2,
-                                                       method=method2,
-                                                       directed=directed,
-                                                       weights=weights,
-                                                       steps=steps, 
-                                                       spins=spins, 
-                                                       e.weights=e.weights, 
-                                                       v.weights=v.weights, 
-                                                       nb.trials=nb.trials,
-                                                       resolution = resolution)
-                        if(measure=="vi")
-                        {
-                            vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                          method=measure)/log2(N)
-                            vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                          method=measure)/log2(N)
-                        } else if(measure=="split.join")
-                        {
-                            vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                          method=measure)/(2*N)
-                            vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                          method=measure)/(2*N)
-                        } else{
-                            vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
-                                                             method=measure))
-                            vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
-                                                             method=measure))
-                        }
-                        
-                        measureReal1[count2, count] <- vector1[k]
-                        measureReal2[count2, count] <- vector2[k]
-                        
-                        
-                    }
-                    Mean1[s, count] <- mean(vector1)
-                    Mean2[s, count] <- mean(vector2)
+                    
                 }
-                if(verbose) cat("Perturbed ", z, " edges\n")
+                Mean1[s, count] <- mean(vector1)
+                Mean2[s, count] <- mean(vector2)
             }
-            #dependent    
-        }else if(type == 3){
-            z <- round((5*de)/100, 0)
-            measureReal1 <- rep(0, nrep^2)
-            measureReal11 <- NULL
-            R11<-NULL
-            measureReal2 <- rep(0, nrep^2)
-            measureReal22 <- NULL
-            R22 <- NULL
-            Mean1 <- rep(0, nrep)
-            Mean2 <-rep(0, nrep)
-            Mean11 <- NULL
-            Mean22 <- NULL
-            diff <- NULL
-            vet<-rep(z,(length(nRewire)-1))
-            for(z in vet)
-            {   
-                count2 <- 0
-                count <- count+1
-                for(s in c(1:nrep))
+            if(verbose) cat("Perturbed ", z, " edges\n")
+        }
+        #dependent    
+    }else{
+        z <- round((5*de)/100, 0)
+        measureReal1 <- rep(0, nrep^2)
+        measureReal11 <- NULL
+        R11<-NULL
+        measureReal2 <- rep(0, nrep^2)
+        measureReal22 <- NULL
+        R22 <- NULL
+        Mean1 <- rep(0, nrep)
+        Mean2 <-rep(0, nrep)
+        Mean11 <- NULL
+        Mean22 <- NULL
+        diff <- NULL
+        vet<-rep(z,(length(nRewire)-1))
+        for(z in vet)
+        {   
+            count2 <- 0
+            count <- count+1
+            for(s in c(1:nrep))
+            {
+                count2 <- count2+1
+                k <- 1
+                graphRewire <- rewireOnl(data=graph, number=z)
+                graphRewire <- igraph::union(graphRewire, diff)
+                comr1 <- membershipCommunities(graph=graphRewire, 
+                                               method=method1,
+                                               FUN=FUN1,
+                                               directed=directed,
+                                               weights=weights,
+                                               steps=steps, 
+                                               spins=spins, 
+                                               e.weights=e.weights, 
+                                               v.weights=v.weights, 
+                                               nb.trials=nb.trials)
+                comr2 <- membershipCommunities(graph=graphRewire, 
+                                               method=method2,
+                                               FUN=FUN2,
+                                               directed=directed,
+                                               weights=weights,
+                                               steps=steps, 
+                                               spins=spins, 
+                                               e.weights=e.weights, 
+                                               v.weights=v.weights, 
+                                               nb.trials=nb.trials)
+                if(measure=="vi")
+                {
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method= measure)/log2(N)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method= measure)/log2(N)
+                } else if(measure=="split.join")
+                {
+                    vector1[k] <- igraph::compare(comr1, comReal1, 
+                                                  method= measure)/(2*N)
+                    vector2[k] <- igraph::compare(comr2, comReal2, 
+                                                  method= measure)/(2*N)
+                } else{
+                    vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
+                                                     method= measure))
+                    vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
+                                                     method= measure))
+                }
+                
+                measureReal11[count2] <- vector1[k]
+                measureReal22[count2] <- vector2[k]
+                diff <- igraph::difference(graph, graphRewire)
+                
+                for(k in c(2:nrep)) 
                 {
                     count2 <- count2+1
-                    k <- 1
-                    graphRewire <- rewireOnl(data=graph, number=z)
-                    graphRewire <- igraph::union(graphRewire, diff)
-                    comr1 <- membershipCommunities(graph=graphRewire, 
+                    graphRewire <- rewireOnl(data=graphRewire,
+                                             number=round(0.01*z))
+                    comr1 <- membershipCommunities(graph=graphRewire,
                                                    method=method1,
                                                    FUN=FUN1,
                                                    directed=directed,
@@ -1227,9 +1133,8 @@ robinCompare <- function(graph,
                                                    spins=spins, 
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
-                                                   nb.trials=nb.trials,
-                                                   resolution = resolution)
-                    comr2 <- membershipCommunities(graph=graphRewire, 
+                                                   nb.trials=nb.trials)
+                    comr2 <- membershipCommunities(graph=graphRewire,
                                                    method=method2,
                                                    FUN=FUN2,
                                                    directed=directed,
@@ -1238,106 +1143,47 @@ robinCompare <- function(graph,
                                                    spins=spins, 
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
-                                                   nb.trials=nb.trials,
-                                                   resolution = resolution)
+                                                   nb.trials=nb.trials)
                     if(measure=="vi")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                      method= measure)/log2(N)
+                                                      method=measure)/log2(N)
                         vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                      method= measure)/log2(N)
-                    } else if(measure=="split.join")
+                                                      method=measure)/log2(N)
+                    } else  if(measure=="split.join")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                      method= measure)/(2*N)
+                                                      method=measure)/(2*N)
                         vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                      method= measure)/(2*N)
+                                                      method=measure)/(2*N)
                     } else{
                         vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
-                                                         method= measure))
+                                                         method=measure))
                         vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
-                                                         method= measure))
+                                                         method=measure))
                     }
-                    
                     measureReal11[count2] <- vector1[k]
                     measureReal22[count2] <- vector2[k]
-                    diff <- igraph::difference(graph, graphRewire)
-                    
-                    for(k in c(2:nrep)) 
-                    {
-                        count2 <- count2+1
-                        graphRewire <- rewireOnl(data=graphRewire,
-                                                 number=round(0.01*de))
-                        comr1 <- membershipCommunities(graph=graphRewire,
-                                                       method=method1,
-                                                       FUN=FUN1,
-                                                       directed=directed,
-                                                       weights=weights,
-                                                       steps=steps, 
-                                                       spins=spins, 
-                                                       e.weights=e.weights, 
-                                                       v.weights=v.weights, 
-                                                       nb.trials=nb.trials,
-                                                       resolution = resolution)
-                        comr2 <- membershipCommunities(graph=graphRewire,
-                                                       method=method2,
-                                                       FUN=FUN2,
-                                                       directed=directed,
-                                                       weights=weights,
-                                                       steps=steps, 
-                                                       spins=spins, 
-                                                       e.weights=e.weights, 
-                                                       v.weights=v.weights, 
-                                                       nb.trials=nb.trials,
-                                                       resolution = resolution)
-                        if(measure=="vi")
-                        {
-                            vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                          method=measure)/log2(N)
-                            vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                          method=measure)/log2(N)
-                        } else  if(measure=="split.join")
-                        {
-                            vector1[k] <- igraph::compare(comr1, comReal1, 
-                                                          method=measure)/(2*N)
-                            vector2[k] <- igraph::compare(comr2, comReal2, 
-                                                          method=measure)/(2*N)
-                        } else{
-                            vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
-                                                             method=measure))
-                            vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
-                                                             method=measure))
-                        }
-                        measureReal11[count2] <- vector1[k]
-                        measureReal22[count2] <- vector2[k]
-                        
-                    }
-                    Mean11[s] <- mean(measureReal11)
-                    Mean22[s] <- mean(measureReal22)
                     
                 }
-                graph <- igraph::intersection(graph, graphRewire)
-                Mean1 <-cbind(Mean1,Mean11)
-                Mean2 <-cbind(Mean2,Mean22)
-                z1 <- igraph::gsize(graph)
-                if(verbose) cat("Perturbed ", z, " edges\n")
+                Mean11[s] <- mean(measureReal11)
+                Mean22[s] <- mean(measureReal22)
+                
             }
+            graph <- igraph::intersection(graph, graphRewire)
+            Mean1 <-cbind(Mean1,Mean11)
+            Mean2 <-cbind(Mean2,Mean22)
+            z1 <- igraph::gsize(graph)
+            if(verbose) cat("Perturbed ", z, " edges\n")
         }
-        colnames(Mean1) <- nRewire 
-        colnames(Mean2) <- nRewire 
-        output <- list(Mean1=Mean1,
-                       Mean2=Mean2)
-        return(output)  
     }
-    
-    
-    
-    
-    
-    
-    
-    
+    colnames(Mean1) <- nRewire 
+    colnames(Mean2) <- nRewire 
+    output <- list(Mean1=Mean1,
+                   Mean2=Mean2)
+    return(output)
 }
+
 
 
 ########################### TEST ROBIN ###################

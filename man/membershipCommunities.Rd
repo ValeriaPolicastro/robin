@@ -69,9 +69,7 @@ integer value equal or larger than 1). This argument is settable only for
 "infomap" method.}
 
 \item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter that allows the user to adjust the resolution parameter of the 
-modularity function that the algorithm uses internally. Lower values 
-typically yield fewer, larger clusters (default is 1).}
+parameter, lower values typically yield fewer, larger clusters (default=1).}
 }
 \value{
 Returns a numeric vector, one number for each vertex in the graph; 
