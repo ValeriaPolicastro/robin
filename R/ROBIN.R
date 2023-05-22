@@ -826,25 +826,30 @@ plotRobin <- function(graph, model1, model2,
                       legend=c("model1", "model2"),
                       title="Robin plot")
 {   
-    
-     mvimodel1 <- as.vector((apply(model1, 2, mean)))
-     mvimodel2 <- as.vector((apply(model2, 2, mean)))
+    mvimodel1 <- as.vector((apply(model1, 2, mean)))
+    mvimodel2 <- as.vector((apply(model2, 2, mean)))
     
     
     percPert <- rep((seq(0,60,5)/100), 2)
     mvi <- c(mvimodel1, mvimodel2)
-    model <-c(rep(legend[1],13),rep(legend[2],13))
+    model <-c(rep("model1",13),rep("model2",13))
     dataFrame <- data.frame(percPert, mvi, model)
-    plot <- ggplot2::ggplot(dataFrame, aes(x = percPert, y = as.numeric(as.character(mvi)), 
-                                           colour = model, group = factor(model))) + 
-                     geom_line() + 
-                     geom_point() + 
-                     xlab("Percentage of perturbation") + 
-                     ylab("Measure") +
-                     ggplot2::ylim(0,1)+
-                     ggtitle(title)
+    plotModel <- ggplot2::ggplot(dataFrame, aes(x = percPert, 
+                                                y = as.numeric(as.character(mvi)),
+                                                colour = model, 
+                                                group = factor(model))) +
+        geom_line() +
+        geom_point() +
+        xlab("Percentage of perturbation") +
+        ylab("Measure") +
+        ggplot2::ylim(0,1)+
+        ggtitle(title)
     
-      
+    cols <- c("model1" = "#00BFC4", "model2" = "#F8766D")
+    plot <-  plotModel+ggplot2::scale_colour_manual(values = cols,
+                                                    breaks = c("model1", "model2"), 
+                                                    labels=c(legend[1], legend[2]))
+    
     return(plot)
 }
 
