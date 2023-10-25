@@ -120,6 +120,11 @@ random <- function(graph, verbose=FALSE)
 #' has a weight edge attribute, but you want to ignore it. Larger edge weights
 #' correspond to stronger connections. This argument is not settable for 
 #' "infomap" method.
+#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
+#' modularity. Must be either "CPM" or "modularity".
+#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
+#' Each iteration may improve the partition further.This argument is settable 
+#' only for "leiden".
 #' @param steps The number of steps to take, this is actually the number of 
 #' tries to make a step. It is not a particularly useful parameter. This 
 #' argument is settable only for "leadingEigen" and "walktrap" method.
@@ -139,9 +144,8 @@ random <- function(graph, verbose=FALSE)
 #' vertices are considered to have the same weight. A larger vertex weight means
 #' a larger probability that the random surfer jumps to that vertex. This 
 #' argument is settable only for "infomap" method.
-#' @param nb.trials The number of attempts to partition the network (can be any
-#' integer value equal or larger than 1). This argument is settable only for
-#' "infomap" method.
+#' @param nb.trials The number of attempts to partition the network. 
+#' This argument is settable only for "infomap".
 #' @param resolution only for "louvain" and "leiden". Optional resolution 
 #' parameter that allows the user to adjust the resolution parameter of the 
 #' modularity function that the algorithm uses internally. Lower values 
@@ -166,7 +170,8 @@ methodCommunity <- function(graph,
                                     "optimal", "leiden", "other"),
                             FUN=NULL, directed=FALSE, weights=NULL, steps=4, 
                             spins=25, e.weights=NULL, v.weights=NULL, 
-                            nb.trials=10, resolution = 1,
+                            nb.trials=10, resolution = 1,n_iterations=2,
+                            objective_function = c("CPM", "modularity"),
                             verbose=FALSE)
 {   
     
@@ -202,7 +207,10 @@ methodCommunity <- function(graph,
             infomap=igraph::cluster_infomap(graph=graph, e.weights=e.weights, 
                                 v.weights=v.weights, nb.trials=nb.trials),
             leiden=igraph::cluster_leiden(graph=graph,resolution_parameter=
-                                              resolution),
+                                              resolution,
+                                          n_iterations=n_iterations,
+                                          weights=weights,
+                                          objective_function),
             other=FUN(graph, weights)
     )
     return(communities)
