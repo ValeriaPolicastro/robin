@@ -17,6 +17,8 @@ methodCommunity(
   v.weights = NULL,
   nb.trials = 10,
   resolution = 1,
+  n_iterations = 2,
+  objective_function = c("CPM", "modularity"),
   verbose = FALSE
 )
 }
@@ -65,14 +67,20 @@ vertices are considered to have the same weight. A larger vertex weight means
 a larger probability that the random surfer jumps to that vertex. This 
 argument is settable only for "infomap" method.}
 
-\item{nb.trials}{The number of attempts to partition the network (can be any
-integer value equal or larger than 1). This argument is settable only for
-"infomap" method.}
+\item{nb.trials}{The number of attempts to partition the network. 
+This argument is settable only for "infomap".}
 
 \item{resolution}{only for "louvain" and "leiden". Optional resolution 
 parameter that allows the user to adjust the resolution parameter of the 
 modularity function that the algorithm uses internally. Lower values 
 typically yield fewer, larger clusters (default is 1).}
+
+\item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
+Each iteration may improve the partition further.This argument is settable 
+only for "leiden".}
+
+\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
+modularity. Must be either "CPM" or "modularity".}
 
 \item{verbose}{flag for verbose output (default as FALSE)}
 }

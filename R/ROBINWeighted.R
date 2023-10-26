@@ -77,8 +77,6 @@ randomWeight <- function(graph, distribution = "NegBinom",verbose=FALSE)
 #' @export
 #'
 #' @examples
-
-
 robinCompareFastWeight <- function(graph,
                                    method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                              "leadingEigen","louvain","spinglass",
