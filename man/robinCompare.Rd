@@ -22,6 +22,7 @@ robinCompare(
   v.weights = NULL,
   nb.trials = 10,
   n_iterations = 2,
+  resolution = 1,
   objective_function = c("CPM", "modularity"),
   verbose = TRUE
 )
@@ -68,13 +69,13 @@ method.}
 Each iteration may improve the partition further.This argument is settable 
 only for "leiden".}
 
+\item{resolution}{only for "louvain" and "leiden". Optional resolution 
+parameter, lower values typically yield fewer, larger clusters (default=1).}
+
 \item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
 modularity. Must be either "CPM" or "modularity".}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
-
-\item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter, lower values typically yield fewer, larger clusters (default=1).}
 }
 \value{
 A list object with two matrices:

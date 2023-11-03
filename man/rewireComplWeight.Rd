@@ -55,7 +55,7 @@ method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
-\item{resolution}{only for "louvain" and "leiden". Optional resolution 
+\item{resolution}{only for "louvain" and "leiden". Optional resolution
 parameter, lower values typically yield fewer, larger clusters (default=1).}
 
 \item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
@@ -64,6 +64,10 @@ only for "leiden".}
 
 \item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
 modularity. Must be either "CPM" or "modularity".}
+
+\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+regardless of distribution of edge weights. This option is invoked by putting 
+any text into this field. Defaults to "NegBinom" for negative binomial.}
 }
 \description{
 rewires the weighted graph, creates the communities and

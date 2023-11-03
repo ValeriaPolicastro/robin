@@ -21,6 +21,7 @@ robinRobustWeighted(
   resolution = 1,
   n_iterations = 2,
   objective_function = c("CPM", "modularity"),
+  distrib = "NegBinom",
   verbose = TRUE
 )
 }
@@ -67,6 +68,10 @@ only for "leiden".}
 \item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
 modularity. Must be either "CPM" or "modularity".}
 
+\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+regardless of distribution of edge weights. This option is invoked by putting 
+any text into this field. Defaults to "NegBinom" for negative binomial.}
+
 \item{verbose}{flag for verbose output (default as TRUE).}
 }
 \value{
@@ -82,7 +87,8 @@ of the original graph structure for weighted network.
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
-E(graph)$weight <- runif(ecount(graph),min=1,max=10)
-robinRobustWeighted(graph=graph, method1="louvain",
-method2="fastGreedy", measure="vi")
+E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
+graphRandom <- randomWeight(graph=graph)
+robinRobustWeighted(graph=graph, graphRandom=graphRandom,
+method="louvain", measure="vi")
 }

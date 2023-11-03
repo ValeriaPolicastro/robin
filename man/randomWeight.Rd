@@ -4,10 +4,14 @@
 \alias{randomWeight}
 \title{randomWeight}
 \usage{
-randomWeight(graph, distribution = "NegBinom", verbose = FALSE)
+randomWeight(graph, distrib = "NegBinom", verbose = FALSE)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
+
+\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+regardless of distribution of edge weights. This option is invoked by putting 
+any text into this field. Defaults to "NegBinom" for negative binomial.}
 
 \item{verbose}{flag for verbose output (default as FALSE)}
 }
@@ -21,5 +25,6 @@ degree distribution.
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
+E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 graphRandom <- randomWeight(graph=graph)
 }

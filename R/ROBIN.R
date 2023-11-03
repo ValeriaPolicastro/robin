@@ -966,7 +966,7 @@ robinCompare <- function(graph,
                          type=c("independent", "dependent"),
                          directed=FALSE, weights=NULL, steps=4, 
                          spins=25, e.weights=NULL, v.weights=NULL, 
-                         nb.trials=10,n_iterations=2,
+                         nb.trials=10,n_iterations=2, resolution=1,
                          objective_function = c("CPM", "modularity"), verbose=TRUE)
 {   
     method1 <- match.arg(method1)

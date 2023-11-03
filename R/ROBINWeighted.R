@@ -4,6 +4,9 @@
 #' @description This function randomly rewires the edges while preserving the original graph's
 #' degree distribution.
 #' @param graph The output of prepGraph.
+#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' regardless of distribution of edge weights. This option is invoked by putting 
+#' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @param verbose flag for verbose output (default as FALSE)
 #'
 #' @return An igraph object, a randomly rewired graph.
@@ -13,8 +16,9 @@
 #' @examples
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
+#' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 #' graphRandom <- randomWeight(graph=graph)
-randomWeight <- function(graph, distribution = "NegBinom",verbose=FALSE)
+randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
 {
     if(verbose) cat("Randomizing the graph edges.\n")
     v <- igraph::vcount(graph) ## number of vertex
@@ -22,7 +26,7 @@ randomWeight <- function(graph, distribution = "NegBinom",verbose=FALSE)
     adj <- as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
     graphRandom <- as.matrix(perturbR::rewireR(sym.matrix=adj, 
                                                nperturb=numberPerturbAll, 
-                                               dist = distribution))
+                                               dist = distrib))
     #rewiring for z all the edges
     graphRandom <- graph_from_adjacency_matrix(graphRandom,weighted = TRUE, 
                                                mode="undirected")
@@ -72,8 +76,8 @@ randomWeight <- function(graph, distribution = "NegBinom",verbose=FALSE)
 #' @param resolution only for "louvain" and "leiden". Optional resolution 
 #' parameter, lower values typically yield fewer, larger clusters (default=1).
 #' @param verbose flag for verbose output (default as TRUE).
-#' @param distrib Option to rewire in a manner that retains overall graph weight
-#' regardless of distribution of edge weights. This option is invoked by putting
+#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
 #'
 #' @return A list object with two matrices:
@@ -83,7 +87,11 @@ randomWeight <- function(graph, distribution = "NegBinom",verbose=FALSE)
 #' @import igraph parallel perturbR
 #' @export
 #'
-#' @examples
+#' @examples my_file <- system.file("example/football.gml", package="robin")
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
+#' robinCompareFastWeight(graph=graph, method1="louvain",
+#' method2="fastGreedy", measure="vi")
 
 
 robinCompareFastWeight <- function(graph,
@@ -281,8 +289,11 @@ robinCompareFastWeight <- function(graph,
 #' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
 #' Each iteration may improve the partition further.This argument is settable 
 #' only for "leiden".
-#' @param resolution only for "louvain" and "leiden". Optional resolution 
-#' parameter, lower values typically yield fewer, larger clusters (default=1).
+#' @param resolution only for "louvain" and "leiden". Optional resolution
+#'  parameter, lower values typically yield fewer, larger clusters (default=1).
+#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' regardless of distribution of edge weights. This option is invoked by putting 
+#' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @keywords internal
 #'
 rewireComplWeight <- function(data, number, community,
@@ -350,6 +361,9 @@ rewireComplWeight <- function(data, number, community,
 #' only for "leiden".
 #' @param resolution only for "louvain" and "leiden". Optional resolution 
 #' parameter, lower values typically yield fewer, larger clusters (default=1).
+#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' regardless of distribution of edge weights. This option is invoked by putting 
+#' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @param verbose flag for verbose output (default as TRUE).
 #'
 #' @return A list object with two matrices:
@@ -359,7 +373,12 @@ rewireComplWeight <- function(data, number, community,
 #' @import igraph perturbR
 #' @export
 #'
-#' @examples
+#' @examples my_file <- system.file("example/football.gml", package="robin")
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
+#' graphRandom <- randomWeight(graph=graph)
+#' robinRobustWeighted(graph=graph, graphRandom=graphRandom,
+#' method="louvain", measure="vi")
 robinRobustWeighted <- function(graph, graphRandom,
                                 method=c("walktrap", "edgeBetweenness",
                                          "fastGreedy", "louvain", "spinglass",
@@ -371,6 +390,7 @@ robinRobustWeighted <- function(graph, graphRandom,
                                 steps=4, spins=25, e.weights=NULL, v.weights=NULL,
                                 nb.trials=10, resolution = 1,n_iterations=2,
                                 objective_function = c("CPM", "modularity"),
+                                distrib="NegBinom",
                                 verbose=TRUE)
 {
     measure <- match.arg(measure)
@@ -446,7 +466,8 @@ robinRobustWeighted <- function(graph, graphRandom,
                                       nb.trials=nb.trials,
                                       resolution=resolution,
                                       objective_function = objective_function,
-                                      n_iterations=n_iterations)
+                                      n_iterations=n_iterations,
+                                      distrib=distrib)
             if (measure=="vi")
             {
                 vector[k] <- (Real$Measure)/log2(N)
@@ -473,7 +494,8 @@ robinRobustWeighted <- function(graph, graphRandom,
                                         nb.trials=nb.trials,
                                         resolution=resolution,
                                         objective_function = objective_function,
-                                        n_iterations=n_iterations)
+                                        n_iterations=n_iterations,
+                                        distrib=distrib)
             if (measure=="vi")
             {
                 vectRandom[k] <- (Random$Measure)/log2(N)
@@ -502,7 +524,8 @@ robinRobustWeighted <- function(graph, graphRandom,
                                           nb.trials=nb.trials,
                                           resolution=resolution,
                                           objective_function = objective_function,
-                                          n_iterations=n_iterations)
+                                          n_iterations=n_iterations,
+                                          distrib=distrib)
                 if (measure=="vi")
                 {
                     vector[k] <- (Real$Measure)/log2(N)
@@ -527,7 +550,8 @@ robinRobustWeighted <- function(graph, graphRandom,
                                             nb.trials=nb.trials,
                                             resolution=resolution,
                                             objective_function = objective_function,
-                                            n_iterations=n_iterations)
+                                            n_iterations=n_iterations,
+                                            distrib=distrib)
                 if (measure=="vi")
                 {
                     vectRandom[k] <- (Random$Measure)/log2(N)

@@ -79,8 +79,8 @@ modularity. Must be either "CPM" or "modularity".}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{distrib}{Option to rewire in a manner that retains overall graph weight
-regardless of distribution of edge weights. This option is invoked by putting
+\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "NegBinom" for negative binomial.}
 }
 \value{
@@ -95,7 +95,7 @@ weighted networks. Is the parallelized and faster version.
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
-E(graph)$weight <- runif(ecount(graph),min=1,max=10)
+E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 robinCompareFastWeight(graph=graph, method1="louvain",
 method2="fastGreedy", measure="vi")
 }
