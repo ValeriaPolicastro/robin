@@ -376,7 +376,6 @@ rewireComplWeight <- function(data, number, community,
 #'
 #' @import igraph perturbR
 #' @export
-#'
 #' @examples my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
