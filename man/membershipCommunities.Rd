@@ -16,7 +16,9 @@ membershipCommunities(
   e.weights = NULL,
   v.weights = NULL,
   nb.trials = 10,
-  resolution = 1
+  resolution = 1,
+  n_iterations = 2,
+  objective_function = c("CPM", "modularity")
 )
 }
 \arguments{
@@ -43,7 +45,7 @@ correspond to stronger connections. This argument is not settable for
 
 \item{steps}{The number of steps to take, this is actually the number of 
 tries to make a step. It is not a particularly useful parameter. This 
-argument is settable only for "leadingEigen"and"walktrap" method.}
+argument is settable only for "leadingEigen" and "walktrap" method.}
 
 \item{spins}{Integer constant, the number of spins to use. This is the upper 
 limit for the number of communities. It is not a problem to supply a 
@@ -54,7 +56,7 @@ unpopulated. This argument is settable only for "spinglass" method.}
 The length must match the number of edges in the graph. By default the 
 ‘weight’ edge attribute is used as weights. If it is not present, then all
 edges are considered to have the same weight. Larger edge weights correspond 
-to stronger connections.  This argument is settable only for "infomap"
+to stronger connections. This argument is settable only for "infomap"
  method.}
 
 \item{v.weights}{If not NULL, then a numeric vector of vertex weights. The
@@ -64,12 +66,20 @@ vertices are considered to have the same weight. A larger vertex weight means
 a larger probability that the random surfer jumps to that vertex. This 
 argument is settable only for "infomap" method.}
 
-\item{nb.trials}{The number of attempts to partition the network (can be any
-integer value equal or larger than 1). This argument is settable only for
-"infomap" method.}
+\item{nb.trials}{The number of attempts to partition the network. 
+This argument is settable only for "infomap".}
 
 \item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter, lower values typically yield fewer, larger clusters (default=1).}
+parameter that allows the user to adjust the resolution parameter of the 
+modularity function that the algorithm uses internally. Lower values 
+typically yield fewer, larger clusters (default is 1).}
+
+\item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
+Each iteration may improve the partition further.This argument is settable 
+only for "leiden".}
+
+\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
+modularity. Must be either "CPM" or "modularity".}
 }
 \value{
 Returns a numeric vector, one number for each vertex in the graph; 

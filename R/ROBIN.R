@@ -110,7 +110,7 @@ random <- function(graph, verbose=FALSE)
 #' @param graph The output of prepGraph.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-#' "optimal", "other".
+#' "optimal", "leiden","other".
 #' @param FUN in case the @method parameter is "other" there is the possibility 
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights 
@@ -235,9 +235,14 @@ methodCommunity <- function(graph,
 #' has a weight edge attribute, but you want to ignore it. Larger edge weights
 #' correspond to stronger connections. This argument is not settable for 
 #' "infomap" method.
+#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
+#' modularity. Must be either "CPM" or "modularity".
+#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
+#' Each iteration may improve the partition further.This argument is settable 
+#' only for "leiden".
 #' @param steps The number of steps to take, this is actually the number of 
 #' tries to make a step. It is not a particularly useful parameter. This 
-#' argument is settable only for "leadingEigen"and"walktrap" method.
+#' argument is settable only for "leadingEigen" and "walktrap" method.
 #' @param spins Integer constant, the number of spins to use. This is the upper 
 #' limit for the number of communities. It is not a problem to supply a 
 #' (reasonably) big number here, in which case some spin states will be 
@@ -246,7 +251,7 @@ methodCommunity <- function(graph,
 #' The length must match the number of edges in the graph. By default the 
 #' ‘weight’ edge attribute is used as weights. If it is not present, then all
 #' edges are considered to have the same weight. Larger edge weights correspond 
-#' to stronger connections.  This argument is settable only for "infomap"
+#' to stronger connections. This argument is settable only for "infomap"
 #'  method.
 #' @param v.weights If not NULL, then a numeric vector of vertex weights. The
 #' length must match the number of vertices in the graph. By default the 
@@ -254,14 +259,16 @@ methodCommunity <- function(graph,
 #' vertices are considered to have the same weight. A larger vertex weight means
 #' a larger probability that the random surfer jumps to that vertex. This 
 #' argument is settable only for "infomap" method.
-#' @param nb.trials The number of attempts to partition the network (can be any
-#' integer value equal or larger than 1). This argument is settable only for
-#' "infomap" method.
+#' @param nb.trials The number of attempts to partition the network. 
+#' This argument is settable only for "infomap".
+#' @param resolution only for "louvain" and "leiden". Optional resolution 
+#' parameter that allows the user to adjust the resolution parameter of the 
+#' modularity function that the algorithm uses internally. Lower values 
+#' typically yield fewer, larger clusters (default is 1).
 #' @param directed Logical constant, whether to calculate directed edge 
 #' betweenness for directed graphs. This argument is settable only for 
 #' "edgeBetweenness" method.
-#' @param resolution only for "louvain" and "leiden". Optional resolution 
-#' parameter, lower values typically yield fewer, larger clusters (default=1).
+#'
 #' 
 #' @return Returns a numeric vector, one number for each vertex in the graph; 
 #' the membership vector of the community structure.
@@ -278,9 +285,10 @@ membershipCommunities <- function(graph,
                                         "fastGreedy", "louvain", "spinglass", 
                                         "leadingEigen", "labelProp", "infomap",
                                         "optimal", "leiden","other"),
-                                 FUN=NULL, directed=FALSE, weights=NULL, 
-                                 steps=4, spins=25, e.weights=NULL, 
-                                 v.weights=NULL, nb.trials=10,resolution=1)
+                                 FUN=NULL, directed=FALSE, weights=NULL, steps=4, 
+                                 spins=25, e.weights=NULL, v.weights=NULL, 
+                                 nb.trials=10, resolution = 1,n_iterations=2,
+                                 objective_function = c("CPM", "modularity"))
 {
     method <- match.arg(method)
     members <- membership(methodCommunity(graph=graph, method=method,
@@ -292,7 +300,9 @@ membershipCommunities <- function(graph,
                                             e.weights=e.weights, 
                                             v.weights=v.weights, 
                                             nb.trials=nb.trials,
-                                          resolution = resolution))
+                                          resolution = resolution,
+                                          n_iterations=n_iterations,
+                                          objective_function=objective_function))
     
     return(members)
 }
@@ -374,6 +384,11 @@ plotComm <- function(graph, members)
 #' @param weights this argument is not settable for "infomap" method
 #' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
 #' method
+#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
+#' modularity. Must be either "CPM" or "modularity".
+#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
+#' Each iteration may improve the partition further.This argument is settable 
+#' only for "leiden".
 #' @param spins This argument is settable only for "infomap" method
 #' @param e.weights This argument is settable only for "infomap" method
 #' @param v.weights This argument is settable only for "infomap" method
@@ -387,12 +402,12 @@ rewireCompl <- function(data, number, community,
                         method=c("walktrap", "edgeBetweenness", 
                                  "fastGreedy", "louvain", "spinglass", 
                                  "leadingEigen", "labelProp", "infomap",
-                                 "optimal", "other"),
-                        FUN=NULL,
+                                 "optimal", "leiden","other"),
                         measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                        directed=FALSE, weights=NULL, steps=4, spins=25, 
-                        e.weights=NULL, v.weights=NULL, nb.trials=10,
-                        resolution = 1)
+                        FUN=NULL, directed=FALSE, weights=NULL, steps=4, 
+                        spins=25, e.weights=NULL, v.weights=NULL, 
+                        nb.trials=10, resolution = 1,n_iterations=2,
+                        objective_function = c("CPM", "modularity"))
 {
     method <- match.arg(method)
     measure <- match.arg (measure)
@@ -402,7 +417,9 @@ rewireCompl <- function(data, number, community,
                             directed=directed, weights=weights, steps=steps, 
                             spins=spins, e.weights=e.weights, 
                             v.weights=v.weights, nb.trials=nb.trials, 
-                            resolution=resolution)
+                            resolution=resolution,
+                            n_iterations=n_iterations,
+                            objective_function=objective_function)
     Measure <- igraph::compare(community, comR, method=measure)
     output <- list(Measure=Measure, graphRewire=graphRewire)
     
@@ -452,6 +469,11 @@ rewireOnl <- function(data, number)
 #' @param v.weights This argument is settable only for "infomap" method.
 #' @param nb.trials This argument is settable only for "infomap" method.
 #' @param directed This argument is settable only for "edgeBetweenness" method.
+#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
+#' modularity. Must be either "CPM" or "modularity".
+#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
+#' Each iteration may improve the partition further.This argument is settable 
+#' only for "leiden".
 #' @param resolution only for "louvain" and "leiden". Optional resolution 
 #' parameter, lower values typically yield fewer, larger clusters (default=1).
 #' @param verbose flag for verbose output (default as TRUE).
@@ -477,7 +499,8 @@ robinRobust <- function(graph, graphRandom,
                 FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
                 type=c("independent","dependent"), directed=FALSE, weights=NULL, 
                 steps=4, spins=25, e.weights=NULL, v.weights=NULL, 
-                nb.trials=10, resolution=1, verbose=TRUE) 
+                nb.trials=10, resolution=1, n_iterations=2,
+                objective_function = c("CPM", "modularity"),verbose=TRUE) 
 {   
     measure <- match.arg(measure)
     type<- match.arg(type)
@@ -492,7 +515,9 @@ robinRobust <- function(graph, graphRandom,
                                     e.weights=e.weights, 
                                     v.weights=v.weights, 
                                     nb.trials=nb.trials,
-                                    resolution=resolution) # real network
+                                    resolution=resolution,
+                                    objective_function = objective_function,
+                                    n_iterations=n_iterations) # real network
 
     comRandom <- membershipCommunities(graph=graphRandom, method=method,
                                         FUN=FUN,
@@ -502,7 +527,10 @@ robinRobust <- function(graph, graphRandom,
                                         spins=spins, 
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
-                                        nb.trials=nb.trials,resolution=resolution) # random network
+                                        nb.trials=nb.trials,
+                                       resolution=resolution,
+                                       objective_function = objective_function,
+                                       n_iterations=n_iterations) # random network
     #stopifnot(length(table(comRandom))>1)
     #if(length(table(comRandom))==1) {stop("Not random graph")}
     de <- igraph::gsize(graph)
@@ -548,7 +576,9 @@ robinRobust <- function(graph, graphRandom,
                                     e.weights=e.weights, 
                                     v.weights=v.weights, 
                                     nb.trials=nb.trials,
-                                    resolution=resolution)
+                                    resolution=resolution,
+                                    objective_function = objective_function,
+                                    n_iterations=n_iterations)
                 if (measure=="vi")
                 {
                     vector[k] <- (Real$Measure)/log2(N)
@@ -573,7 +603,9 @@ robinRobust <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
-                                      resolution=resolution)
+                                      resolution=resolution,
+                                      objective_function = objective_function,
+                                      n_iterations=n_iterations)
                 if (measure=="vi")
                 {
                     vectRandom[k] <- (Random$Measure)/log2(N)
@@ -600,7 +632,9 @@ robinRobust <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
-                                        resolution=resolution)
+                                        resolution=resolution,
+                                        objective_function = objective_function,
+                                        n_iterations=n_iterations)
                     if (measure=="vi")
                     {
                         vector[k] <- (Real$Measure)/log2(N)
@@ -623,7 +657,9 @@ robinRobust <- function(graph, graphRandom,
                                           e.weights=e.weights, 
                                           v.weights=v.weights, 
                                           nb.trials=nb.trials,
-                                          resolution=resolution)
+                                          resolution=resolution,
+                                          objective_function = objective_function,
+                                          n_iterations=n_iterations)
                     if (measure=="vi")
                     {
                         vectRandom[k] <- (Random$Measure)/log2(N)
@@ -676,7 +712,9 @@ robinRobust <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
                                         FUN=FUN,
-                                        resolution=resolution)
+                                        resolution=resolution,
+                                        objective_function = objective_function,
+                                        n_iterations=n_iterations)
                 Measure <- igraph::compare(comReal, comr, method=measure)
                 if (measure=="vi")
                 {
@@ -703,7 +741,9 @@ robinRobust <- function(graph, graphRandom,
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
                                         FUN=FUN,
-                                        resolution=resolution)
+                                        resolution=resolution,
+                                        objective_function = objective_function,
+                                        n_iterations=n_iterations)
                 Measure <- igraph::compare(comRandom, comr,
                                            method=measure)
                 if(measure=="vi")
@@ -734,7 +774,9 @@ robinRobust <- function(graph, graphRandom,
                                         e.weights=e.weights, 
                                         v.weights=v.weights, 
                                         nb.trials=nb.trials,
-                                        resolution=resolution)
+                                        resolution=resolution,
+                                        objective_function = objective_function,
+                                        n_iterations=n_iterations)
                     if(measure=="vi")
                     {
                         vector[k] <- (Real$Measure)/log2(N)
@@ -759,7 +801,9 @@ robinRobust <- function(graph, graphRandom,
                                             e.weights=e.weights, 
                                             v.weights=v.weights, 
                                             nb.trials=nb.trials,
-                                          resolution=resolution)
+                                          resolution=resolution,
+                                          objective_function = objective_function,
+                                          n_iterations=n_iterations)
                     if(measure=="vi")
                     {
                         vectRandom[k] <- (Random$Measure)/log2(N)
@@ -889,6 +933,13 @@ plotRobin <- function(graph, model1, model2,
 #' @param v.weights This argument is settable only for "infomap" method.
 #' @param nb.trials This argument is settable only for "infomap" method.
 #' @param directed This argument is settable only for "edgeBetweenness" method.
+#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
+#' modularity. Must be either "CPM" or "modularity".
+#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
+#' Each iteration may improve the partition further.This argument is settable 
+#' only for "leiden".
+#' @param resolution only for "louvain" and "leiden". Optional resolution 
+#' parameter, lower values typically yield fewer, larger clusters (default=1).
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
@@ -906,16 +957,17 @@ plotRobin <- function(graph, model1, model2,
 robinCompare <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen","louvain","spinglass",
-                                   "labelProp","infomap","optimal", "other"),
+                                   "labelProp","infomap","optimal","leiden", "other"),
                          method2=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen","louvain","spinglass",
-                                   "labelProp","infomap","optimal", "other"),
+                                   "labelProp","infomap","optimal","leiden", "other"),
                          FUN1=NULL, FUN2=NULL,
                          measure= c("vi", "nmi","split.join", "adjusted.rand"),
                          type=c("independent", "dependent"),
                          directed=FALSE, weights=NULL, steps=4, 
                          spins=25, e.weights=NULL, v.weights=NULL, 
-                         nb.trials=10, verbose=TRUE)
+                         nb.trials=10,n_iterations=2,
+                         objective_function = c("CPM", "modularity"), verbose=TRUE)
 {   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
@@ -931,7 +983,10 @@ robinCompare <- function(graph,
                                       spins=spins, 
                                       e.weights=e.weights, 
                                       v.weights=v.weights, 
-                                      nb.trials=nb.trials) 
+                                      nb.trials=nb.trials,
+                                      resolution=resolution,
+                                      objective_function = objective_function,
+                                      n_iterations=n_iterations) 
     comReal2 <- membershipCommunities(graph=graph, method=method2,
                                       FUN=FUN2,
                                       directed=directed,
@@ -940,7 +995,10 @@ robinCompare <- function(graph,
                                       spins=spins, 
                                       e.weights=e.weights, 
                                       v.weights=v.weights, 
-                                      nb.trials=nb.trials)
+                                      nb.trials=nb.trials,
+                                      resolution=resolution,
+                                      objective_function = objective_function,
+                                      n_iterations=n_iterations)
     
     de <- igraph::gsize(graph)
     Measure <- NULL
@@ -978,7 +1036,10 @@ robinCompare <- function(graph,
                                                spins=spins, 
                                                e.weights=e.weights, 
                                                v.weights=v.weights, 
-                                               nb.trials=nb.trials)
+                                               nb.trials=nb.trials,
+                                               resolution=resolution,
+                                               objective_function = objective_function,
+                                               n_iterations=n_iterations)
                 comr2 <- membershipCommunities(graph=graphRewire, 
                                                method=method2, 
                                                FUN=FUN2,
@@ -988,7 +1049,10 @@ robinCompare <- function(graph,
                                                spins=spins, 
                                                e.weights=e.weights, 
                                                v.weights=v.weights, 
-                                               nb.trials=nb.trials)
+                                               nb.trials=nb.trials,
+                                               resolution=resolution,
+                                               objective_function = objective_function,
+                                               n_iterations=n_iterations)
                 if (measure=="vi")
                 {
                     vector1[k] <- igraph::compare(comr1, comReal1, 
@@ -1024,7 +1088,10 @@ robinCompare <- function(graph,
                                                    spins=spins, 
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
-                                                   nb.trials=nb.trials)
+                                                   nb.trials=nb.trials,
+                                                   resolution=resolution,
+                                                   objective_function = objective_function,
+                                                   n_iterations=n_iterations)
                     comr2 <- membershipCommunities(graph=graphRewire, 
                                                    FUN=FUN2,
                                                    method=method2,
@@ -1034,7 +1101,10 @@ robinCompare <- function(graph,
                                                    spins=spins, 
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
-                                                   nb.trials=nb.trials)
+                                                   nb.trials=nb.trials,
+                                                   resolution=resolution,
+                                                   objective_function = objective_function,
+                                                   n_iterations=n_iterations)
                     if(measure=="vi")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 
@@ -1098,7 +1168,10 @@ robinCompare <- function(graph,
                                                spins=spins, 
                                                e.weights=e.weights, 
                                                v.weights=v.weights, 
-                                               nb.trials=nb.trials)
+                                               nb.trials=nb.trials,
+                                               resolution=resolution,
+                                               objective_function = objective_function,
+                                               n_iterations=n_iterations)
                 comr2 <- membershipCommunities(graph=graphRewire, 
                                                method=method2,
                                                FUN=FUN2,
@@ -1108,7 +1181,10 @@ robinCompare <- function(graph,
                                                spins=spins, 
                                                e.weights=e.weights, 
                                                v.weights=v.weights, 
-                                               nb.trials=nb.trials)
+                                               nb.trials=nb.trials,
+                                               resolution=resolution,
+                                               objective_function = objective_function,
+                                               n_iterations=n_iterations)
                 if(measure=="vi")
                 {
                     vector1[k] <- igraph::compare(comr1, comReal1, 
@@ -1146,7 +1222,10 @@ robinCompare <- function(graph,
                                                    spins=spins, 
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
-                                                   nb.trials=nb.trials)
+                                                   nb.trials=nb.trials,
+                                                   resolution=resolution,
+                                                   objective_function = objective_function,
+                                                   n_iterations=n_iterations)
                     comr2 <- membershipCommunities(graph=graphRewire,
                                                    method=method2,
                                                    FUN=FUN2,
@@ -1156,7 +1235,10 @@ robinCompare <- function(graph,
                                                    spins=spins, 
                                                    e.weights=e.weights, 
                                                    v.weights=v.weights, 
-                                                   nb.trials=nb.trials)
+                                                   nb.trials=nb.trials,
+                                                   resolution=resolution,
+                                                   objective_function = objective_function,
+                                                   n_iterations=n_iterations)
                     if(measure=="vi")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 

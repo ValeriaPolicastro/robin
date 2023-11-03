@@ -27,7 +27,8 @@ Imports:
     parallel,
     spam,
     qpdf,
-    Matrix
+    Matrix,
+    perturbR
 VignetteBuilder: knitr
 Suggests:
     devtools,
