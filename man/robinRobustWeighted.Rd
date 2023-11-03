@@ -8,7 +8,11 @@ robinRobustWeighted(
   graph,
   graphRandom,
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
+<<<<<<< HEAD
     "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
+=======
+    "leadingEigen", "labelProp", "infomap", "optimal", "other"),
+>>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   directed = FALSE,
@@ -18,10 +22,13 @@ robinRobustWeighted(
   e.weights = NULL,
   v.weights = NULL,
   nb.trials = 10,
+<<<<<<< HEAD
   resolution = 1,
   n_iterations = 2,
   objective_function = c("CPM", "modularity"),
   distrib = "NegBinom",
+=======
+>>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
   verbose = TRUE
 )
 }
@@ -58,6 +65,7 @@ method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
+<<<<<<< HEAD
 \item{resolution}{only for "louvain" and "leiden". Optional resolution 
 parameter, lower values typically yield fewer, larger clusters (default=1).}
 
@@ -72,6 +80,8 @@ modularity. Must be either "CPM" or "modularity".}
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "NegBinom" for negative binomial.}
 
+=======
+>>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
 \item{verbose}{flag for verbose output (default as TRUE).}
 }
 \value{
@@ -84,6 +94,7 @@ This functions implements a procedure to examine the stability
 of the partition recovered by some algorithm against random perturbations
 of the original graph structure for weighted network.
 }
+<<<<<<< HEAD
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
@@ -92,3 +103,5 @@ graphRandom <- randomWeight(graph=graph)
 robinRobustWeighted(graph=graph, graphRandom=graphRandom,
 method="louvain", measure="vi")
 }
+=======
+>>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5

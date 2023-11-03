@@ -19,14 +19,21 @@ rewireComplWeight(
   e.weights = NULL,
   v.weights = NULL,
   nb.trials = 10,
+<<<<<<< HEAD
   resolution = 1,
   n_iterations = 2,
   objective_function = c("CPM", "modularity"),
+=======
+>>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
   distrib = "NegBinom"
 )
 }
 \arguments{
+<<<<<<< HEAD
 \item{data}{The output of prepGraph.}
+=======
+\item{data}{The output of prepGraph}
+>>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
 
 \item{number}{Number of rewiring trials to perform.}
 
@@ -38,6 +45,7 @@ rewireComplWeight(
 \item{FUN}{see \code{\link{methodCommunity}}.}
 
 \item{measure}{The measure for the comparison of the communities "vi", "nmi",
+<<<<<<< HEAD
 "split.join", "adjusted.rand".}
 
 \item{directed}{This argument is settable only for "edgeBetweenness" method}
@@ -68,6 +76,24 @@ modularity. Must be either "CPM" or "modularity".}
 \item{distrib}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "NegBinom" for negative binomial.}
+=======
+"split.join", "adjusted.rand"}
+
+\item{directed}{This argument is settable only for "edgeBetweenness" method}
+
+\item{weights}{this argument is not settable for "infomap" method}
+
+\item{steps}{this argument is settable only for "leadingEigen"and"walktrap"
+method}
+
+\item{spins}{This argument is settable only for "infomap" method}
+
+\item{e.weights}{This argument is settable only for "infomap" method}
+
+\item{v.weights}{This argument is settable only for "infomap" method}
+
+\item{nb.trials}{This argument is settable only for "infomap" method}
+>>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
 }
 \description{
 rewires the weighted graph, creates the communities and

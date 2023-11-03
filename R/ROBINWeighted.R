@@ -87,6 +87,7 @@ randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
 #' @import igraph parallel perturbR
 #' @export
 #'
+<<<<<<< HEAD
 #' @examples my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
@@ -94,6 +95,9 @@ randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
 #' method2="fastGreedy", measure="vi")
 
 
+=======
+#' @examples
+>>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
 robinCompareFastWeight <- function(graph,
                                    method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                              "leadingEigen","louvain","spinglass",
