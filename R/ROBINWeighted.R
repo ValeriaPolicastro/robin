@@ -87,7 +87,6 @@ randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
 #' @import igraph parallel perturbR
 #' @export
 #'
-<<<<<<< HEAD
 #' @examples my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
@@ -95,9 +94,6 @@ randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
 #' method2="fastGreedy", measure="vi")
 
 
-=======
-#' @examples
->>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
 robinCompareFastWeight <- function(graph,
                                    method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                              "leadingEigen","louvain","spinglass",
@@ -276,7 +272,8 @@ robinCompareFastWeight <- function(graph,
 #' @param number Number of rewiring trials to perform.
 #' @param community Community to compare with.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness",
-#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap".
+#' "fastGreedy", "louvain", "spinglass","leadingEigen", "labelProp", "infomap",
+#' "optimal","leiden", "other".
 #' @param FUN see \code{\link{methodCommunity}}.
 #' @param measure The measure for the comparison of the communities "vi", "nmi",
 #' "split.join", "adjusted.rand".
@@ -304,7 +301,7 @@ rewireComplWeight <- function(data, number, community,
                               method=c("walktrap", "edgeBetweenness",
                                        "fastGreedy", "louvain", "spinglass",
                                        "leadingEigen", "labelProp", "infomap",
-                                       "optimal", "other"),
+                                       "optimal","leiden", "other"),
                               FUN=NULL,
                               measure= c("vi", "nmi","split.join", "adjusted.rand"),
                               directed=FALSE, weights=NULL, steps=4, spins=25,
@@ -342,7 +339,7 @@ rewireComplWeight <- function(data, number, community,
 #' @param graphRandom The output of random function.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness",
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
-#' "optimal".
+#' "leiden","optimal".
 #' @param FUN in case the @method parameter is "other" there is the possibility
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights
