@@ -4,22 +4,15 @@
 \alias{randomWeight}
 \title{randomWeight}
 \usage{
-<<<<<<< HEAD
 randomWeight(graph, distrib = "NegBinom", verbose = FALSE)
-=======
-randomWeight(graph, distribution = "NegBinom", verbose = FALSE)
->>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
 
-<<<<<<< HEAD
 \item{distrib}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "NegBinom" for negative binomial.}
 
-=======
->>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
 \item{verbose}{flag for verbose output (default as FALSE)}
 }
 \value{
@@ -32,9 +25,6 @@ degree distribution.
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
-<<<<<<< HEAD
 E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
-=======
->>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
 graphRandom <- randomWeight(graph=graph)
 }

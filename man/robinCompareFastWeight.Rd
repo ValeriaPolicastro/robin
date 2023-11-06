@@ -21,12 +21,9 @@ robinCompareFastWeight(
   e.weights = NULL,
   v.weights = NULL,
   nb.trials = 10,
-<<<<<<< HEAD
   resolution = 1,
   n_iterations = 2,
   objective_function = c("CPM", "modularity"),
-=======
->>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
   verbose = TRUE,
   distrib = "NegBinom"
 )
@@ -70,7 +67,6 @@ method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
-<<<<<<< HEAD
 \item{resolution}{only for "louvain" and "leiden". Optional resolution 
 parameter, lower values typically yield fewer, larger clusters (default=1).}
 
@@ -85,12 +81,6 @@ modularity. Must be either "CPM" or "modularity".}
 
 \item{distrib}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
-=======
-\item{verbose}{flag for verbose output (default as TRUE).}
-
-\item{distrib}{Option to rewire in a manner that retains overall graph weight
-regardless of distribution of edge weights. This option is invoked by putting
->>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
 any text into this field. Defaults to "NegBinom" for negative binomial.}
 }
 \value{
@@ -102,7 +92,6 @@ A list object with two matrices:
 This function compares two community detection algorithms, from
 weighted networks. Is the parallelized and faster version.
 }
-<<<<<<< HEAD
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
@@ -110,5 +99,3 @@ E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 robinCompareFastWeight(graph=graph, method1="louvain",
 method2="fastGreedy", measure="vi")
 }
-=======
->>>>>>> e36ac9913ffd448c77a88638e057e2df6615f7f5
