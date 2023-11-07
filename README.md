@@ -34,7 +34,7 @@ proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", method="
 plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, legend=c("real data", "null model"))
 ```
 <p align="center">
-<img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotRobin.png" width="500" height="500" />
+<img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotRobin.png" width="400" height="350" />
 </p>
 
 ```{r}
@@ -51,7 +51,7 @@ comp <- robinCompare(graph=graph, method1="fastGreedy", method2="louvain", measu
 plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
 ```
 <p align="center">
-<img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotCompare.png" width="500" height="500"/>
+<img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotCompare.png" width="400" height="350"/>
 </p>
 In this example, the Louvain algorithm fits better the network of interest, as the curve of the stability measure varies less than the one obtained by the Fast greedy method.
 
