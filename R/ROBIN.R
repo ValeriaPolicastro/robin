@@ -44,7 +44,7 @@ prepGraph <- function(file, file.format=c("edgelist", "pajek", "ncol", "lgl",
     if (file.format =="igraph")
     { 
         net <- file
-        ind <- igraph::V(net)[degree(net) == 0] #isolate node
+        ind <- igraph::V(net)[igraph::degree(net) == 0] #isolate node
         graph <- igraph::delete.vertices(net, ind)
         graph <- igraph::simplify(graph)
         
