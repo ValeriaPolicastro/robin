@@ -1,4 +1,4 @@
-# robin <img align= "right" src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/Logo2.png" width="100" height="100" /> 
+# robin <img src="man/img/logoRobin.png" align="right" height="138.5" /> 
  Available on CRAN https://CRAN.R-project.org/package=robin
 <br/><br>
 
