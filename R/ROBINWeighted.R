@@ -55,7 +55,7 @@ randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param ncores number of CPU cores to use.(default is 2) For a faster
-#' execution we suggest to use ncores=(detectCores(logical = FALSE)-1)
+#' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)
 #' @param FUN1 personal designed function when method1 is "others".
 #' see \code{\link{methodCommunity}}.
 #' @param FUN2 personal designed function when method2 is "others".
@@ -108,7 +108,7 @@ robinCompareFastWeight <- function(graph,
                                    FUN1=NULL, FUN2=NULL,
                                    directed=FALSE, weights=NULL, steps=4,
                                    spins=25, e.weights=NULL, v.weights=NULL,
-                                   nb.trials=10,resolution = 1,n_iterations=2,
+                                   nb.trials=10, resolution=1, n_iterations=2,
                                    objective_function = c("CPM", "modularity"),
                                    verbose=TRUE, distrib="NegBinom")
 {
@@ -308,7 +308,7 @@ rewireComplWeight <- function(data, number, community,
                               measure= c("vi", "nmi","split.join", "adjusted.rand"),
                               directed=FALSE, weights=NULL, steps=4, spins=25,
                               e.weights=NULL, v.weights=NULL, nb.trials=10, 
-                              resolution = 1,n_iterations=2,
+                              resolution=1, n_iterations=2,
                               objective_function = c("CPM", "modularity"),
                               distrib="NegBinom")
 {
@@ -390,7 +390,7 @@ robinRobustWeighted <- function(graph, graphRandom,
                                                      "adjusted.rand"),
                                 directed=FALSE, weights=NULL,
                                 steps=4, spins=25, e.weights=NULL, v.weights=NULL,
-                                nb.trials=10, resolution = 1,n_iterations=2,
+                                nb.trials=10, resolution = 1, n_iterations=2,
                                 objective_function = c("CPM", "modularity"),
                                 distrib="NegBinom",
                                 verbose=TRUE)

@@ -5,15 +5,15 @@
 #' @param graph The output of prepGraph.
 #' @param method1 The first clustering method, one of "walktrap", 
 #' "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
-#' "labelProp", "infomap","optimal".
+#' "labelProp", "infomap","leiden",optimal","other".
 #' @param method2 The second custering method one of "walktrap",
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
-#' "labelProp", "infomap","optimal".
+#' "labelProp", "infomap","leiden","optimal","other".
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param ncores number of CPU cores to use.(default is 2) For a faster 
-#' execution we suggest to use ncores=(detectCores(logical = FALSE)-1) 
+#' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1) 
 #' @param FUN1 personal designed function when method1 is "others". 
 #' see \code{\link{methodCommunity}}.
 #' @param FUN2 personal designed function when method2 is "others". 
@@ -26,6 +26,14 @@
 #' @param v.weights This argument is settable only for "infomap" method.
 #' @param nb.trials This argument is settable only for "infomap" method.
 #' @param directed This argument is settable only for "edgeBetweenness" method.
+#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
+#' Each iteration may improve the partition further.This argument is settable 
+#' only for "leiden".
+#' @param resolution only for "louvain" and "leiden". Optional resolution 
+#' parameter, lower values typically yield fewer, larger clusters (default=1).
+#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' regardless of distribution of edge weights. This option is invoked by putting 
+#' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
@@ -44,10 +52,12 @@
 robinCompareFast <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen","louvain","spinglass",
-                                   "labelProp","infomap","optimal", "other"),
+                                   "labelProp","infomap","optimal","leiden",
+                                   "other"),
                          method2=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen","louvain","spinglass",
-                                   "labelProp","infomap","optimal", "other"),
+                                   "labelProp","infomap","optimal","leiden",
+                                   "other"),
                          measure= c("vi", "nmi","split.join", "adjusted.rand"),
                          ncores=2,
                          FUN1=NULL, FUN2=NULL,
@@ -66,7 +76,10 @@ robinCompareFast <- function(graph,
                                       spins=spins, 
                                       e.weights=e.weights, 
                                       v.weights=v.weights, 
-                                      nb.trials=nb.trials) 
+                                      nb.trials=nb.trials,
+                                      resolution=resolution,
+                                      objective_function = objective_function,
+                                      n_iterations=n_iterations) 
     comReal2 <- membershipCommunities(graph=graph, method=method2,
                                       FUN=FUN2,
                                       directed=directed,
@@ -75,7 +88,10 @@ robinCompareFast <- function(graph,
                                       spins=spins, 
                                       e.weights=e.weights, 
                                       v.weights=v.weights, 
-                                      nb.trials=nb.trials)
+                                      nb.trials=nb.trials,
+                                      resolution=resolution,
+                                      objective_function = objective_function,
+                                      n_iterations=n_iterations)
     de <- igraph::gsize(graph)
     N <- igraph::vcount(graph)
     Measure <- NULL
@@ -91,7 +107,10 @@ robinCompareFast <- function(graph,
     parallel::clusterExport(cl,varlist =c("graph","method1","method2","directed",
                                 "weights","steps","spins", "e.weights", 
                                 "v.weights", "nb.trials","measure","comReal1",
-                                "comReal2","N","verbose","FUN1","FUN2"), 
+                                "comReal2","N","verbose","FUN1","FUN2",
+                                "resolution",
+                                "objective_function",
+                                "n_iterations"), 
                   envir=environment())
     zlist <- parallel::clusterApply(cl,vet, function(z) 
     {
@@ -114,7 +133,10 @@ robinCompareFast <- function(graph,
                                                   spins=spins, 
                                                   e.weights=e.weights, 
                                                   v.weights=v.weights, 
-                                                  nb.trials=nb.trials)
+                                                  nb.trials=nb.trials,
+                                                  resolution=resolution,
+                                                  objective_function = objective_function,
+                                                  n_iterations=n_iterations)
             
             if(measure=="vi")
             {
@@ -141,7 +163,10 @@ robinCompareFast <- function(graph,
                                                   spins=spins, 
                                                   e.weights=e.weights, 
                                                   v.weights=v.weights, 
-                                                  nb.trials=nb.trials)
+                                                  nb.trials=nb.trials,
+                                                  resolution=resolution,
+                                                  objective_function = objective_function,
+                                                  n_iterations=n_iterations)
             if(measure=="vi")
             {
                 
