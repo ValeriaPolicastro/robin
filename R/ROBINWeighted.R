@@ -155,7 +155,9 @@ robinCompareFastWeight <- function(graph,
     parallel::clusterExport(cl,varlist =c("graph","method1","method2","directed",
                                           "weights","steps","spins", "e.weights",
                                           "v.weights", "nb.trials","measure","comReal1",
-                                          "comReal2","N","verbose","FUN1","FUN2","distrib"),
+                                          "comReal2","N","verbose","FUN1","FUN2","distrib",
+                                          "resolution","objective_function",
+                                          "n_iterations"),
                             envir=environment())
     zlist <- parallel::clusterApply(cl,vet, function(z)
     {
