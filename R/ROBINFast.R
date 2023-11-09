@@ -26,14 +26,13 @@
 #' @param v.weights This argument is settable only for "infomap" method.
 #' @param nb.trials This argument is settable only for "infomap" method.
 #' @param directed This argument is settable only for "edgeBetweenness" method.
+#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
+#' modularity. Must be either "CPM" or "modularity".
 #' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
 #' Each iteration may improve the partition further.This argument is settable 
 #' only for "leiden".
 #' @param resolution only for "louvain" and "leiden". Optional resolution 
 #' parameter, lower values typically yield fewer, larger clusters (default=1).
-#' @param distrib Option to rewire in a manner that retains overall graph weight 
-#' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
@@ -63,7 +62,9 @@ robinCompareFast <- function(graph,
                          FUN1=NULL, FUN2=NULL,
                          directed=FALSE, weights=NULL, steps=4, 
                          spins=25, e.weights=NULL, v.weights=NULL, 
-                         nb.trials=10, verbose=TRUE)
+                         nb.trials=10, resolution=1, n_iterations=2,
+                         objective_function = c("CPM", "modularity"),
+                         verbose=TRUE)
 {   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)

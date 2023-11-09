@@ -7,9 +7,9 @@
 robinCompareFast(
   graph,
   method1 = c("walktrap", "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain",
-    "spinglass", "labelProp", "infomap", "optimal", "other"),
+    "spinglass", "labelProp", "infomap", "optimal", "leiden", "other"),
   method2 = c("walktrap", "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain",
-    "spinglass", "labelProp", "infomap", "optimal", "other"),
+    "spinglass", "labelProp", "infomap", "optimal", "leiden", "other"),
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   ncores = 2,
   FUN1 = NULL,
@@ -21,6 +21,9 @@ robinCompareFast(
   e.weights = NULL,
   v.weights = NULL,
   nb.trials = 10,
+  resolution = 1,
+  n_iterations = 2,
+  objective_function = c("CPM", "modularity"),
   verbose = TRUE
 )
 }
@@ -29,18 +32,18 @@ robinCompareFast(
 
 \item{method1}{The first clustering method, one of "walktrap", 
 "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
-"labelProp", "infomap","optimal".}
+"labelProp", "infomap","leiden",optimal","other".}
 
 \item{method2}{The second custering method one of "walktrap",
 "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
-"labelProp", "infomap","optimal".}
+"labelProp", "infomap","leiden","optimal","other".}
 
 \item{measure}{The stability measure, one of "vi", "nmi", "split.join", 
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
 \item{ncores}{number of CPU cores to use.(default is 2) For a faster 
-execution we suggest to use ncores=(detectCores(logical = FALSE)-1)}
+execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)}
 
 \item{FUN1}{personal designed function when method1 is "others". 
 see \code{\link{methodCommunity}}.}
@@ -62,6 +65,16 @@ method.}
 \item{v.weights}{This argument is settable only for "infomap" method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
+
+\item{resolution}{only for "louvain" and "leiden". Optional resolution 
+parameter, lower values typically yield fewer, larger clusters (default=1).}
+
+\item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
+Each iteration may improve the partition further.This argument is settable 
+only for "leiden".}
+
+\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
+modularity. Must be either "CPM" or "modularity".}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 }

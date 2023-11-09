@@ -44,7 +44,7 @@ robinCompareFastWeight(
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
 \item{ncores}{number of CPU cores to use.(default is 2) For a faster
-execution we suggest to use ncores=(detectCores(logical = FALSE)-1)}
+execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)}
 
 \item{FUN1}{personal designed function when method1 is "others".
 see \code{\link{methodCommunity}}.}
