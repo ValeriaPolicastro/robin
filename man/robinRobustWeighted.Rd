@@ -58,7 +58,6 @@ method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
-<<<<<<< HEAD
 \item{resolution}{only for "louvain" and "leiden". Optional resolution 
 parameter, lower values typically yield fewer, larger clusters (default=1).}
 
