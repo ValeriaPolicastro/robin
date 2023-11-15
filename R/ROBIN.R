@@ -111,48 +111,13 @@ random <- function(graph, verbose=FALSE)
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "optimal", "leiden","other".
+#' @param ... additional parameters to use with any of the previous described 
+#' methods (see igraph package community detection methods for more details 
+#' i.e. \link[igraph]{cluster_walktrap})
 #' @param FUN in case the @method parameter is "other" there is the possibility 
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights 
 #' (that can be NULL), and has to return a community object.
-#' @param weights  Optional positive weight vector. If the graph has a weight 
-#' edge attribute, then this is used by default. Supply NA here if the graph 
-#' has a weight edge attribute, but you want to ignore it. Larger edge weights
-#' correspond to stronger connections. This argument is not settable for 
-#' "infomap" method.
-#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
-#' modularity. Must be either "CPM" or "modularity".
-#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
-#' Each iteration may improve the partition further.This argument is settable 
-#' only for "leiden".
-#' @param steps The number of steps to take, this is actually the number of 
-#' tries to make a step. It is not a particularly useful parameter. This 
-#' argument is settable only for "leadingEigen" and "walktrap" method.
-#' @param spins Integer constant, the number of spins to use. This is the upper 
-#' limit for the number of communities. It is not a problem to supply a 
-#' (reasonably) big number here, in which case some spin states will be 
-#' unpopulated. This argument is settable only for "spinglass" method.
-#' @param e.weights If not NULL, then a numeric vector of edge weights. 
-#' The length must match the number of edges in the graph. By default the 
-#' ‘weight’ edge attribute is used as weights. If it is not present, then all
-#' edges are considered to have the same weight. Larger edge weights correspond 
-#' to stronger connections. This argument is settable only for "infomap"
-#'  method.
-#' @param v.weights If not NULL, then a numeric vector of vertex weights. The
-#' length must match the number of vertices in the graph. By default the 
-#' ‘weight’ vertex attribute is used as weights. If it is not present, then all
-#' vertices are considered to have the same weight. A larger vertex weight means
-#' a larger probability that the random surfer jumps to that vertex. This 
-#' argument is settable only for "infomap" method.
-#' @param nb.trials The number of attempts to partition the network. 
-#' This argument is settable only for "infomap".
-#' @param resolution only for "louvain" and "leiden". Optional resolution 
-#' parameter that allows the user to adjust the resolution parameter of the 
-#' modularity function that the algorithm uses internally. Lower values 
-#' typically yield fewer, larger clusters (default is 1).
-#' @param directed Logical constant, whether to calculate directed edge 
-#' betweenness for directed graphs. This argument is settable only for 
-#' "edgeBetweenness" method.
 #' @param verbose flag for verbose output (default as FALSE)
 #'
 #' @return A Communities object.
@@ -167,51 +132,25 @@ methodCommunity <- function(graph,
                             method=c("walktrap", "edgeBetweenness", 
                                     "fastGreedy", "louvain", "spinglass", 
                                     "leadingEigen", "labelProp", "infomap",
-                                    "optimal", "leiden", "other"),
-                            FUN=NULL, directed=FALSE, weights=NULL, steps=4, 
-                            spins=25, e.weights=NULL, v.weights=NULL, 
-                            nb.trials=10, resolution=1, n_iterations=2,
-                            objective_function = c("CPM", "modularity"),
-                            verbose=FALSE)
+                                    "optimal", "leiden", "other"), 
+                                    ..., FUN=NULL, verbose=FALSE)
 {   
     
     method <- match.arg(method)
-    if(verbose) cat("Applying community method ", method, "\n")
-    if(is.null(weights) &
-       (sum(method %in% c("walktrap", "edgeBetweenness", "fastGreedy") == 1 )))
-    {
-        weights <- E(graph)$weight
-    }
+    if(verbose) message("Applying community method ", method, "\n")
     
-    if((steps == 4) & (method == "leadingEigen"))
-    {
-        steps  <- -1
-    }
     communities <- switch(method, 
-            optimal=igraph::cluster_optimal(graph, weights = weights),
-            louvain=igraph::cluster_louvain(graph=graph, weights=weights, 
-                                            resolution=resolution),
-            walktrap=igraph::cluster_walktrap(graph=graph, weights=weights, 
-                                    steps=steps), 
-            spinglass=igraph::cluster_spinglass(graph=graph, weights=weights, 
-                                        spins=spins), 
-            leadingEigen=igraph::cluster_leading_eigen(graph=graph, 
-                                            steps=steps, weights=weights,
-                                            options=list(maxiter=1000000)), 
-            edgeBetweenness=igraph::cluster_edge_betweenness(graph=graph, 
-                                                    weights=weights,
-                                                    directed=directed), 
-            fastGreedy=igraph::cluster_fast_greedy(graph=graph, 
-                                                   weights=weights), 
-            labelProp=igraph::cluster_label_prop(graph=graph, weights=weights), 
-            infomap=igraph::cluster_infomap(graph=graph, e.weights=e.weights, 
-                                v.weights=v.weights, nb.trials=nb.trials),
-            leiden=igraph::cluster_leiden(graph=graph,resolution_parameter=
-                                              resolution,
-                                          n_iterations=n_iterations,
-                                          weights=weights,
-                                          objective_function),
-            other=FUN(graph, weights)
+            optimal=igraph::cluster_optimal(graph, ...),
+            louvain=igraph::cluster_louvain(graph=graph, ...),
+            walktrap=igraph::cluster_walktrap(graph=graph, ...), 
+            spinglass=igraph::cluster_spinglass(graph=graph, ...), 
+            leadingEigen=igraph::cluster_leading_eigen(graph=graph, ...), 
+            edgeBetweenness=igraph::cluster_edge_betweenness(graph=graph, ...), 
+            fastGreedy=igraph::cluster_fast_greedy(graph=graph, ...), 
+            labelProp=igraph::cluster_label_prop(graph=graph, ...), 
+            infomap=igraph::cluster_infomap(graph=graph, ...),
+            leiden=igraph::cluster_leiden(graph=graph, ...),
+            other=FUN(graph, ...)
     )
     return(communities)
 }
@@ -230,46 +169,10 @@ methodCommunity <- function(graph,
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights 
 #' (that can be NULL), and has to return a community object.
-#' @param weights  Optional positive weight vector. If the graph has a weight 
-#' edge attribute, then this is used by default. Supply NA here if the graph 
-#' has a weight edge attribute, but you want to ignore it. Larger edge weights
-#' correspond to stronger connections. This argument is not settable for 
-#' "infomap" method.
-#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
-#' modularity. Must be either "CPM" or "modularity".
-#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
-#' Each iteration may improve the partition further.This argument is settable 
-#' only for "leiden".
-#' @param steps The number of steps to take, this is actually the number of 
-#' tries to make a step. It is not a particularly useful parameter. This 
-#' argument is settable only for "leadingEigen" and "walktrap" method.
-#' @param spins Integer constant, the number of spins to use. This is the upper 
-#' limit for the number of communities. It is not a problem to supply a 
-#' (reasonably) big number here, in which case some spin states will be 
-#' unpopulated. This argument is settable only for "spinglass" method.
-#' @param e.weights If not NULL, then a numeric vector of edge weights. 
-#' The length must match the number of edges in the graph. By default the 
-#' ‘weight’ edge attribute is used as weights. If it is not present, then all
-#' edges are considered to have the same weight. Larger edge weights correspond 
-#' to stronger connections. This argument is settable only for "infomap"
-#'  method.
-#' @param v.weights If not NULL, then a numeric vector of vertex weights. The
-#' length must match the number of vertices in the graph. By default the 
-#' ‘weight’ vertex attribute is used as weights. If it is not present, then all
-#' vertices are considered to have the same weight. A larger vertex weight means
-#' a larger probability that the random surfer jumps to that vertex. This 
-#' argument is settable only for "infomap" method.
-#' @param nb.trials The number of attempts to partition the network. 
-#' This argument is settable only for "infomap".
-#' @param resolution only for "louvain" and "leiden". Optional resolution 
-#' parameter that allows the user to adjust the resolution parameter of the 
-#' modularity function that the algorithm uses internally. Lower values 
-#' typically yield fewer, larger clusters (default is 1).
-#' @param directed Logical constant, whether to calculate directed edge 
-#' betweenness for directed graphs. This argument is settable only for 
-#' "edgeBetweenness" method.
+#' @param ... additional parameters to use with any of the previous described 
+#' methods (see igraph package community detection methods for more details 
+#' i.e. \link[igraph]{cluster_walktrap})
 #'
-#' 
 #' @return Returns a numeric vector, one number for each vertex in the graph; 
 #' the membership vector of the community structure.
 #' @import igraph
@@ -284,86 +187,14 @@ membershipCommunities <- function(graph,
                                  method=c("walktrap", "edgeBetweenness", 
                                         "fastGreedy", "louvain", "spinglass", 
                                         "leadingEigen", "labelProp", "infomap",
-                                        "optimal", "leiden","other"),
-                                 FUN=NULL, directed=FALSE, weights=NULL, steps=4, 
-                                 spins=25, e.weights=NULL, v.weights=NULL, 
-                                 nb.trials=10, resolution=1, n_iterations=2,
-                                 objective_function = c("CPM", "modularity"))
+                                        "optimal", "leiden","other"), ...,
+                                 FUN=NULL)
 {
     method <- match.arg(method)
-    members <- membership(methodCommunity(graph=graph, method=method,
-                                            FUN=FUN,
-                                            directed=directed,
-                                            weights=weights, 
-                                            steps=steps, 
-                                            spins=spins, 
-                                            e.weights=e.weights, 
-                                            v.weights=v.weights, 
-                                            nb.trials=nb.trials,
-                                          resolution = resolution,
-                                          n_iterations=n_iterations,
-                                          objective_function=objective_function))
+    members <- membership(methodCommunity(graph=graph, method=method, ...,
+                                            FUN=FUN))
     
     return(members)
-}
-
-
-################ PLOT GRAPH ###############
-#' plotGraph
-#'
-#' @description Graphical interactive representation of the network.
-#' @param graph The output of prepGraph.
-#'
-#' @return Creates an interactive plot, a D3 JavaScript network graph.
-#' @import networkD3
-#' @export
-#'
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' plotGraph (graph)
-plotGraph <- function(graph)
-{
-    graph_d3 <- networkD3::igraph_to_networkD3(g=graph)
-    plot <- networkD3::simpleNetwork(graph_d3$links, opacity=0.8, zoom=TRUE,
-                                nodeColour = "#2E66AC",
-                                fontSize=12)
-    return(plot)
-}   
-
-
-######################## PLOT COMMUNITIES ##############
-#' plotComm
-#' 
-#' @description Graphical interactive representation of the network and its 
-#' communities.
-#' 
-#' @param graph The output of prepGraph.
-#' @param members A membership vector of the community structure, the output of
-#' membershipCommunities. 
-#'
-#' @return Creates an interactive plot with colorful communities, a D3 
-#' JavaScript network graph.
-#' @import networkD3 
-#' @importFrom methods is
-#' @export
-#'
-#' @examples
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' members <- membershipCommunities (graph=graph, method="louvain")
-#' plotComm(graph, members)
-plotComm <- function(graph, members) 
-{
-    stopifnot(methods::is(graph, "igraph"))
-    stopifnot(methods::is(members, "membership"))
-    graph_d3 <- networkD3::igraph_to_networkD3(g=graph, group=members)
-    # Create network plot
-    plot <- networkD3::forceNetwork(Links=graph_d3$links, Nodes=graph_d3$nodes,
-                                    Source='source', Target='target', 
-                                    NodeID='name', Group='group', opacity=0.8,
-                                    fontSize=12, legend=TRUE)
-    return(plot)
 }
 
 
@@ -378,48 +209,26 @@ plotComm <- function(graph, members)
 #' @param community Community to compare with.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap".
+#' @param ... additional parameters to use with any of the previous described 
+#' methods (see igraph package community detection methods for more details 
+#' i.e. \link[igraph]{cluster_walktrap})
 #' @param FUN see \code{\link{methodCommunity}}.
 #' @param measure The measure for the comparison of the communities "vi", "nmi",
 #' "split.join", "adjusted.rand"
-#' @param weights this argument is not settable for "infomap" method
-#' @param steps this argument is settable only for "leadingEigen"and"walktrap" 
-#' method
-#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
-#' modularity. Must be either "CPM" or "modularity".
-#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
-#' Each iteration may improve the partition further.This argument is settable 
-#' only for "leiden".
-#' @param spins This argument is settable only for "infomap" method
-#' @param e.weights This argument is settable only for "infomap" method
-#' @param v.weights This argument is settable only for "infomap" method
-#' @param nb.trials This argument is settable only for "infomap" method
-#' @param directed This argument is settable only for "edgeBetweenness" method
-#' @param resolution only for "louvain" and "leiden". Optional resolution 
-#' parameter, lower values typically yield fewer, larger clusters (default=1).
-#' @keywords internal
-
+#' @keywords iternal
 rewireCompl <- function(data, number, community, 
                         method=c("walktrap", "edgeBetweenness", 
                                  "fastGreedy", "louvain", "spinglass", 
                                  "leadingEigen", "labelProp", "infomap",
-                                 "optimal", "leiden","other"),
-                        measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                        FUN=NULL, directed=FALSE, weights=NULL, steps=4, 
-                        spins=25, e.weights=NULL, v.weights=NULL, 
-                        nb.trials=10, resolution = 1,n_iterations=2,
-                        objective_function = c("CPM", "modularity"))
+                                 "optimal", "leiden","other"), ..., 
+                        measure=c("vi", "nmi","split.join", "adjusted.rand"),
+                        FUN=NULL)
 {
     method <- match.arg(method)
     measure <- match.arg (measure)
     graphRewire <- igraph::rewire(data,
-                                  with=keeping_degseq(loops=FALSE,niter=number))
-    comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
-                            directed=directed, weights=weights, steps=steps, 
-                            spins=spins, e.weights=e.weights, 
-                            v.weights=v.weights, nb.trials=nb.trials, 
-                            resolution=resolution,
-                            n_iterations=n_iterations,
-                            objective_function=objective_function)
+                            with=keeping_degseq(loops=FALSE, niter=number))
+    comR <- membershipCommunities(graph=graphRewire, method=method, ..., FUN=FUN)
     Measure <- igraph::compare(community, comR, method=measure)
     output <- list(Measure=Measure, graphRewire=graphRewire)
     
@@ -845,65 +654,6 @@ robinRobust <- function(graph, graphRandom,
 
 
 
-############PLOT##############
-#' plotRobin
-#'
-#' @description This function plots two curves: the measure of the null model and the measure
-#' of the real graph or the measure of the two community detection algorithms.
-#' @param graph The output of prepGraph
-#' @param model1 The Mean output of the robinRobust function or the Mean1 
-#' output of robinCompare.
-#' @param model2 The MeanRandom output of the robinRobust function or the Mean2 
-#' output of robinCompare.
-#' @param legend The legend for the graph. The default is c("model1", 
-#' "model2"). If using robinRobust is recommended c("real data", "null model"), 
-#' if using robinCompare, enter the names of the community detection 
-#' algorithms.
-#' @param title The title for the graph. The default is "Robin plot".
-#'
-#' @return A ggplot object.
-#' @import ggplot2 igraph
-#' @export
-#'
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' graphRandom <- random(graph=graph)
-#' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-#' measure="vi", type="independent")
-#' plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom
-#' , legend=c("real data", "null model"))
-#' 
-plotRobin <- function(graph, model1, model2,
-                      legend=c("model1", "model2"),
-                      title="Robin plot")
-{   
-    mvimodel1 <- as.vector((apply(model1, 2, mean)))
-    mvimodel2 <- as.vector((apply(model2, 2, mean)))
-    
-    
-    percPert <- rep((seq(0,60,5)/100), 2)
-    mvi <- c(mvimodel1, mvimodel2)
-    model <-c(rep("model1",13),rep("model2",13))
-    dataFrame <- data.frame(percPert, mvi, model)
-    plotModel <- ggplot2::ggplot(dataFrame, aes(x = percPert, 
-                                                y = as.numeric(as.character(mvi)),
-                                                colour = model, 
-                                                group = factor(model))) +
-        geom_line() +
-        geom_point() +
-        xlab("Percentage of perturbation") +
-        ylab("Measure") +
-        ggplot2::ylim(0,1)+
-        ggtitle(title)
-    
-    cols <- c("model1" = "#00BFC4", "model2" = "#F8766D")
-    plot <-  plotModel+ggplot2::scale_colour_manual(values = cols,
-                                                    breaks = c("model1", "model2"), 
-                                                    labels=c(legend[1], legend[2]))
-    
-    return(plot)
-}
 
 ############### COMPARISON DIFFERENT METHODS ##########
 #' robinCompare
@@ -956,49 +706,31 @@ plotRobin <- function(graph, model1, model2,
 #' method2="fastGreedy", measure="vi", type="independent")
 robinCompare <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
-                                   "leadingEigen","louvain","spinglass",
-                                   "labelProp","infomap","optimal","leiden", "other"),
+                                   "leadingEigen", "louvain", "spinglass",
+                                   "labelProp", "infomap", "optimal", "leiden", 
+                                   "other"),
+                         args1=NULL,
                          method2=c("walktrap", "edgeBetweenness", "fastGreedy",
-                                   "leadingEigen","louvain","spinglass",
-                                   "labelProp","infomap","optimal","leiden", "other"),
+                                   "leadingEigen", "louvain", "spinglass",
+                                   "labelProp", "infomap", "optimal", "leiden", 
+                                   "other"),
+                         args2=NULL,
                          FUN1=NULL, FUN2=NULL,
                          measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                         type=c("independent", "dependent"),
-                         directed=FALSE, weights=NULL, steps=4, 
-                         spins=25, e.weights=NULL, v.weights=NULL, 
-                         nb.trials=10,n_iterations=2, resolution=1,
-                         objective_function = c("CPM", "modularity"), verbose=TRUE)
+                         type=c("independent", "dependent"), verbose=TRUE)
 {   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
     type <- match.arg(type)
-    measure <-match.arg(measure)
+    measure <- match.arg(measure)
     nrep <- 10
     N <- igraph::vcount(graph)
-    comReal1 <- membershipCommunities(graph=graph, method=method1,
-                                      FUN=FUN1,
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps, 
-                                      spins=spins, 
-                                      e.weights=e.weights, 
-                                      v.weights=v.weights, 
-                                      nb.trials=nb.trials,
-                                      resolution=resolution,
-                                      objective_function = objective_function,
-                                      n_iterations=n_iterations) 
-    comReal2 <- membershipCommunities(graph=graph, method=method2,
-                                      FUN=FUN2,
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps, 
-                                      spins=spins, 
-                                      e.weights=e.weights, 
-                                      v.weights=v.weights, 
-                                      nb.trials=nb.trials,
-                                      resolution=resolution,
-                                      objective_function = objective_function,
-                                      n_iterations=n_iterations)
+    args1=list(args1)
+    args2=list(args2)
+    comReal1 <- membershipCommunities(graph=graph, method=method1, ...=args1,
+                                      FUN=FUN1) 
+    comReal2 <- membershipCommunities(graph=graph, method=method2, ...=args2,
+                                      FUN=FUN2)
     
     de <- igraph::gsize(graph)
     Measure <- NULL

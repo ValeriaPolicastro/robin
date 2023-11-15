@@ -8,17 +8,8 @@ methodCommunity(
   graph,
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
     "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
+  ...,
   FUN = NULL,
-  directed = FALSE,
-  weights = NULL,
-  steps = 4,
-  spins = 25,
-  e.weights = NULL,
-  v.weights = NULL,
-  nb.trials = 10,
-  resolution = 1,
-  n_iterations = 2,
-  objective_function = c("CPM", "modularity"),
   verbose = FALSE
 )
 }
@@ -29,58 +20,14 @@ methodCommunity(
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "optimal", "leiden","other".}
 
+\item{...}{additional parameters to use with any of the previous described 
+methods (see igraph package community detection methods for more details 
+i.e. \link[igraph]{cluster_walktrap})}
+
 \item{FUN}{in case the @method parameter is "other" there is the possibility 
 to use a personal function passing its name through this parameter.
 The personal parameter has to take as input the @graph and the @weights 
 (that can be NULL), and has to return a community object.}
-
-\item{directed}{Logical constant, whether to calculate directed edge 
-betweenness for directed graphs. This argument is settable only for 
-"edgeBetweenness" method.}
-
-\item{weights}{Optional positive weight vector. If the graph has a weight 
-edge attribute, then this is used by default. Supply NA here if the graph 
-has a weight edge attribute, but you want to ignore it. Larger edge weights
-correspond to stronger connections. This argument is not settable for 
-"infomap" method.}
-
-\item{steps}{The number of steps to take, this is actually the number of 
-tries to make a step. It is not a particularly useful parameter. This 
-argument is settable only for "leadingEigen" and "walktrap" method.}
-
-\item{spins}{Integer constant, the number of spins to use. This is the upper 
-limit for the number of communities. It is not a problem to supply a 
-(reasonably) big number here, in which case some spin states will be 
-unpopulated. This argument is settable only for "spinglass" method.}
-
-\item{e.weights}{If not NULL, then a numeric vector of edge weights. 
-The length must match the number of edges in the graph. By default the 
-‘weight’ edge attribute is used as weights. If it is not present, then all
-edges are considered to have the same weight. Larger edge weights correspond 
-to stronger connections. This argument is settable only for "infomap"
- method.}
-
-\item{v.weights}{If not NULL, then a numeric vector of vertex weights. The
-length must match the number of vertices in the graph. By default the 
-‘weight’ vertex attribute is used as weights. If it is not present, then all
-vertices are considered to have the same weight. A larger vertex weight means
-a larger probability that the random surfer jumps to that vertex. This 
-argument is settable only for "infomap" method.}
-
-\item{nb.trials}{The number of attempts to partition the network. 
-This argument is settable only for "infomap".}
-
-\item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter that allows the user to adjust the resolution parameter of the 
-modularity function that the algorithm uses internally. Lower values 
-typically yield fewer, larger clusters (default is 1).}
-
-\item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
-Each iteration may improve the partition further.This argument is settable 
-only for "leiden".}
-
-\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
-modularity. Must be either "CPM" or "modularity".}
 
 \item{verbose}{flag for verbose output (default as FALSE)}
 }

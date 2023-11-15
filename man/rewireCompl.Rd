@@ -10,18 +10,9 @@ rewireCompl(
   community,
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
     "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
+  ...,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  FUN = NULL,
-  directed = FALSE,
-  weights = NULL,
-  steps = 4,
-  spins = 25,
-  e.weights = NULL,
-  v.weights = NULL,
-  nb.trials = 10,
-  resolution = 1,
-  n_iterations = 2,
-  objective_function = c("CPM", "modularity")
+  FUN = NULL
 )
 }
 \arguments{
@@ -34,38 +25,17 @@ rewireCompl(
 \item{method}{The clustering method, one of "walktrap", "edgeBetweenness", 
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap".}
 
+\item{...}{additional parameters to use with any of the previous described 
+methods (see igraph package community detection methods for more details 
+i.e. \link[igraph]{cluster_walktrap})}
+
 \item{measure}{The measure for the comparison of the communities "vi", "nmi",
 "split.join", "adjusted.rand"}
 
 \item{FUN}{see \code{\link{methodCommunity}}.}
-
-\item{directed}{This argument is settable only for "edgeBetweenness" method}
-
-\item{weights}{this argument is not settable for "infomap" method}
-
-\item{steps}{this argument is settable only for "leadingEigen"and"walktrap" 
-method}
-
-\item{spins}{This argument is settable only for "infomap" method}
-
-\item{e.weights}{This argument is settable only for "infomap" method}
-
-\item{v.weights}{This argument is settable only for "infomap" method}
-
-\item{nb.trials}{This argument is settable only for "infomap" method}
-
-\item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter, lower values typically yield fewer, larger clusters (default=1).}
-
-\item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
-Each iteration may improve the partition further.This argument is settable 
-only for "leiden".}
-
-\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
-modularity. Must be either "CPM" or "modularity".}
 }
 \description{
 rewires the graph, creates the communities and 
 compares the communities through different measures.
 }
-\keyword{internal}
+\keyword{iternal}
