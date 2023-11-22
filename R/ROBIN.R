@@ -709,12 +709,12 @@ robinCompare <- function(graph,
                                    "leadingEigen", "louvain", "spinglass",
                                    "labelProp", "infomap", "optimal", "leiden", 
                                    "other"),
-                         args1=NULL,
+                         args1=list(),
                          method2=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen", "louvain", "spinglass",
                                    "labelProp", "infomap", "optimal", "leiden", 
                                    "other"),
-                         args2=NULL,
+                         args2=list(),
                          FUN1=NULL, FUN2=NULL,
                          measure= c("vi", "nmi","split.join", "adjusted.rand"),
                          type=c("independent", "dependent"), verbose=TRUE)
@@ -725,13 +725,14 @@ robinCompare <- function(graph,
     measure <- match.arg(measure)
     nrep <- 10
     N <- igraph::vcount(graph)
-    args1=list(args1)
-    args2=list(args2)
-    comReal1 <- membershipCommunities(graph=graph, method=method1, ...=args1,
-                                      FUN=FUN1) 
-    comReal2 <- membershipCommunities(graph=graph, method=method2, ...=args2,
-                                      FUN=FUN2)
+    args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
     
+    comReal1 <- do.call(membershipCommunities, args11)
+    # comReal1 <- membershipCommunities(graph=graph, method=method1, ...=args1,
+    #                                   FUN=FUN1)
+    # comReal2 <- membershipCommunities(graph=graph, method=method2, ...=args2,
+    #                                   FUN=FUN2)
+    # 
     de <- igraph::gsize(graph)
     Measure <- NULL
     vector1 <- NULL
