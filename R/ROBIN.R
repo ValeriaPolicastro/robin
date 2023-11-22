@@ -726,13 +726,10 @@ robinCompare <- function(graph,
     nrep <- 10
     N <- igraph::vcount(graph)
     args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
-    
+    args21 <- c(list(graph=graph), method=method2, FUN=FUN2, args2)
     comReal1 <- do.call(membershipCommunities, args11)
-    # comReal1 <- membershipCommunities(graph=graph, method=method1, ...=args1,
-    #                                   FUN=FUN1)
-    # comReal2 <- membershipCommunities(graph=graph, method=method2, ...=args2,
-    #                                   FUN=FUN2)
-    # 
+    comReal2 <- do.call(membershipCommunities, args21)
+    
     de <- igraph::gsize(graph)
     Measure <- NULL
     vector1 <- NULL
