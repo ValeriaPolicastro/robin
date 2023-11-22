@@ -215,7 +215,7 @@ membershipCommunities <- function(graph,
 #' @param FUN see \code{\link{methodCommunity}}.
 #' @param measure The measure for the comparison of the communities "vi", "nmi",
 #' "split.join", "adjusted.rand"
-#' @keywords iternal
+#' @keywords internal
 rewireCompl <- function(data, number, community, 
                         method=c("walktrap", "edgeBetweenness", 
                                  "fastGreedy", "louvain", "spinglass", 
@@ -1227,7 +1227,6 @@ robinFDATest <- function(graph,model1,model2,
 #' robinAUC
 #'
 #' @description This function calculates the area under two curves with a spline approach. 
-#' @param graph The output of prepGraph.
 #' @param model1 The Mean output of the robinRobust function (or the Mean1 
 #' output of the robinCompare function).
 #' @param model2 The MeanRandom output of the robinRobust function (or the 
@@ -1245,9 +1244,8 @@ robinFDATest <- function(graph,model1,model2,
 #' graphRandom <- random(graph=graph)
 #' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 #' measure="vi",type="independent")
-#' robinAUC(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
-robinAUC <- function(graph, model1, model2,
-                        verbose=FALSE)
+#' robinAUC(model1=Proc$Mean, model2=Proc$MeanRandom)
+robinAUC <- function( model1, model2, verbose=FALSE)
 {
     if(verbose) cat("Computing area under the curve (AUC).\n")
     
@@ -1258,7 +1256,10 @@ robinAUC <- function(graph, model1, model2,
                           method ="spline")
     area2 <- DescTools::AUC(x=(seq(0,60,5)/100), y=mvimeanmodel2, 
                           method ="spline")
-    output <- list(area1=area1,area2=area2)
+    
+    output <- c(area1,area2)
+    names(output) <- c("Area 1","Area 2")
+    
 return(output)
 }
 
