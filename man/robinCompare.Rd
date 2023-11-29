@@ -8,22 +8,14 @@ robinCompare(
   graph,
   method1 = c("walktrap", "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain",
     "spinglass", "labelProp", "infomap", "optimal", "leiden", "other"),
+  args1 = list(),
   method2 = c("walktrap", "edgeBetweenness", "fastGreedy", "leadingEigen", "louvain",
     "spinglass", "labelProp", "infomap", "optimal", "leiden", "other"),
+  args2 = list(),
   FUN1 = NULL,
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = c("independent", "dependent"),
-  directed = FALSE,
-  weights = NULL,
-  steps = 4,
-  spins = 25,
-  e.weights = NULL,
-  v.weights = NULL,
-  nb.trials = 10,
-  n_iterations = 2,
-  resolution = 1,
-  objective_function = c("CPM", "modularity"),
   verbose = TRUE
 )
 }
@@ -50,7 +42,7 @@ see \code{\link{methodCommunity}}.}
 
 \item{type}{The type of robin construction, dependent or independent.}
 
-\item{directed}{This argument is settable only for "edgeBetweenness" method.}
+\item{verbose}{flag for verbose output (default as TRUE).}
 
 \item{weights}{This argument is not settable for "infomap" method.}
 
@@ -65,17 +57,17 @@ method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
+\item{directed}{This argument is settable only for "edgeBetweenness" method.}
+
+\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
+modularity. Must be either "CPM" or "modularity".}
+
 \item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
 Each iteration may improve the partition further.This argument is settable 
 only for "leiden".}
 
 \item{resolution}{only for "louvain" and "leiden". Optional resolution 
 parameter, lower values typically yield fewer, larger clusters (default=1).}
-
-\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
-modularity. Must be either "CPM" or "modularity".}
-
-\item{verbose}{flag for verbose output (default as TRUE).}
 }
 \value{
 A list object with two matrices:
@@ -89,6 +81,7 @@ detection algorithms.
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
-robinCompare(graph=graph, method1="louvain", 
-method2="fastGreedy", measure="vi", type="independent")
+robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8),
+            method2="leiden", args2=list(objective_function ="modularity"), 
+            measure="vi", type="independent")
 }
