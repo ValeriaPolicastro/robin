@@ -138,7 +138,7 @@ methodCommunity <- function(graph,
     
     method <- match.arg(method)
     if(verbose) message("Applying community method ", method, "\n")
-    
+    dots <- list(...)
     communities <- switch(method, 
             optimal=igraph::cluster_optimal(graph, ...),
             louvain=igraph::cluster_louvain(graph=graph, ...),
@@ -225,7 +225,8 @@ rewireCompl <- function(data, number, community,
                         FUN=NULL)
 {
     method <- match.arg(method)
-    measure <- match.arg (measure)
+    measure <- match.arg(measure)
+    # dots <- list(...)
     graphRewire <- igraph::rewire(data,
                             with=keeping_degseq(loops=FALSE, niter=number))
     comR <- membershipCommunities(graph=graphRewire, method=method, ..., FUN=FUN)
@@ -241,7 +242,6 @@ rewireCompl <- function(data, number, community,
 #' @param data The output of prepGraph
 #' @param number Number of rewiring trials to perform.
 #' @keywords internal
-
 rewireOnl <- function(data, number)
 {
     graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
@@ -299,47 +299,53 @@ rewireOnl <- function(data, number)
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 #' robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-#' measure="vi",type="independent")
+#'     measure="vi",type="independent")
 robinRobust <- function(graph, graphRandom, 
                 method=c("walktrap", "edgeBetweenness", 
                          "fastGreedy", "louvain", "spinglass", 
                          "leadingEigen", "labelProp", "infomap",
                          "optimal","leiden","other"),
+                ...,
                 FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                type=c("independent","dependent"), directed=FALSE, weights=NULL, 
-                steps=4, spins=25, e.weights=NULL, v.weights=NULL, 
-                nb.trials=10, resolution=1, n_iterations=2,
-                objective_function = c("CPM", "modularity"),verbose=TRUE) 
+                type=c("independent","dependent"), nrep=5,
+                # directed=FALSE, weights=NULL, 
+                # steps=4, spins=25, e.weights=NULL, v.weights=NULL, 
+                # nb.trials=10, resolution=1, n_iterations=2,
+                # objective_function = c("CPM", "modularity"), 
+                verbose=TRUE)
 {   
     measure <- match.arg(measure)
     type<- match.arg(type)
     method <- match.arg(method)
-    nrep <- 10
+    # dots <- list(...)
+    # nrep <- 10
     comReal <- membershipCommunities(graph=graph, method=method, 
-                                    FUN=FUN,
-                                    directed=directed,
-                                    weights=weights, 
-                                    steps=steps, 
-                                    spins=spins, 
-                                    e.weights=e.weights, 
-                                    v.weights=v.weights, 
-                                    nb.trials=nb.trials,
-                                    resolution=resolution,
-                                    objective_function = objective_function,
-                                    n_iterations=n_iterations) # real network
+                                    ...=...,
+                                    FUN=FUN) # real network
+                                    # directed=directed,
+                                    # weights=weights, 
+                                    # steps=steps, 
+                                    # spins=spins, 
+                                    # e.weights=e.weights, 
+                                    # v.weights=v.weights, 
+                                    # nb.trials=nb.trials,
+                                    # resolution=resolution,
+                                    # objective_function = objective_function,
+                                    # n_iterations=n_iterations
+                                    # ) # real network
 
     comRandom <- membershipCommunities(graph=graphRandom, method=method,
-                                        FUN=FUN,
-                                        directed=directed,
-                                        weights=weights,
-                                        steps=steps, 
-                                        spins=spins, 
-                                        e.weights=e.weights, 
-                                        v.weights=v.weights, 
-                                        nb.trials=nb.trials,
-                                       resolution=resolution,
-                                       objective_function = objective_function,
-                                       n_iterations=n_iterations) # random network
+                                       ...=..., FUN=FUN)
+                                       #  directed=directed,
+                                       #  weights=weights,
+                                       #  steps=steps, 
+                                       #  spins=spins, 
+                                       #  e.weights=e.weights, 
+                                       #  v.weights=v.weights, 
+                                       #  nb.trials=nb.trials,
+                                       # resolution=resolution,
+                                       # objective_function = objective_function,
+                                       # n_iterations=n_iterations) # random network
     #stopifnot(length(table(comRandom))>1)
     #if(length(table(comRandom))==1) {stop("Not random graph")}
     de <- igraph::gsize(graph)
@@ -350,7 +356,7 @@ robinRobust <- function(graph, graphRandom,
     graphRewireRandom <- NULL
     graphRewire <- NULL
     count <- 1
-    nRewire <- seq(0,60,5)
+    nRewire <- seq(0, 60, 5)
     if(verbose) cat("Detected robin method ", type, " type\n")
     #INDEPENDENT    
     if(type == "independent") 
@@ -377,17 +383,18 @@ robinRobust <- function(graph, graphRandom,
                                     number=z, 
                                     community=comReal, 
                                     method=method,
-                                    measure=measure,
-                                    directed=directed,
-                                    weights=weights,
-                                    steps=steps, 
-                                    spins=spins, 
-                                    e.weights=e.weights, 
-                                    v.weights=v.weights, 
-                                    nb.trials=nb.trials,
-                                    resolution=resolution,
-                                    objective_function = objective_function,
-                                    n_iterations=n_iterations)
+                                    ...=..., FUN=FUN)
+                                    # measure=measure,
+                                    # directed=directed,
+                                    # weights=weights,
+                                    # steps=steps, 
+                                    # spins=spins, 
+                                    # e.weights=e.weights, 
+                                    # v.weights=v.weights, 
+                                    # nb.trials=nb.trials,
+                                    # resolution=resolution,
+                                    # objective_function = objective_function,
+                                    # n_iterations=n_iterations)
                 if (measure=="vi")
                 {
                     vector[k] <- (Real$Measure)/log2(N)
@@ -404,17 +411,17 @@ robinRobust <- function(graph, graphRandom,
                                         number=z, 
                                         community=comRandom, 
                                         method=method,
-                                        measure=measure,
-                                        directed=directed,
-                                        weights=weights,
-                                        steps=steps, 
-                                        spins=spins, 
-                                        e.weights=e.weights, 
-                                        v.weights=v.weights, 
-                                        nb.trials=nb.trials,
-                                      resolution=resolution,
-                                      objective_function = objective_function,
-                                      n_iterations=n_iterations)
+                                        measure=measure, ...=..., FUN=FUN)
+                                      #   directed=directed,
+                                      #   weights=weights,
+                                      #   steps=steps, 
+                                      #   spins=spins, 
+                                      #   e.weights=e.weights, 
+                                      #   v.weights=v.weights, 
+                                      #   nb.trials=nb.trials,
+                                      # resolution=resolution,
+                                      # objective_function = objective_function,
+                                      # n_iterations=n_iterations)
                 if (measure=="vi")
                 {
                     vectRandom[k] <- (Random$Measure)/log2(N)
@@ -433,17 +440,17 @@ robinRobust <- function(graph, graphRandom,
                                         number=round(0.01*de), 
                                         community=comReal, 
                                         method=method,
-                                        measure=measure,
-                                        directed=directed,
-                                        weights=weights,
-                                        steps=steps, 
-                                        spins=spins, 
-                                        e.weights=e.weights, 
-                                        v.weights=v.weights, 
-                                        nb.trials=nb.trials,
-                                        resolution=resolution,
-                                        objective_function = objective_function,
-                                        n_iterations=n_iterations)
+                                        measure=measure, ...=..., FUN=FUN)
+                                        # directed=directed,
+                                        # weights=weights,
+                                        # steps=steps, 
+                                        # spins=spins, 
+                                        # e.weights=e.weights, 
+                                        # v.weights=v.weights, 
+                                        # nb.trials=nb.trials,
+                                        # resolution=resolution,
+                                        # objective_function = objective_function,
+                                        # n_iterations=n_iterations)
                     if (measure=="vi")
                     {
                         vector[k] <- (Real$Measure)/log2(N)
@@ -458,17 +465,17 @@ robinRobust <- function(graph, graphRandom,
                                           number=round(0.01*de),
                                           community=comRandom,
                                           method=method,
-                                          measure=measure,
-                                          directed=directed,
-                                          weights=weights,
-                                          steps=steps, 
-                                          spins=spins, 
-                                          e.weights=e.weights, 
-                                          v.weights=v.weights, 
-                                          nb.trials=nb.trials,
-                                          resolution=resolution,
-                                          objective_function = objective_function,
-                                          n_iterations=n_iterations)
+                                          measure=measure, ...=..., FUN=FUN)
+                                          # directed=directed,
+                                          # weights=weights,
+                                          # steps=steps, 
+                                          # spins=spins, 
+                                          # e.weights=e.weights, 
+                                          # v.weights=v.weights, 
+                                          # nb.trials=nb.trials,
+                                          # resolution=resolution,
+                                          # objective_function = objective_function,
+                                          # n_iterations=n_iterations)
                     if (measure=="vi")
                     {
                         vectRandom[k] <- (Random$Measure)/log2(N)
@@ -512,18 +519,18 @@ robinRobust <- function(graph, graphRandom,
                 graphRewire <- rewireOnl(data=graph, number=z)
                 graphRewire <-igraph::union(graphRewire, diff)
                 comr <- membershipCommunities(graph=graphRewire,
-                                        method=method,
-                                        directed=directed,
-                                        weights=weights,
-                                        steps=steps, 
-                                        spins=spins, 
-                                        e.weights=e.weights, 
-                                        v.weights=v.weights, 
-                                        nb.trials=nb.trials,
-                                        FUN=FUN,
-                                        resolution=resolution,
-                                        objective_function = objective_function,
-                                        n_iterations=n_iterations)
+                                        method=method, ...=..., FUN=FUN)
+                                        # directed=directed,
+                                        # weights=weights,
+                                        # steps=steps, 
+                                        # spins=spins, 
+                                        # e.weights=e.weights, 
+                                        # v.weights=v.weights, 
+                                        # nb.trials=nb.trials,
+                                        # FUN=FUN,
+                                        # resolution=resolution,
+                                        # objective_function = objective_function,
+                                        # n_iterations=n_iterations)
                 Measure <- igraph::compare(comReal, comr, method=measure)
                 if (measure=="vi")
                 {
@@ -541,18 +548,18 @@ robinRobust <- function(graph, graphRandom,
                 graphRewireRandom <- rewireOnl(data=graphRandom, number=z)
                 graphRewireRandom <- igraph::union(graphRewireRandom, diffR)
                 comr <- membershipCommunities(graph=graphRewireRandom,
-                                        method=method,
-                                        directed=directed,
-                                        weights=weights,
-                                        steps=steps, 
-                                        spins=spins, 
-                                        e.weights=e.weights, 
-                                        v.weights=v.weights, 
-                                        nb.trials=nb.trials,
-                                        FUN=FUN,
-                                        resolution=resolution,
-                                        objective_function = objective_function,
-                                        n_iterations=n_iterations)
+                                        method=method, ...=..., FUN=FUN)
+                                        # directed=directed,
+                                        # weights=weights,
+                                        # steps=steps, 
+                                        # spins=spins, 
+                                        # e.weights=e.weights, 
+                                        # v.weights=v.weights, 
+                                        # nb.trials=nb.trials,
+                                        # FUN=FUN,
+                                        # resolution=resolution,
+                                        # objective_function = objective_function,
+                                        # n_iterations=n_iterations)
                 Measure <- igraph::compare(comRandom, comr,
                                            method=measure)
                 if(measure=="vi")
@@ -574,18 +581,18 @@ robinRobust <- function(graph, graphRandom,
                     ##REAL
                     Real <- rewireCompl(data=graphRewire, number=round(0.01*de),
                                         method=method,
-                                        measure=measure,
-                                        community=comReal,
-                                        directed=directed,
-                                        weights=weights,
-                                        steps=steps, 
-                                        spins=spins, 
-                                        e.weights=e.weights, 
-                                        v.weights=v.weights, 
-                                        nb.trials=nb.trials,
-                                        resolution=resolution,
-                                        objective_function = objective_function,
-                                        n_iterations=n_iterations)
+                                        measure=measure, , ...=..., FUN=FUN)
+                                        # community=comReal,
+                                        # directed=directed,
+                                        # weights=weights,
+                                        # steps=steps, 
+                                        # spins=spins, 
+                                        # e.weights=e.weights, 
+                                        # v.weights=v.weights, 
+                                        # nb.trials=nb.trials,
+                                        # resolution=resolution,
+                                        # objective_function = objective_function,
+                                        # n_iterations=n_iterations)
                     if(measure=="vi")
                     {
                         vector[k] <- (Real$Measure)/log2(N)
@@ -601,18 +608,19 @@ robinRobust <- function(graph, graphRandom,
                     Random <- rewireCompl(data=graphRewireRandom,
                                             method=method,
                                             measure=measure,
-                                            number=round(0.01*de),
-                                            community=comRandom,
-                                            directed=directed,
-                                            weights=weights,
-                                            steps=steps, 
-                                            spins=spins, 
-                                            e.weights=e.weights, 
-                                            v.weights=v.weights, 
-                                            nb.trials=nb.trials,
-                                          resolution=resolution,
-                                          objective_function = objective_function,
-                                          n_iterations=n_iterations)
+                                            number=round(0.01*de), 
+                                            ...=..., FUN=FUN)
+                                          #   community=comRandom,
+                                          #   directed=directed,
+                                          #   weights=weights,
+                                          #   steps=steps, 
+                                          #   spins=spins, 
+                                          #   e.weights=e.weights, 
+                                          #   v.weights=v.weights, 
+                                          #   nb.trials=nb.trials,
+                                          # resolution=resolution,
+                                          # objective_function = objective_function,
+                                          # n_iterations=n_iterations)
                     if(measure=="vi")
                     {
                         vectRandom[k] <- (Random$Measure)/log2(N)
@@ -629,10 +637,10 @@ robinRobust <- function(graph, graphRandom,
             }
             graph <- igraph::intersection(graph, graphRewire)
             graphRandom <- igraph::intersection(graphRandom, graphRewireRandom)
-            measureRandom <- cbind(measureRandom,measureRandom1)
-            measureReal <- cbind(measureReal,measureReal1)
-            Mean <- cbind(Mean,Mean1)
-            MeanRandom <- cbind(MeanRandom,MeanRandom1)
+            measureRandom <- cbind(measureRandom, measureRandom1)
+            measureReal <- cbind(measureReal, measureReal1)
+            Mean <- cbind(Mean, Mean1)
+            MeanRandom <- cbind(MeanRandom, MeanRandom1)
             z1 <- igraph::gsize(graph)
             #print(z1)
             if(verbose) cat("Perturbed ", z, " edges\n")
@@ -651,8 +659,6 @@ robinRobust <- function(graph, graphRandom,
       return(output)
 
 }
-
-
 
 
 ############### COMPARISON DIFFERENT METHODS ##########
