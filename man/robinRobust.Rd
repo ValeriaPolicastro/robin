@@ -9,19 +9,11 @@ robinRobust(
   graphRandom,
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
     "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
+  ...,
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = c("independent", "dependent"),
-  directed = FALSE,
-  weights = NULL,
-  steps = 4,
-  spins = 25,
-  e.weights = NULL,
-  v.weights = NULL,
-  nb.trials = 10,
-  resolution = 1,
-  n_iterations = 2,
-  objective_function = c("CPM", "modularity"),
+  nrep = 5,
   verbose = TRUE
 )
 }
@@ -46,7 +38,7 @@ The personal parameter has to take as input the @graph and the @weights
 \item{type}{The type of robin construction, dependent or independent 
 procedure.}
 
-\item{directed}{This argument is settable only for "edgeBetweenness" method.}
+\item{verbose}{flag for verbose output (default as TRUE).}
 
 \item{weights}{this argument is not settable for "infomap" method.}
 
@@ -61,17 +53,17 @@ method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
-\item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter, lower values typically yield fewer, larger clusters (default=1).}
+\item{directed}{This argument is settable only for "edgeBetweenness" method.}
+
+\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
+modularity. Must be either "CPM" or "modularity".}
 
 \item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
 Each iteration may improve the partition further.This argument is settable 
 only for "leiden".}
 
-\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
-modularity. Must be either "CPM" or "modularity".}
-
-\item{verbose}{flag for verbose output (default as TRUE).}
+\item{resolution}{only for "louvain" and "leiden". Optional resolution 
+parameter, lower values typically yield fewer, larger clusters (default=1).}
 }
 \value{
 A list object with two matrices:
@@ -88,5 +80,5 @@ my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-measure="vi",type="independent")
+    resolution=0.8, measure="vi", type="independent")
 }

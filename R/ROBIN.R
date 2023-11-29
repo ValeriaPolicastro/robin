@@ -299,12 +299,12 @@ rewireOnl <- function(data, number)
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 #' robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-#'     measure="vi",type="independent")
+#'     resolution=0.8, measure="vi", type="independent")
 robinRobust <- function(graph, graphRandom, 
                 method=c("walktrap", "edgeBetweenness", 
                          "fastGreedy", "louvain", "spinglass", 
                          "leadingEigen", "labelProp", "infomap",
-                         "optimal","leiden","other"),
+                         "optimal", "leiden", "other"),
                 ...,
                 FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
                 type=c("independent","dependent"), nrep=5,
