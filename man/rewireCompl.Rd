@@ -38,4 +38,4 @@ i.e. \link[igraph]{cluster_walktrap})}
 rewires the graph, creates the communities and 
 compares the communities through different measures.
 }
-\keyword{iternal}
+\keyword{internal}

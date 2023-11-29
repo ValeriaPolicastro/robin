@@ -4,11 +4,9 @@
 \alias{robinAUC}
 \title{robinAUC}
 \usage{
-robinAUC(graph, model1, model2, verbose = FALSE)
+robinAUC(model1, model2, verbose = FALSE)
 }
 \arguments{
-\item{graph}{The output of prepGraph.}
-
 \item{model1}{The Mean output of the robinRobust function (or the Mean1 
 output of the robinCompare function).}
 
@@ -29,5 +27,5 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
 measure="vi",type="independent")
-robinAUC(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom)
+robinAUC(model1=Proc$Mean, model2=Proc$MeanRandom)
 }

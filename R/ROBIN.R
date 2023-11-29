@@ -664,11 +664,13 @@ robinRobust <- function(graph, graphRandom,
 #' @param method1 The first clustering method, one of "walktrap", 
 #' "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal".
-#' @param args1 A \code{list} of arguments to be passed to the \code{method1}.
+#' @param args1 A \code{list} of arguments to be passed to the \code{method1} 
+#' (see i.e. \link[igraph]{cluster_leiden} for a list of possible method parameters).
 #' @param method2 The second custering method one of "walktrap",
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal".
-#' @param args2 A \code{list} of arguments to be passed to the \code{method2}.
+#' @param args2 A \code{list} of arguments to be passed to the \code{method2}
+#' (see i.e. \link[igraph]{cluster_leiden} for a list of possible method parameters).
 #' @param FUN1 personal designed function when \code{method1} is "others". 
 #' see \code{\link{methodCommunity}}.
 #' @param FUN2 personal designed function when \code{method2} is "others". 
