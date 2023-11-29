@@ -663,17 +663,17 @@ robinRobust <- function(graph, graphRandom,
 #' @param graph The output of prepGraph.
 #' @param method1 The first clustering method, one of "walktrap", 
 #' "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
-#' "labelProp", "infomap","optimal".
+#' "labelProp", "infomap","leiden","optimal","other".
 #' @param args1 A \code{list} of arguments to be passed to the \code{method1} 
 #' (see i.e. \link[igraph]{cluster_leiden} for a list of possible method parameters).
 #' @param method2 The second custering method one of "walktrap",
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
-#' "labelProp", "infomap","optimal".
+#' "labelProp", "infomap","leiden","optimal","other".
 #' @param args2 A \code{list} of arguments to be passed to the \code{method2}
 #' (see i.e. \link[igraph]{cluster_leiden} for a list of possible method parameters).
-#' @param FUN1 personal designed function when \code{method1} is "others". 
+#' @param FUN1 personal designed function when \code{method1} is "other". 
 #' see \code{\link{methodCommunity}}.
-#' @param FUN2 personal designed function when \code{method2} is "others". 
+#' @param FUN2 personal designed function when \code{method2} is "other". 
 #' see \code{\link{methodCommunity}}.
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
@@ -686,15 +686,16 @@ robinRobust <- function(graph, graphRandom,
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
 #' @import igraph
-#' @export
+#' @export 
+#' @keywords internal
 #'
 #' @examples 
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
-#' robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8),
+#' robinCompareNoParallel(graph=graph, method1="louvain", args1 = list(resolution=0.8),
 #'             method2="leiden", args2=list(objective_function ="modularity"), 
 #'             measure="vi", type="independent")
-robinCompare <- function(graph, 
+robinCompareNoParallel <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen", "louvain", "spinglass",
                                    "labelProp", "infomap", "optimal", "leiden", 
