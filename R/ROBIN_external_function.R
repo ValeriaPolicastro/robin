@@ -44,8 +44,6 @@
 #' robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8),
 #'             method2="leiden", args2=list(objective_function ="modularity"),
 #'             ncores=2)
-
-
 robinCompare <-  function(graph, 
                           method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                     "leadingEigen", "louvain", "spinglass",
@@ -58,23 +56,21 @@ robinCompare <-  function(graph,
                                     "other"),
                           args2=list(),
                           FUN1=NULL, FUN2=NULL,
-                          measure= c("vi", "nmi","split.join", "adjusted.rand"),
+                          measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           ncores=2,
                           type=c("parallel", "independent", "dependent"),
                           verbose=TRUE)
 {
     type <- match.arg(type)
-    if(type=="parallel"){
-        
-     output <- robinCompareFast(graph=graph, method1=method1, args1 = args1,
-                         method2=method2, args2=args2, measure=measure, 
-                         ncores=ncores)
-        
-    }
-    
-    else 
+
+    if (type=="parallel")
     {
-        output <- robinCompareNoParallel(graph=graph, method1=method1, args1 = args1,
+     output <- robinCompareFast(graph=graph, method1=method1, args1=args1, 
+                                method2=method2, args2=args2, measure=measure, 
+                                ncores=ncores)
+        
+    } else {
+        output <- robinCompareNoParallel(graph=graph, method1=method1, args1=args1,
                             method2=method2, args2=args2, measure=measure, 
                            type=type) 
     }

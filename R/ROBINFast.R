@@ -38,7 +38,6 @@
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' robinCompareFast(graph=graph, method1="louvain", 
 #' method2="fastGreedy", measure="vi")
-
 robinCompareFast <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen","louvain","spinglass",
