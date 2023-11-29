@@ -664,32 +664,19 @@ robinRobust <- function(graph, graphRandom,
 #' @param method1 The first clustering method, one of "walktrap", 
 #' "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal".
+#' @param args1 A \code{list} of arguments to be passed to the \code{method1}.
 #' @param method2 The second custering method one of "walktrap",
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal".
-#' @param FUN1 personal designed function when method1 is "others". 
+#' @param args2 A \code{list} of arguments to be passed to the \code{method2}.
+#' @param FUN1 personal designed function when \code{method1} is "others". 
 #' see \code{\link{methodCommunity}}.
-#' @param FUN2 personal designed function when method2 is "others". 
+#' @param FUN2 personal designed function when \code{method2} is "others". 
 #' see \code{\link{methodCommunity}}.
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param type The type of robin construction, dependent or independent.
-#' @param weights This argument is not settable for "infomap" method.
-#' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
-#' method.
-#' @param spins This argument is settable only for "infomap" method.
-#' @param e.weights This argument is settable only for "infomap" method.
-#' @param v.weights This argument is settable only for "infomap" method.
-#' @param nb.trials This argument is settable only for "infomap" method.
-#' @param directed This argument is settable only for "edgeBetweenness" method.
-#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
-#' modularity. Must be either "CPM" or "modularity".
-#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
-#' Each iteration may improve the partition further.This argument is settable 
-#' only for "leiden".
-#' @param resolution only for "louvain" and "leiden". Optional resolution 
-#' parameter, lower values typically yield fewer, larger clusters (default=1).
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
@@ -761,33 +748,6 @@ robinCompare <- function(graph,
                 args21 <- c(list(graph=graphRewire), method=method2, FUN=FUN2, args2)
                 comr1 <- do.call(membershipCommunities, args11)
                 comr2 <- do.call(membershipCommunities, args21)
-                # comr1 <- membershipCommunities(graph=graphRewire, 
-                #                                method=method1,
-                #                                FUN=FUN1,
-                #                                directed=directed,
-                #                                weights=weights,
-                #                                steps=steps, 
-                #                                spins=spins, 
-                #                                e.weights=e.weights, 
-                #                                v.weights=v.weights, 
-                #                                nb.trials=nb.trials,
-                #                                resolution=resolution,
-                #                                objective_function = objective_function,
-                #                                n_iterations=n_iterations
-                #                                )
-                # comr2 <- membershipCommunities(graph=graphRewire, 
-                #                                method=method2, 
-                #                                FUN=FUN2,
-                #                                directed=directed,
-                #                                weights=weights,
-                #                                steps=steps, 
-                #                                spins=spins, 
-                #                                e.weights=e.weights, 
-                #                                v.weights=v.weights, 
-                #                                nb.trials=nb.trials,
-                #                                resolution=resolution,
-                #                                objective_function = objective_function,
-                #                                n_iterations=n_iterations)
                 if (measure=="vi")
                 {
                     vector1[k] <- igraph::compare(comr1, comReal1, 
@@ -818,33 +778,7 @@ robinCompare <- function(graph,
                     args21 <- c(list(graph=graphRewire), method=method2, FUN=FUN2, args2)
                     comr1 <- do.call(membershipCommunities, args11)
                     comr2 <- do.call(membershipCommunities, args21)
-                    # 
-                    # comr1 <- membershipCommunities(graph=graphRewire,
-                    #                                method=method1,
-                    #                                FUN=FUN1,
-                    #                                directed=directed,
-                    #                                weights=weights,
-                    #                                steps=steps, 
-                    #                                spins=spins, 
-                    #                                e.weights=e.weights, 
-                    #                                v.weights=v.weights, 
-                    #                                nb.trials=nb.trials,
-                    #                                resolution=resolution,
-                    #                                objective_function = objective_function,
-                    #                                n_iterations=n_iterations)
-                    # comr2 <- membershipCommunities(graph=graphRewire, 
-                    #                                FUN=FUN2,
-                    #                                method=method2,
-                    #                                directed=directed,
-                    #                                weights=weights,
-                    #                                steps=steps, 
-                    #                                spins=spins, 
-                    #                                e.weights=e.weights, 
-                    #                                v.weights=v.weights, 
-                    #                                nb.trials=nb.trials,
-                    #                                resolution=resolution,
-                    #                                objective_function = objective_function,
-                    #                                n_iterations=n_iterations)
+                   
                     if(measure=="vi")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 
@@ -903,32 +837,7 @@ robinCompare <- function(graph,
                 args21 <- c(list(graph=graphRewire), method=method2, FUN=FUN2, args2)
                 comr1 <- do.call(membershipCommunities, args11)
                 comr2 <- do.call(membershipCommunities, args21)
-                # comr1 <- membershipCommunities(graph=graphRewire, 
-                #                                method=method1,
-                #                                FUN=FUN1,
-                #                                directed=directed,
-                #                                weights=weights,
-                #                                steps=steps, 
-                #                                spins=spins, 
-                #                                e.weights=e.weights, 
-                #                                v.weights=v.weights, 
-                #                                nb.trials=nb.trials,
-                #                                resolution=resolution,
-                #                                objective_function = objective_function,
-                #                                n_iterations=n_iterations)
-                # comr2 <- membershipCommunities(graph=graphRewire, 
-                #                                method=method2,
-                #                                FUN=FUN2,
-                #                                directed=directed,
-                #                                weights=weights,
-                #                                steps=steps, 
-                #                                spins=spins, 
-                #                                e.weights=e.weights, 
-                #                                v.weights=v.weights, 
-                #                                nb.trials=nb.trials,
-                #                                resolution=resolution,
-                #                                objective_function = objective_function,
-                #                                n_iterations=n_iterations)
+                
                 if(measure=="vi")
                 {
                     vector1[k] <- igraph::compare(comr1, comReal1, 
@@ -961,32 +870,7 @@ robinCompare <- function(graph,
                     args21 <- c(list(graph=graphRewire), method=method2, FUN=FUN2, args2)
                     comr1 <- do.call(membershipCommunities, args11)
                     comr2 <- do.call(membershipCommunities, args21)
-                    # comr1 <- membershipCommunities(graph=graphRewire,
-                    #                                method=method1,
-                    #                                FUN=FUN1,
-                    #                                directed=directed,
-                    #                                weights=weights,
-                    #                                steps=steps, 
-                    #                                spins=spins, 
-                    #                                e.weights=e.weights, 
-                    #                                v.weights=v.weights, 
-                    #                                nb.trials=nb.trials,
-                    #                                resolution=resolution,
-                    #                                objective_function = objective_function,
-                    #                                n_iterations=n_iterations)
-                    # comr2 <- membershipCommunities(graph=graphRewire,
-                    #                                method=method2,
-                    #                                FUN=FUN2,
-                    #                                directed=directed,
-                    #                                weights=weights,
-                    #                                steps=steps, 
-                    #                                spins=spins, 
-                    #                                e.weights=e.weights, 
-                    #                                v.weights=v.weights, 
-                    #                                nb.trials=nb.trials,
-                    #                                resolution=resolution,
-                    #                                objective_function = objective_function,
-                    #                                n_iterations=n_iterations)
+                    
                     if(measure=="vi")
                     {
                         vector1[k] <- igraph::compare(comr1, comReal1, 
