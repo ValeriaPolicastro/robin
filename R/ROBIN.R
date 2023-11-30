@@ -568,7 +568,7 @@ robinRobustNoParallel <- function(graph, graphRandom,
                     ##REAL
                     Real <- rewireCompl(data=graphRewire, number=round(0.01*de),
                                         method=method,
-                                        measure=measure, , ...=..., FUN=FUN)
+                                        measure=measure, ...=..., FUN=FUN)
                                         # community=comReal,
                                         # directed=directed,
                                         # weights=weights,
