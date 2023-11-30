@@ -26,6 +26,8 @@ robinRobustNoParallel(
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "leiden","optimal".}
 
+\item{...}{other parameter}
+
 \item{FUN}{in case the @method parameter is "other" there is the possibility 
 to use a personal function passing its name through this parameter.
 The personal parameter has to take as input the @graph and the @weights 
@@ -40,30 +42,7 @@ procedure.}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{weights}{this argument is not settable for "infomap" method.}
-
-\item{steps}{this argument is settable only for "leadingEigen"and"walktrap" 
-method.}
-
-\item{spins}{This argument is settable only for "infomap" method.}
-
-\item{e.weights}{This argument is settable only for "infomap" method.}
-
-\item{v.weights}{This argument is settable only for "infomap" method.}
-
-\item{nb.trials}{This argument is settable only for "infomap" method.}
-
-\item{directed}{This argument is settable only for "edgeBetweenness" method.}
-
-\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
-modularity. Must be either "CPM" or "modularity".}
-
-\item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
-Each iteration may improve the partition further.This argument is settable 
-only for "leiden".}
-
-\item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter, lower values typically yield fewer, larger clusters (default=1).}
+\item{rep}{number of replicates for each perturbation.}
 }
 \value{
 A list object with two matrices:
