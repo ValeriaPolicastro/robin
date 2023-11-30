@@ -63,7 +63,8 @@ plotComm <- function(graph, members)
 #'
 #' @description This function plots two curves: the measure of the null model and the measure
 #' of the real graph or the measure of the two community detection algorithms.
-#' @param x A robin class object
+#' @param x A robin class object. The output of the functions:  
+#' \code{\link{robinRobust}} and \code{\link{robinCompare}}.
 #' @param title The title for the graph. The default is "Robin plot".
 #' @param ... other parameter
 #'

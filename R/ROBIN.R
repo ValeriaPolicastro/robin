@@ -959,10 +959,8 @@ createITPSplineResult <- function(graph, model1, model2,
 #'
 #' @description This function implements the GP testing procedure and calculates the 
 #' Bayes factor.
-#' @param model1 The Mean output of the robinRobust function (or the Mean1 
-#' output of the robinCompare function).
-#' @param model2 The MeanRandom output of the robinRobust function (or the 
-#' Mean2 output of the robinCompare function).
+#' @param x A robin class object. The output of the functions:  
+#' \code{\link{robinRobust}} and \code{\link{robinCompare}}.
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return A numeric value, the Bayes factor
@@ -972,13 +970,20 @@ createITPSplineResult <- function(graph, model1, model2,
 #' @examples 
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
-#' graphRandom <- random(graph=graph)
-#' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, 
-#' method="louvain", measure="vi",type="independent")
-#' \donttest{robinGPTest(model1=Proc$Mean,model2=Proc$MeanRandom)}
-robinGPTest <- function(model1, model2, verbose=FALSE)
+#' comp <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
+#' \donttest{robinGPTest(comp)}
+robinGPTest <- function(x, verbose=FALSE)
 { 
-   ratios <- log2((model1+0.001)/(model2+0.001))
+   
+    if (length(x$Mean1)==0)
+    {
+        model1 <- x$Mean
+        model2 <- x$MeanRandom 
+    }else{
+        model1 <- x$Mean1
+        model2 <- x$Mean2 
+    }
+    ratios <- log2((model1+0.001)/(model2+0.001))
    #rapporto tra la media delle misure tra il modello reale e quello perturbato 
    #e la media delle distanze tra il random e la sua perturbazione
    res <- as.vector(ratios)
@@ -1035,15 +1040,8 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #'@description The function implements the Interval Testing Procedure to 
 #'test the difference between two curves.
 #'
-#' @param graph The output of prepGraph.
-#' @param model1 The Mean output of the robinRobust function (or the Mean1 
-#' output of the robinCompare function).
-#' @param model2 The MeanRandom output of the robinRobust function (or the 
-#' Mean2 output of the robinCompare function).
-#' @param legend The legend for the graph. The default is c("model1", 
-#' "model2"). If using robinRobust is recommended c("real data", "null model"), 
-#' if using robinCompare, enter the names of the community detection 
-#' algorithms.
+#' @param x A robin class object. The output of the functions:  
+#' \code{\link{robinRobust}} and \code{\link{robinCompare}}.
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return Two plots: the fitted curves and the adjusted p-values. A vector of the adjusted p-values. 
@@ -1053,18 +1051,26 @@ robinGPTest <- function(model1, model2, verbose=FALSE)
 #' @examples 
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
-#' graphRandom <- random(graph=graph)
-#' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-#' measure="vi",type="independent")
-#' \donttest{robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
-#' legend=c("real data", "null model"))}
-robinFDATest <- function(graph,model1,model2,
-                        legend=c("model1", "model2"), verbose=FALSE)
+#' comp <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
+#' \donttest{robinFDATest(comp)}
+robinFDATest <- function(x, verbose=FALSE)
 {
     if(verbose) cat("Computing Interval testing procedure.\n")
+    
+    graph <- x$graph
+    legend <- c(x$model1,x$model2)
+    if (length(x$Mean1)==0)
+    {
+        model1 <- x$Mean
+        model2 <- x$MeanRandom 
+    }else{
+        model1 <- x$Mean1
+        model2 <- x$Mean2 
+    }
+    
+    
+    
     object <- createITPSplineResult(graph, model1, model2)
-    
-    
     #Functional Data plot
     J <- dim(object$data.eval)[2]
     xmin <- 0

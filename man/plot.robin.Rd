@@ -7,7 +7,8 @@
 \method{plot}{robin}(x, title = "Robin plot", ...)
 }
 \arguments{
-\item{x}{A robin class object}
+\item{x}{A robin class object. The output of the functions:
+\code{\link{robinRobust}} and \code{\link{robinCompare}}.}
 
 \item{title}{The title for the graph. The default is "Robin plot".}
 
