@@ -62,7 +62,7 @@ robinCompare <-  function(graph,
                           verbose=TRUE)
 {
     type <- match.arg(type)
-
+    methods <- c(method1,method2)
     if (type=="parallel")
     {
      output <- robinCompareFast(graph=graph, method1=method1, args1=args1, 
@@ -75,9 +75,79 @@ robinCompare <-  function(graph,
                            type=type) 
     }
    
-    
-   # class(output) <- "robin"
-    return(output)
+   
+    outputRobin <- c(output, model=methods, list(graph=graph))
+
+   class(outputRobin) <- "robin"
+    return(outputRobin)
     
 }
-           
+
+
+############### ROBUST METHOD ##########
+#' robinRobust
+#' @description This functions implements a procedure to examine the stability 
+#' of the partition recovered by some algorithm against random perturbations 
+#' of the original graph structure.
+#' @param graph The output of prepGraph.
+#' @param graphRandom The output of random function.
+#' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
+#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
+#' "leiden","optimal".
+#' @param FUN in case the @method parameter is "other" there is the possibility 
+#' to use a personal function passing its name through this parameter.
+#' The personal parameter has to take as input the @graph and the @weights 
+#' (that can be NULL), and has to return a community object.
+#' @param measure The stability measure, one of "vi", "nmi", "split.join", 
+#' "adjusted.rand" all normalized and used as distances.
+#' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
+#' @param type The type of robin construction, dependent or independent 
+#' procedure.
+#' @param ... other parameter.
+#' @param verbose flag for verbose output (default as TRUE).
+#' 
+#' @return A list object with two matrices:
+#' - the matrix "Mean" with the means of the procedure for the graph
+#' - the matrix "MeanRandom" with the means of the procedure for the random graph. 
+#' 
+#' @import igraph
+#' @export
+#'
+#' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
+#'     resolution=0.8, measure="vi", type="independent")
+
+
+robinRobust <-  function(graph, graphRandom, 
+                          method=c("walktrap", "edgeBetweenness", 
+                                   "fastGreedy", "louvain", "spinglass", 
+                                   "leadingEigen", "labelProp", "infomap",
+                                   "optimal", "leiden", "other"),
+                          ...,
+                          FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
+                          type=c("independent","dependent"), nrep=5,verbose=TRUE )
+{
+    type <- match.arg(type)
+    methods <- c("real data", "null model")
+     # No Parallel              
+    output <- robinRobustNoParallel(graph=graph, graphRandom= graphRandom, 
+                                    method=method,
+                                    ...,
+                                    FUN=NULL, measure=measure,
+                                    type=type, nrep=nrep, verbose=verbose)
+     # Parallel version: 
+    #DA FARE
+
+outputRobin <- c(output, model=methods, list(graph=graph))
+
+class(outputRobin) <- "robin"
+return(outputRobin)
+}
+                          
+
+                          
+            
+

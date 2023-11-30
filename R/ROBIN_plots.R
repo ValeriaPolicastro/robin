@@ -59,20 +59,13 @@ plotComm <- function(graph, members)
 
 
 ############PLOT##############
-#' plotRobin
+#' plot.robin
 #'
 #' @description This function plots two curves: the measure of the null model and the measure
 #' of the real graph or the measure of the two community detection algorithms.
-#' @param graph The output of prepGraph
-#' @param model1 The Mean output of the robinRobust function or the Mean1 
-#' output of robinCompare.
-#' @param model2 The MeanRandom output of the robinRobust function or the Mean2 
-#' output of robinCompare.
-#' @param legend The legend for the graph. The default is c("model1", 
-#' "model2"). If using robinRobust is recommended c("real data", "null model"), 
-#' if using robinCompare, enter the names of the community detection 
-#' algorithms.
+#' @param x A robin class object
 #' @param title The title for the graph. The default is "Robin plot".
+#' @param ... other parameter
 #'
 #' @return A ggplot object.
 #' @import ggplot2 igraph
@@ -81,16 +74,22 @@ plotComm <- function(graph, members)
 #' @examples 
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
-#' graphRandom <- random(graph=graph)
-#' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-#' measure="vi", type="independent")
-#' plotRobin(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom
-#' , legend=c("real data", "null model"))
+#' comp <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
+#' plot(comp)
 #' 
-plotRobin <- function(graph, model1, model2,
-                      legend=c("model1", "model2"),
-                      title="Robin plot")
+plot.robin <- function(x, title="Robin plot", ...)
 {   
+    
+    legend <- c(x$model1,x$model2)
+    if (length(x$Mean1)==0)
+    {
+        model1 <- x$Mean
+        model2 <- x$MeanRandom 
+    }else{
+         model1 <- x$Mean1
+         model2 <- x$Mean2 
+    }
+   
     mvimodel1 <- as.vector((apply(model1, 2, mean)))
     mvimodel2 <- as.vector((apply(model2, 2, mean)))
     

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ROBIN.R
 \name{robinCompareNoParallel}
 \alias{robinCompareNoParallel}
-\title{robinCompare}
+\title{robinCompareNoParallel}
 \usage{
 robinCompareNoParallel(
   graph,

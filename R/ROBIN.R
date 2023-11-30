@@ -251,7 +251,7 @@ rewireOnl <- function(data, number)
 
 
 ########  ROBIN PROCEDURE ROBUSTNESS#######
-#' robinRobust
+#' robinRobustNoParallel
 #'
 #' @description This functions implements a procedure to examine the stability 
 #' of the partition recovered by some algorithm against random perturbations 
@@ -298,9 +298,9 @@ rewireOnl <- function(data, number)
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
+#' robinRobustNoParallel(graph=graph, graphRandom=graphRandom, method="louvain",
 #'     resolution=0.8, measure="vi", type="independent")
-robinRobust <- function(graph, graphRandom, 
+robinRobustNoParallel <- function(graph, graphRandom, 
                 method=c("walktrap", "edgeBetweenness", 
                          "fastGreedy", "louvain", "spinglass", 
                          "leadingEigen", "labelProp", "infomap",
@@ -662,7 +662,7 @@ robinRobust <- function(graph, graphRandom,
 
 
 ############### COMPARISON DIFFERENT METHODS ##########
-#' robinCompare
+#' robinCompareNoParallel
 #'
 #' @description  This function compares the robustness of two community 
 #' detection algorithms.
