@@ -217,3 +217,24 @@ robinCompareFast <- function(graph,
 
 
 
+#' robinRobustFast
+#'
+
+robinRobustFast <- function(graph, graphRandom, 
+                             method=c("walktrap", "edgeBetweenness", 
+                                      "fastGreedy", "louvain", "spinglass", 
+                                      "leadingEigen", "labelProp", "infomap",
+                                      "optimal", "leiden", "other"),
+                             ...,
+                             FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
+                             verbose=TRUE)
+{ 
+    
+    #FARE
+}
+
+
+
+
+
+

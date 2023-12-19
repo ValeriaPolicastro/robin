@@ -271,7 +271,6 @@ rewireOnl <- function(data, number)
 #' @param type The type of robin construction, dependent or independent 
 #' procedure.
 #' @param ... other parameter
-#' @param rep number of replicates for each perturbation.
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
@@ -294,7 +293,7 @@ robinRobustNoParallel <- function(graph, graphRandom,
                          "optimal", "leiden", "other"),
                 ...,
                 FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                type=c("independent","dependent"), nrep=5,
+                type=c("independent","dependent"),
                 # directed=FALSE, weights=NULL, 
                 # steps=4, spins=25, e.weights=NULL, v.weights=NULL, 
                 # nb.trials=10, resolution=1, n_iterations=2,
@@ -305,7 +304,7 @@ robinRobustNoParallel <- function(graph, graphRandom,
     type<- match.arg(type)
     method <- match.arg(method)
     # dots <- list(...)
-    # nrep <- 10
+     nrep <- 10
     comReal <- membershipCommunities(graph=graph, method=method, 
                                     ...=...,
                                     FUN=FUN) # real network

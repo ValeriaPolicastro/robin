@@ -25,8 +25,9 @@
 #' @param ncores number of CPU cores to use.(default is 2) For a faster 
 #' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)
 #' maximum 12 cores
-#' @param type The type of robin construction, parallel, dependent or 
-#' independent (default parallel).
+#' @param type Character indicating "independent" or "dependent" for the old 
+#' robin type contruction. If NULL the new faster version is computed 
+#' (default NULL).
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' 
@@ -58,22 +59,28 @@ robinCompare <-  function(graph,
                           FUN1=NULL, FUN2=NULL,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           ncores=2,
-                          type=c("parallel", "independent", "dependent"),
+                          type=NULL,
                           verbose=TRUE)
 {
-    type <- match.arg(type)
+    
     methods <- c(method1,method2)
-    if (type=="parallel")
-    {
+    
+    # Aggiungere la versione Weigthed
+   
+    
+    
+        
      output <- robinCompareFast(graph=graph, method1=method1, args1=args1, 
                                 method2=method2, args2=args2, measure=measure, 
                                 ncores=ncores)
         
-    } else {
-        output <- robinCompareNoParallel(graph=graph, method1=method1, args1=args1,
+     if(any(type%in%c("independent","dependent")))
+     {
+    
+          output <- robinCompareNoParallel(graph=graph, method1=method1, args1=args1,
                             method2=method2, args2=args2, measure=measure, 
                            type=type) 
-    }
+     }
    
    
     outputRobin <- c(output, model=methods, list(graph=graph))
