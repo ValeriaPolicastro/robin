@@ -36,7 +36,7 @@
 #' @examples 
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
-#' robinCompareFast(graph=graph, method1="louvain", 
+#' robinCompareFast(graph=graph, method1="louvain", args1 = list(resolution=0.8)
 #' method2="fastGreedy", measure="vi")
 robinCompareFast <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
@@ -49,7 +49,7 @@ robinCompareFast <- function(graph,
                                    "labelProp","infomap","optimal","leiden",
                                    "other"),
                          args2=list(),
-                         measure= c("vi", "nmi","split.join", "adjusted.rand"),
+                         measure= c("vi", "nmi", "split.join", "adjusted.rand"),
                          ncores=2,
                          FUN1=NULL, FUN2=NULL,
                          verbose=TRUE)
@@ -88,11 +88,11 @@ robinCompareFast <- function(graph,
     #                                   n_iterations=n_iterations)
     de <- igraph::gsize(graph)
     N <- igraph::vcount(graph)
-    Measure <- NULL
-    vector1 <- NULL
-    vector2 <- NULL
-    graphRewire <- NULL
-    count <- 1
+   # Measure <- NULL
+     # vector1 <- NULL
+   # vector2 <- NULL
+    # graphRewire <- NULL
+   # count <- 1
     nRewire <- seq(0,60,5)
     if(verbose) cat("Detecting robin method independent parallelized type, wait it can take time it depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
@@ -219,6 +219,40 @@ robinCompareFast <- function(graph,
 
 #' robinRobustFast
 #'
+#' @description This functions implements a procedure to examine the stability 
+#' of the partition recovered by some algorithm against random perturbations 
+#' of the original graph structure.
+#' @param graph The output of prepGraph.
+#' @param graphRandom The output of random function.
+#' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
+#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
+#' "leiden","optimal".
+#' @param measure The stability measure, one of "vi", "nmi", "split.join", 
+#' "adjusted.rand" all normalized and used as distances.
+#' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
+#' @param ... 
+#' @param FUN in case the @method parameter is "other" there is the possibility 
+#' to use a personal function passing its name through this parameter.
+#' The personal parameter has to take as input the @graph and the @weights 
+#' (that can be NULL), and has to return a community object.
+#' @param ... other parameter
+#' @param verbose flag for verbose output (default as TRUE)
+#' @param ncores number of CPU cores to use.(default is 2) For a faster 
+#' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1) 
+#' 
+#' @return A list object with two matrices:
+#' - the matrix "Mean" with the means of the procedure for the graph
+#' - the matrix "MeanRandom" with the means of the procedure for the random graph. 
+#' 
+#' @import igraph
+#' @export
+#'
+#' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' robinRobustFast(graph=graph, graphRandom=graphRandom, method="louvain",
+#'     resolution=0.8, measure="vi", ncores=2)
 
 robinRobustFast <- function(graph, graphRandom, 
                              method=c("walktrap", "edgeBetweenness", 
@@ -226,11 +260,120 @@ robinRobustFast <- function(graph, graphRandom,
                                       "leadingEigen", "labelProp", "infomap",
                                       "optimal", "leiden", "other"),
                              ...,
-                             FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                             verbose=TRUE)
+                             FUN=NULL, measure= c("vi", "nmi", "split.join", 
+                                                  "adjusted.rand"),
+                             ncores=2, verbose=TRUE)
 { 
+    measure <- match.arg(measure)
+    method <- match.arg(method)
+    # dots <- list(...)
+    comReal <- robin::membershipCommunities(graph=graph, method=method, 
+                                     ...=..., FUN=FUN) # real network
     
-    #FARE
+    
+    comRandom <- robin::membershipCommunities(graph=graphRandom, method=method,
+                                       ...=..., FUN=FUN)
+  
+    de <- igraph::gsize(graph)
+    N <- igraph::vcount(graph)
+
+    nRewire <- seq(0, 60, 5)
+    if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
+  
+    
+        vet1 <- seq(5, 60, 5) #each step 
+        vet <- round(vet1*de/100, 0) #the numbers of edges to rewire
+        #arrotonda a 0 cifre decimali
+        cl <- parallel::makeCluster(ncores)
+        zlist <- parallel::clusterApply(cl,vet, function(z) 
+        {  
+            MeansList <- lapply(1:10, function(s)
+            {
+                
+                graphRList <- igraph::rewire(graph, 
+                                             with=igraph::keeping_degseq(loops=FALSE,
+                                                                         niter=z))
+                
+                
+                comReal1 <- robin::membershipCommunities(graph=graphRList,
+                                                      method=method,
+                                                      FUN=FUN, ...=...)
+                                                      
+                #argsP <- c(list(graph=graphRList), method=method, FUN=FUN, ...=...)
+                #comReal1 <- do.call(membershipCommunities, argsP)
+                
+                
+                if(measure=="vi")
+                {
+                    measure1 <- igraph::compare(comReal1, comReal, 
+                                                method=measure)/log2(N)
+                } else if(measure=="split.join")
+                {
+                    measure1 <- igraph::compare(comReal1, comReal, 
+                                                method=measure)/(2*N)
+                }else{
+                    measure1 <- 1-(igraph::compare(comReal1, comReal,
+                                                   method=measure))
+                    
+                }
+                
+                graphRandomList <- igraph::rewire(graphRandom, 
+                                             with=igraph::keeping_degseq(loops=FALSE,
+                                                                         niter=z))
+                
+                
+                comRandom1 <- robin::membershipCommunities(graph=graphRandomList,
+                                                         method=method,
+                                                         FUN=FUN, ...=...)
+                
+                #argsR <- c(list(graph=graphRandomList), method=method, FUN=FUN, ...=...)
+                #comRandom1 <- do.call(membershipCommunities, argsR)
+                
+                
+                
+    
+                if(measure=="vi")
+                {
+                    
+                    measure2 <-  igraph::compare(comRandom1, comRandom, 
+                                                 method=measure)/log2(N)
+                } else if (measure=="split.join"){
+                    measure2 <- igraph::compare(comRandom1, comRandom, 
+                                                method=measure)/(2*N)
+                } else{
+                    
+                    measure2 <- 1-(igraph::compare(comRandom1, comRandom, 
+                                                   method=measure))
+                }
+                return(list("Measure1"=measure1, "Measure2"=measure2))
+            })
+            
+            
+            m1 <- unlist(lapply(MeansList, function(mm)
+            {
+                mm$Measure1
+            }))
+            
+            m2 <- unlist(lapply(MeansList, function(mm)
+            {
+                mm$Measure2
+            }))
+            
+            
+            
+            return(list("Measure1"=measure1, "Measure2"=measure2))
+        })
+        parallel::stopCluster(cl)
+        Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
+        Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
+        
+        Measure1 <- cbind(rep(0, 10), Measure1)
+        Measure2 <- cbind(rep(0, 10), Measure2)
+        
+        colnames(Measure1) <- nRewire 
+        colnames(Measure2) <- nRewire 
+        return(list(Mean=Measure1,
+                    MeanRandom=Measure2))
 }
 
 

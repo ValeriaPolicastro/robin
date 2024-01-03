@@ -16,7 +16,7 @@ robinCompare(
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   ncores = 2,
-  type = c("parallel", "independent", "dependent"),
+  type = NULL,
   verbose = TRUE
 )
 }
@@ -51,8 +51,9 @@ see \code{\link{methodCommunity}}.}
 execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)
 maximum 12 cores}
 
-\item{type}{The type of robin construction, parallel, dependent or 
-independent (default parallel).}
+\item{type}{Character indicating "independent" or "dependent" for the old 
+robin type contruction. If NULL the new faster version is computed 
+(default NULL).}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 }
