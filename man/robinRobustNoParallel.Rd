@@ -13,7 +13,6 @@ robinRobustNoParallel(
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = c("independent", "dependent"),
-  nrep = 5,
   verbose = TRUE
 )
 }
@@ -41,8 +40,6 @@ The personal parameter has to take as input the @graph and the @weights
 procedure.}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
-
-\item{rep}{number of replicates for each perturbation.}
 }
 \value{
 A list object with two matrices:

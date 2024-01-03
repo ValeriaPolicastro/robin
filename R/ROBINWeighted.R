@@ -18,17 +18,17 @@
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 #' graphRandom <- randomWeight(graph=graph)
-randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
+randomWeight <- function(graph, distrib="NegBinom", verbose=FALSE)
 {
     if(verbose) cat("Randomizing the graph edges.\n")
     v <- igraph::vcount(graph) ## number of vertex
     numberPerturbAll <- round((v*(v-1))/2, 0)
-    adj <- as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
+    adj <- as_adjacency_matrix(graph, attr="weight", sparse=FALSE)
     graphRandom <- as.matrix(perturbR::rewireR(sym.matrix=adj, 
                                                nperturb=numberPerturbAll, 
-                                               dist = distrib))
+                                               dist=distrib))
     #rewiring for z all the edges
-    graphRandom <- graph_from_adjacency_matrix(graphRandom,weighted = TRUE, 
+    graphRandom <- graph_from_adjacency_matrix(graphRandom, weighted=TRUE, 
                                                mode="undirected")
     return(graphRandom)
 }
@@ -48,9 +48,13 @@ randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
 #' @param method1 The first clustering method, one of "walktrap",
 #' "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal","leiden".
+#' @param args1 A \code{list} of arguments to be passed to the \code{method1} 
+#' (see i.e. \link[igraph]{cluster_leiden} for a list of possible method parameters).
 #' @param method2 The second custering method one of "walktrap",
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal","leiden".
+#' @param args2 A \code{list} of arguments to be passed to the \code{method2}
+#' (see i.e. \link[igraph]{cluster_leiden} for a list of possible method parameters).
 #' @param measure The stability measure, one of "vi", "nmi", "split.join",
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
@@ -58,23 +62,9 @@ randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
 #' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)
 #' @param FUN1 personal designed function when method1 is "others".
 #' see \code{\link{methodCommunity}}.
+
 #' @param FUN2 personal designed function when method2 is "others".
 #' see \code{\link{methodCommunity}}.
-#' @param weights This argument is not settable for "infomap" method.
-#' @param steps This argument is settable only for "leadingEigen"and"walktrap"
-#' method.
-#' @param spins This argument is settable only for "infomap" method.
-#' @param e.weights This argument is settable only for "infomap" method.
-#' @param v.weights This argument is settable only for "infomap" method.
-#' @param nb.trials This argument is settable only for "infomap" method.
-#' @param directed This argument is settable only for "edgeBetweenness" method.
-#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
-#' modularity. Must be either "CPM" or "modularity".
-#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
-#' Each iteration may improve the partition further.This argument is settable 
-#' only for "leiden".
-#' @param resolution only for "louvain" and "leiden". Optional resolution 
-#' parameter, lower values typically yield fewer, larger clusters (default=1).
 #' @param verbose flag for verbose output (default as TRUE).
 #' @param distrib Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
@@ -87,58 +77,44 @@ randomWeight <- function(graph, distrib = "NegBinom",verbose=FALSE)
 #' @import igraph parallel perturbR
 #' @export
 #'
-#' @examples my_file <- system.file("example/football.gml", package="robin")
+#' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
-#' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
+#' E(graph)$weight <- round(runif(ecount(graph), min=1, max=10))
 #' robinCompareFastWeight(graph=graph, method1="louvain",
-#' method2="fastGreedy", measure="vi")
+#'     method2="fastGreedy", measure="vi")
 
 
 robinCompareFastWeight <- function(graph,
                                    method1=c("walktrap", "edgeBetweenness", "fastGreedy",
-                                             "leadingEigen","louvain","spinglass",
-                                             "labelProp","infomap","optimal","leiden",
+                                             "leadingEigen", "louvain", "spinglass",
+                                             "labelProp", "infomap", "optimal", "leiden", 
                                              "other"),
+                                   args1=list(),
                                    method2=c("walktrap", "edgeBetweenness", "fastGreedy",
-                                             "leadingEigen","louvain","spinglass",
-                                             "labelProp","infomap","optimal","leiden",
+                                             "leadingEigen", "louvain", "spinglass",
+                                             "labelProp", "infomap", "optimal", "leiden", 
                                              "other"),
-                                   measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                                   ncores=2,
+                                   args2=list(),
                                    FUN1=NULL, FUN2=NULL,
-                                   directed=FALSE, weights=NULL, steps=4,
-                                   spins=25, e.weights=NULL, v.weights=NULL,
-                                   nb.trials=10, resolution=1, n_iterations=2,
-                                   objective_function = c("CPM", "modularity"),
+                                   measure=c("vi", "nmi","split.join", "adjusted.rand"),
+                                   ncores=2,
+                                   type=NULL,
                                    verbose=TRUE, distrib="NegBinom")
 {
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
     measure <- match.arg(measure)
-    comReal1 <- membershipCommunities(graph=graph, method=method1,
-                                      FUN=FUN1,
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps,
-                                      spins=spins,
-                                      e.weights=e.weights,
-                                      v.weights=v.weights,
-                                      nb.trials=nb.trials,
-                                      resolution=resolution,
-                                      objective_function = objective_function,
-                                      n_iterations=n_iterations)
-    comReal2 <- membershipCommunities(graph=graph, method=method2,
-                                      FUN=FUN2,
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps,
-                                      spins=spins,
-                                      e.weights=e.weights,
-                                      v.weights=v.weights,
-                                      nb.trials=nb.trials,
-                                      resolution=resolution,
-                                      objective_function = objective_function,
-                                      n_iterations=n_iterations)
+    args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
+    args21 <- c(list(graph=graph), method=method2, FUN=FUN2, args2)
+    comReal1 <- do.call(membershipCommunities, args11)
+    comReal2 <- do.call(membershipCommunities, args21)
+    # comReal1 <- membershipCommunities(graph=graph, method=method1,
+    #                                   FUN=FUN1,
+    #                                   args1)
+    # comReal2 <- membershipCommunities(graph=graph, method=method2,
+    #                                   FUN=FUN2,
+    #                                   args2)
     
     N <- igraph::vcount(graph)
     de <- round((N*(N-1))/2, 0)
@@ -152,18 +128,15 @@ robinCompareFastWeight <- function(graph,
     vet1 <- seq(5, 60, 5)
     vet <- round(vet1*de/100, 0)
     cl <- parallel::makeCluster(ncores)
-    parallel::clusterExport(cl,varlist =c("graph","method1","method2","directed",
-                                          "weights","steps","spins", "e.weights",
-                                          "v.weights", "nb.trials","measure","comReal1",
-                                          "comReal2","N","verbose","FUN1","FUN2","distrib",
-                                          "resolution","objective_function",
-                                          "n_iterations"),
-                            envir=environment())
-    zlist <- parallel::clusterApply(cl,vet, function(z)
+    # parallel::clusterExport(cl, varlist =c("graph","method1","method2","directed",
+                                          # "weights","steps","spins", "e.weights",
+                                          # "v.weights", "nb.trials","measure","comReal1",
+                                          # "comReal2","N","verbose","FUN1","FUN2","distrib",
+                                          # "resolution","objective_function",
+                                          # "n_iterations"),
+                            # envir=environment())
+    zlist <- parallel::clusterApply(cl, vet, function(z)
     {
-        
-        
-        
         MeansList <- lapply(1:5, function(s)
         {
             
@@ -173,20 +146,12 @@ robinCompareFastWeight <- function(graph,
             graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
                                                               mode="undirected")
             
-            
-            comr1 <- robin::membershipCommunities(graph=graphRList,
-                                                  method=method1,
-                                                  FUN=FUN1,
-                                                  directed=directed,
-                                                  weights=weights,
-                                                  steps=steps,
-                                                  spins=spins,
-                                                  e.weights=e.weights,
-                                                  v.weights=v.weights,
-                                                  nb.trials=nb.trials,
-                                                  resolution=resolution,
-                                                  objective_function = objective_function,
-                                                  n_iterations=n_iterations)
+            argsP <- c(list(graph=graphRList), method=method1, FUN=FUN1, args1)
+            comr1 <- do.call(membershipCommunities, argsP)
+            # comr1 <- robin::membershipCommunities(graph=graphRList,
+            #                                       method=method1,
+            #                                       FUN=FUN1,
+            #                                       ...=args1)
             
             if(measure=="vi")
             {
@@ -203,20 +168,12 @@ robinCompareFastWeight <- function(graph,
             }
             
             
-            
-            comr2 <- robin::membershipCommunities(graph=graphRList,
-                                                  FUN=FUN2,
-                                                  method=method2,
-                                                  directed=directed,
-                                                  weights=weights,
-                                                  steps=steps,
-                                                  spins=spins,
-                                                  e.weights=e.weights,
-                                                  v.weights=v.weights,
-                                                  nb.trials=nb.trials,
-                                                  resolution=resolution,
-                                                  objective_function = objective_function,
-                                                  n_iterations=n_iterations)
+            argsP <- c(list(graph=graphRList), method=method2, FUN=FUN2, args2)
+            comr2 <- do.call(membershipCommunities, argsP)
+            # comr2 <- robin::membershipCommunities(graph=graphRList,
+            #                                       FUN=FUN2,
+            #                                       method=method2,
+            #                                       ...=args2)
             if(measure=="vi")
             {
                 
@@ -243,10 +200,6 @@ robinCompareFastWeight <- function(graph,
         {
             mm$Measure2
         }))
-        
-        
-        
-        
         
         return(list("Measure1"=m1,"Measure2"=m2))
     })
@@ -306,24 +259,28 @@ rewireComplWeight <- function(data, number, community,
                                        "optimal","leiden", "other"),
                               FUN=NULL,
                               measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                              directed=FALSE, weights=NULL, steps=4, spins=25,
-                              e.weights=NULL, v.weights=NULL, nb.trials=10, 
-                              resolution=1, n_iterations=2,
-                              objective_function = c("CPM", "modularity"),
-                              distrib="NegBinom")
+                              distrib="NegBinom",
+                              ...)
+                              # directed=FALSE, weights=NULL, steps=4, spins=25,
+                              # e.weights=NULL, v.weights=NULL, nb.trials=10, 
+                              # resolution=1, n_iterations=2,
+                              # objective_function = c("CPM", "modularity"),
+                              # )
 {
     method <- match.arg(method)
     measure <- match.arg (measure)
     adj <- as_adjacency_matrix(data, attr="weight", sparse = FALSE)
-    graphRewire <- as.matrix(perturbR::rewireR(adj, number,dist = distrib))
-    graphRewire <- graph_from_adjacency_matrix(graphRewire,weighted = TRUE, mode="undirected")
-    comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
-                                  directed=directed, weights=weights, steps=steps,
-                                  spins=spins, e.weights=e.weights,
-                                  v.weights=v.weights, nb.trials=nb.trials,
-                                  resolution=resolution,
-                                  objective_function = objective_function,
-                                  n_iterations=n_iterations)
+    graphRewire <- as.matrix(perturbR::rewireR(adj, number,dist=distrib))
+    graphRewire <- graph_from_adjacency_matrix(graphRewire, weighted=TRUE, mode="undirected")
+    args <- c(list(graph=graphRewire), method=method, FUN=FUN, ...)
+    comR <- do.call(membershipCommunities, args)
+    # comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
+    #                               directed=directed, weights=weights, steps=steps,
+    #                               spins=spins, e.weights=e.weights,
+    #                               v.weights=v.weights, nb.trials=nb.trials,
+    #                               resolution=resolution,
+    #                               objective_function = objective_function,
+    #                               n_iterations=n_iterations)
     Measure <- igraph::compare(community, comR, method=measure)
     output <- list(Measure=Measure, graphRewire=graphRewire)
     
@@ -375,12 +332,13 @@ rewireComplWeight <- function(data, number, community,
 #'
 #' @import igraph perturbR
 #' @export
-#' @examples my_file <- system.file("example/football.gml", package="robin")
+#' @examples 
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 #' graphRandom <- randomWeight(graph=graph)
 #' robinRobustWeighted(graph=graph, graphRandom=graphRandom,
-#' method="louvain", measure="vi")
+#'     method="louvain", measure="vi")
 robinRobustWeighted <- function(graph, graphRandom,
                                 method=c("walktrap", "edgeBetweenness",
                                          "fastGreedy", "louvain", "spinglass",
@@ -388,41 +346,45 @@ robinRobustWeighted <- function(graph, graphRandom,
                                          "optimal","leiden", "other"),
                                 FUN=NULL, measure= c("vi", "nmi","split.join", 
                                                      "adjusted.rand"),
-                                directed=FALSE, weights=NULL,
-                                steps=4, spins=25, e.weights=NULL, v.weights=NULL,
-                                nb.trials=10, resolution = 1, n_iterations=2,
-                                objective_function = c("CPM", "modularity"),
+                                ...,
+                                # directed=FALSE, weights=NULL,
+                                # steps=4, spins=25, e.weights=NULL, v.weights=NULL,
+                                # nb.trials=10, resolution = 1, n_iterations=2,
+                                # objective_function = c("CPM", "modularity"),
                                 distrib="NegBinom",
                                 verbose=TRUE)
 {
     measure <- match.arg(measure)
     method <- match.arg(method)
     nrep <- 10
-    comReal <- membershipCommunities(graph=graph, method=method,
-                                     FUN=FUN,
-                                     directed=directed,
-                                     weights=weights,
-                                     steps=steps,
-                                     spins=spins,
-                                     e.weights=e.weights,
-                                     v.weights=v.weights,
-                                     nb.trials=nb.trials,
-                                     resolution=resolution,
-                                     objective_function = objective_function,
-                                     n_iterations=n_iterations) # real network
-    
-    comRandom <- membershipCommunities(graph=graphRandom, method=method,
-                                       FUN=FUN,
-                                       directed=directed,
-                                       weights=weights,
-                                       steps=steps,
-                                       spins=spins,
-                                       e.weights=e.weights,
-                                       v.weights=v.weights,
-                                       nb.trials=nb.trials,
-                                       resolution=resolution,
-                                       objective_function = objective_function,
-                                       n_iterations=n_iterations) # random network
+    args <- c(list(graph=graph), method=method, FUN=FUN, ...)
+    comReal <- do.call(membershipCommunities, args)
+    # comReal <- membershipCommunities(graph=graph, method=method,
+    #                                  FUN=FUN,
+    #                                  directed=directed,
+    #                                  weights=weights,
+    #                                  steps=steps,
+    #                                  spins=spins,
+    #                                  e.weights=e.weights,
+    #                                  v.weights=v.weights,
+    #                                  nb.trials=nb.trials,
+    #                                  resolution=resolution,
+    #                                  objective_function = objective_function,
+    #                                  n_iterations=n_iterations) # real network
+    args <- c(list(graph=graphRandom), method=method, FUN=FUN, ...)
+    comRandom <- do.call(membershipCommunities, args)
+    # comRandom <- membershipCommunities(graph=graphRandom, method=method,
+    #                                    FUN=FUN,
+    #                                    directed=directed,
+    #                                    weights=weights,
+    #                                    steps=steps,
+    #                                    spins=spins,
+    #                                    e.weights=e.weights,
+    #                                    v.weights=v.weights,
+    #                                    nb.trials=nb.trials,
+    #                                    resolution=resolution,
+    #                                    objective_function = objective_function,
+    #                                    n_iterations=n_iterations) # random network
     #stopifnot(length(table(comRandom))>1)
     #if(length(table(comRandom))==1) {stop("Not random graph")}
     N <- igraph::vcount(graph)
@@ -459,16 +421,17 @@ robinRobustWeighted <- function(graph, graphRandom,
                                       community=comReal,
                                       method=method,
                                       measure=measure,
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps,
-                                      spins=spins,
-                                      e.weights=e.weights,
-                                      v.weights=v.weights,
-                                      nb.trials=nb.trials,
-                                      resolution=resolution,
-                                      objective_function = objective_function,
-                                      n_iterations=n_iterations,
+                                      ...,
+                                      # directed=directed,
+                                      # weights=weights,
+                                      # steps=steps,
+                                      # spins=spins,
+                                      # e.weights=e.weights,
+                                      # v.weights=v.weights,
+                                      # nb.trials=nb.trials,
+                                      # resolution=resolution,
+                                      # objective_function = objective_function,
+                                      # n_iterations=n_iterations,
                                       distrib=distrib)
             if (measure=="vi")
             {
@@ -487,16 +450,17 @@ robinRobustWeighted <- function(graph, graphRandom,
                                         community=comRandom,
                                         method=method,
                                         measure=measure,
-                                        directed=directed,
-                                        weights=weights,
-                                        steps=steps,
-                                        spins=spins,
-                                        e.weights=e.weights,
-                                        v.weights=v.weights,
-                                        nb.trials=nb.trials,
-                                        resolution=resolution,
-                                        objective_function = objective_function,
-                                        n_iterations=n_iterations,
+                                        ...,
+                                        # directed=directed,
+                                        # weights=weights,
+                                        # steps=steps,
+                                        # spins=spins,
+                                        # e.weights=e.weights,
+                                        # v.weights=v.weights,
+                                        # nb.trials=nb.trials,
+                                        # resolution=resolution,
+                                        # objective_function = objective_function,
+                                        # n_iterations=n_iterations,
                                         distrib=distrib)
             if (measure=="vi")
             {
@@ -517,16 +481,17 @@ robinRobustWeighted <- function(graph, graphRandom,
                                           community=comReal,
                                           method=method,
                                           measure=measure,
-                                          directed=directed,
-                                          weights=weights,
-                                          steps=steps,
-                                          spins=spins,
-                                          e.weights=e.weights,
-                                          v.weights=v.weights,
-                                          nb.trials=nb.trials,
-                                          resolution=resolution,
-                                          objective_function = objective_function,
-                                          n_iterations=n_iterations,
+                                          ...,
+                                          # directed=directed,
+                                          # weights=weights,
+                                          # steps=steps,
+                                          # spins=spins,
+                                          # e.weights=e.weights,
+                                          # v.weights=v.weights,
+                                          # nb.trials=nb.trials,
+                                          # resolution=resolution,
+                                          # objective_function = objective_function,
+                                          # n_iterations=n_iterations,
                                           distrib=distrib)
                 if (measure=="vi")
                 {
@@ -543,16 +508,17 @@ robinRobustWeighted <- function(graph, graphRandom,
                                             community=comRandom,
                                             method=method,
                                             measure=measure,
-                                            directed=directed,
-                                            weights=weights,
-                                            steps=steps,
-                                            spins=spins,
-                                            e.weights=e.weights,
-                                            v.weights=v.weights,
-                                            nb.trials=nb.trials,
-                                            resolution=resolution,
-                                            objective_function = objective_function,
-                                            n_iterations=n_iterations,
+                                            ...,
+                                            # directed=directed,
+                                            # weights=weights,
+                                            # steps=steps,
+                                            # spins=spins,
+                                            # e.weights=e.weights,
+                                            # v.weights=v.weights,
+                                            # nb.trials=nb.trials,
+                                            # resolution=resolution,
+                                            # objective_function = objective_function,
+                                            # n_iterations=n_iterations,
                                             distrib=distrib)
                 if (measure=="vi")
                 {
@@ -579,8 +545,7 @@ robinRobustWeighted <- function(graph, graphRandom,
     colnames(MeanRandom) <- nRewire
     colnames(Mean) <- nRewire
     output <- list( Mean=Mean,
-                    MeanRandom=MeanRandom
-    )
+                    MeanRandom=MeanRandom)
     return(output)
     
 }
