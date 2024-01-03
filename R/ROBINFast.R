@@ -107,7 +107,7 @@ robinCompareFast <- function(graph,
     
     # parallel::clusterExport(cl,varlist=names(varlist), envir=environment())
     #print(names(varlist))
-    zlist <- parallel::clusterApply(cl,vet, function(z) 
+    zlist <- parallel::clusterApply(cl, vet, function(z) 
     {
         
         
@@ -116,8 +116,8 @@ robinCompareFast <- function(graph,
         {
             
             graphRList <- igraph::rewire(graph, 
-                                         with=igraph::keeping_degseq(loops=FALSE,
-                                                                     niter=z))
+                                with=igraph::keeping_degseq(loops=FALSE,
+                                                             niter=z))
             
             # comr1 <- robin::membershipCommunities(graph=graphRList,
             #                                       method=method1,

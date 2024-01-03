@@ -12,6 +12,7 @@ robinRobustFast(
   ...,
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
+<<<<<<< HEAD
   ncores = 2,
   verbose = TRUE
 )
@@ -57,4 +58,11 @@ graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 robinRobustFast(graph=graph, graphRandom=graphRandom, method="louvain",
     resolution=0.8, measure="vi", ncores=2)
+=======
+  verbose = TRUE
+)
+}
+\description{
+robinRobustFast
+>>>>>>> bf813e13664d8052d21c43fd53b788cf47b98fe4
 }

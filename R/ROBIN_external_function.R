@@ -60,21 +60,25 @@ robinCompare <-  function(graph,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           ncores=2,
                           type=NULL,
-                          verbose=TRUE)
+                          verbose=TRUE, distrib="NegBinom")
 {
     
-    methods <- c(method1,method2)
+    methods <- c(method1, method2)
     
     # Aggiungere la versione Weigthed
-   
-    
-    
+    if ( is.weighted(graph) )
+    {
+        output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
+            method2=method2, args2=args2, FUN1=FUN1, FUN2=FUN2, measure=measure, 
+            ncores=ncores, verbose=verbose, distrib=distrib)
+    } else {
+        output <- robinCompareFast(graph=graph, method1=method1, args1=args1, 
+                                method2=method2, args2=args2, 
+                                FUN1=FUN1, FUN2=FUN2, measure=measure, 
+                                ncores=ncores, verbose=verbose)
+    }
         
-     output <- robinCompareFast(graph=graph, method1=method1, args1=args1, 
-                                method2=method2, args2=args2, measure=measure, 
-                                ncores=ncores)
-        
-     if(any(type%in%c("independent","dependent")))
+     if(any(type %in% c("independent", "dependent")))
      {
     
           output <- robinCompareNoParallel(graph=graph, method1=method1, args1=args1,

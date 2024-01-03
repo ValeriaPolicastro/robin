@@ -17,7 +17,12 @@ robinCompare(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   ncores = 2,
   type = NULL,
+<<<<<<< HEAD
   verbose = TRUE
+=======
+  verbose = TRUE,
+  distrib = "NegBinom"
+>>>>>>> bf813e13664d8052d21c43fd53b788cf47b98fe4
 )
 }
 \arguments{

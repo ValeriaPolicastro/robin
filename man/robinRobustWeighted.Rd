@@ -11,16 +11,7 @@ robinRobustWeighted(
     "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  directed = FALSE,
-  weights = NULL,
-  steps = 4,
-  spins = 25,
-  e.weights = NULL,
-  v.weights = NULL,
-  nb.trials = 10,
-  resolution = 1,
-  n_iterations = 2,
-  objective_function = c("CPM", "modularity"),
+  ...,
   distrib = "NegBinom",
   verbose = TRUE
 )
@@ -43,7 +34,11 @@ The personal parameter has to take as input the @graph and the @weights
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
-\item{directed}{This argument is settable only for "edgeBetweenness" method.}
+\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+regardless of distribution of edge weights. This option is invoked by putting 
+any text into this field. Defaults to "NegBinom" for negative binomial.}
+
+\item{verbose}{flag for verbose output (default as TRUE).}
 
 \item{weights}{this argument is not settable for "infomap" method.}
 
@@ -58,21 +53,17 @@ method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
-\item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter, lower values typically yield fewer, larger clusters (default=1).}
+\item{directed}{This argument is settable only for "edgeBetweenness" method.}
+
+\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
+modularity. Must be either "CPM" or "modularity".}
 
 \item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
 Each iteration may improve the partition further.This argument is settable 
 only for "leiden".}
 
-\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
-modularity. Must be either "CPM" or "modularity".}
-
-\item{distrib}{Option to rewire in a manner that retains overall graph weight 
-regardless of distribution of edge weights. This option is invoked by putting 
-any text into this field. Defaults to "NegBinom" for negative binomial.}
-
-\item{verbose}{flag for verbose output (default as TRUE).}
+\item{resolution}{only for "louvain" and "leiden". Optional resolution 
+parameter, lower values typically yield fewer, larger clusters (default=1).}
 }
 \value{
 A list object with two matrices:
@@ -90,5 +81,5 @@ graph <- prepGraph(file=my_file, file.format="gml")
 E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 graphRandom <- randomWeight(graph=graph)
 robinRobustWeighted(graph=graph, graphRandom=graphRandom,
-method="louvain", measure="vi")
+    method="louvain", measure="vi")
 }

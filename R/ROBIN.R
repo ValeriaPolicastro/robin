@@ -220,7 +220,8 @@ rewireCompl <- function(data, number, community,
                         method=c("walktrap", "edgeBetweenness", 
                                  "fastGreedy", "louvain", "spinglass", 
                                  "leadingEigen", "labelProp", "infomap",
-                                 "optimal", "leiden","other"), ..., 
+                                 "optimal", "leiden","other"), 
+                        ..., 
                         measure=c("vi", "nmi","split.join", "adjusted.rand"),
                         FUN=NULL)
 {

@@ -12,17 +12,8 @@ rewireComplWeight(
     "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  directed = FALSE,
-  weights = NULL,
-  steps = 4,
-  spins = 25,
-  e.weights = NULL,
-  v.weights = NULL,
-  nb.trials = 10,
-  resolution = 1,
-  n_iterations = 2,
-  objective_function = c("CPM", "modularity"),
-  distrib = "NegBinom"
+  distrib = "NegBinom",
+  ...
 )
 }
 \arguments{
@@ -41,7 +32,9 @@ rewireComplWeight(
 \item{measure}{The measure for the comparison of the communities "vi", "nmi",
 "split.join", "adjusted.rand".}
 
-\item{directed}{This argument is settable only for "edgeBetweenness" method}
+\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+regardless of distribution of edge weights. This option is invoked by putting 
+any text into this field. Defaults to "NegBinom" for negative binomial.}
 
 \item{weights}{this argument is not settable for "infomap" method.}
 
@@ -56,19 +49,17 @@ method.}
 
 \item{nb.trials}{This argument is settable only for "infomap" method.}
 
-\item{resolution}{only for "louvain" and "leiden". Optional resolution
-parameter, lower values typically yield fewer, larger clusters (default=1).}
+\item{directed}{This argument is settable only for "edgeBetweenness" method}
+
+\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
+modularity. Must be either "CPM" or "modularity".}
 
 \item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
 Each iteration may improve the partition further.This argument is settable 
 only for "leiden".}
 
-\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
-modularity. Must be either "CPM" or "modularity".}
-
-\item{distrib}{Option to rewire in a manner that retains overall graph weight 
-regardless of distribution of edge weights. This option is invoked by putting 
-any text into this field. Defaults to "NegBinom" for negative binomial.}
+\item{resolution}{only for "louvain" and "leiden". Optional resolution
+parameter, lower values typically yield fewer, larger clusters (default=1).}
 }
 \description{
 rewires the weighted graph, creates the communities and
