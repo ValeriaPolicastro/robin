@@ -33,9 +33,6 @@ Mean2 output of the comparison function).}
 \item{BParam}{the B parameter for ITP2bspline (default 10000).}
 
 \item{isPaired}{the paired parameter for ITP2bspline (default TRUE).}
-
-\item{measure}{The measure for the comparison of the communities "vi", "nmi",
-"split.join", "adjusted.rand".}
 }
 \description{
 creates an fdatest::ITP2 class object

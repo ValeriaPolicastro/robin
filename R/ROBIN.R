@@ -1204,8 +1204,6 @@ robinCompare <- function(graph,
 #' output of the comparison function).
 #' @param model2 The MeanRandom output of the robinRobust function (or the 
 #' Mean2 output of the comparison function).
-#' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand".
 #' @param muParam the mu parameter for ITP2bspline (default 0).
 #' @param orderParam the order parameter for ITP2bspline (default 4).
 #' @param nKnots the nknots parameter for ITP2bspline (default 7).
