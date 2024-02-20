@@ -16,7 +16,6 @@ robinCompareFastWeight(
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   ncores = 2,
-  type = NULL,
   verbose = TRUE,
   distrib = "NegBinom"
 )
@@ -66,10 +65,4 @@ A list object with two matrices:
 This function compares two community detection algorithms, from
 weighted networks. Is the parallelized and faster version.
 }
-\examples{
-my_file <- system.file("example/football.gml", package="robin")
-graph <- prepGraph(file=my_file, file.format="gml")
-E(graph)$weight <- round(runif(ecount(graph), min=1, max=10))
-robinCompareFastWeight(graph=graph, method1="louvain",
-    method2="fastGreedy", measure="vi")
-}
+\keyword{internal}

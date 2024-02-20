@@ -17,12 +17,8 @@ robinCompare(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   ncores = 2,
   type = NULL,
-<<<<<<< HEAD
-  verbose = TRUE
-=======
   verbose = TRUE,
   distrib = "NegBinom"
->>>>>>> bf813e13664d8052d21c43fd53b788cf47b98fe4
 )
 }
 \arguments{
@@ -61,6 +57,10 @@ robin type contruction. If NULL the new faster version is computed
 (default NULL).}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
+
+\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+regardless of distribution of edge weights. This option is invoked by putting 
+any text into this field. Defaults to "NegBinom" for negative binomial.}
 }
 \value{
 A list object with two matrices:

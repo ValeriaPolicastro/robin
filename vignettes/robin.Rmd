@@ -127,7 +127,7 @@ The *graphRandom* must be the one returned by **random** function or own random 
 
 ```{r}
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
-                  method="louvain", type="independent")
+                  method="louvain")
 ```
 As output **robinRobust** will give all the measures at different level of perturbation from 0% to 60% for the real and random graph.
 
@@ -140,8 +140,7 @@ The arguments of *model1* and *model2* must be the measures for the real graph a
 *We will expect that with a robust algorithm the behavior of the two curves is different. We expect that the curve of the real graph vary less than the curve of the random graph, this visually means that the curve of the real graph is lower than the one of the random graph, so it is more stable than a random graph.*  
 
 ```{r}
-plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom,
-legend=c("real data", "null model"))
+plot(proc)
 ```
 <br>
 The procedure implemented depends on the network of interest. In this example, the Louvain algorithm fits good the network of interest,as the curve of the stability measure assumes lower values than the one obtained by the null model. 
@@ -161,8 +160,7 @@ very close the Area Under the Curves (AUC) are evaluated.
 **robinFDATest** function implements a test giving a p-value for different intervals of the curves. It tests in which interval the two curves are different.
 
 ```{r message=FALSE, warning=FALSE}
-robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, 
-            legend=c("real graph", "random graph"))
+robinFDATest(proc)
 ```
 
 The first figure represents the stability measure plot using Louvain algorithm for detecting communities. The second one represents the corresponding p-values and adjusted p-values of the Interval Testing procedure. Horizontal red line corresponds to the critical value 0.05. 
@@ -170,7 +168,7 @@ The first figure represents the stability measure plot using Louvain algorithm f
 
 **robinGPTest** function implements the GP testing.
 ```{r message=FALSE, warning=FALSE}
-robinGPTest(model1=proc$Mean, model2=proc$MeanRandom)
+robinGPTest(proc)
 ```
 It tests the two curves globally. The null hypothesis claims that the two curves come from the same process, the alternative hypothesis that they come from two different processes.
 The output is the Bayes Factor.
@@ -192,7 +190,7 @@ One of the most common interpretations is the one proposed by Harold Jeffereys (
 **robinAUC** function implements the AUC.
 
 ```{r}
-robinAUC(graph=graph, model1=proc$Mean, model2=proc$MeanRandom)
+robinAUC(proc)
 ```
 The outputs are the area under the two curves.
 
@@ -223,8 +221,7 @@ comp <- robinCompare(graph=graph, method1="fastGreedy",
 Thirdly, we plot the curves of the compared methods.
 
 ```{r}
-plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, 
-legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
+plot(comp)
 ```
 
 In this example, the Louvain algorithm fits better the network of interest, 
@@ -234,16 +231,16 @@ the Fast greedy method.
 Fourthly we test the statistical differences between these two curves that now are created on two different community detection algorithm. 
 The tests are already explained with more detail above.
 ```{r message=FALSE, warning=FALSE}
-robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2)
+robinFDATest(comp)
 
 ```
 
 ```{r message=FALSE, warning=FALSE}
-robinGPTest(model1=comp$Mean1, model2=comp$Mean2)
+robinGPTest(comp)
 ```
 
  
 ```{r}
-robinAUC(graph=graph, model1=comp$Mean1, model2=comp$Mean2)
+robinAUC(comp)
 ```
 

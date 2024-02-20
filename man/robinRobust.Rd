@@ -12,9 +12,10 @@ robinRobust(
   ...,
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  type = c("independent", "dependent"),
-  nrep = 5,
-  verbose = TRUE
+  type = NULL,
+  ncores = 2,
+  verbose = TRUE,
+  distrib = "NegBinom"
 )
 }
 \arguments{
@@ -37,10 +38,18 @@ The personal parameter has to take as input the @graph and the @weights
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
-\item{type}{The type of robin construction, dependent or independent 
-procedure.}
+\item{type}{Character indicating "independent" or "dependent" for the old 
+robin type contruction. If NULL the new faster version is computed 
+(default NULL).}
+
+\item{ncores}{number of CPU cores to use.(default is 2) For a faster 
+execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
+
+\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+regardless of distribution of edge weights. This option is invoked by putting 
+any text into this field. Defaults to "NegBinom" for negative binomial.}
 }
 \value{
 A list object with two matrices:
@@ -57,5 +66,5 @@ my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
 robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-    resolution=0.8, measure="vi", type="independent")
+    resolution=0.8, measure="vi")
 }

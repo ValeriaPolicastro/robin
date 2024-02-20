@@ -30,14 +30,9 @@
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
 #' @import igraph parallel
-#' @export
 #' @keywords internal
 #' 
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' robinCompareFast(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-#' method2="fastGreedy", measure="vi")
+
 robinCompareFast <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen","louvain","spinglass",
@@ -246,13 +241,8 @@ robinCompareFast <- function(graph,
 #' 
 #' @import igraph
 #' @export
-#'
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' graphRandom <- random(graph=graph)
-#' robinRobustFast(graph=graph, graphRandom=graphRandom, method="louvain",
-#'     resolution=0.8, measure="vi", ncores=2)
+#' @keywords internal
+
 robinRobustFast <- function(graph, graphRandom, 
                             method=c("walktrap", "edgeBetweenness", 
                                      "fastGreedy", "louvain", "spinglass", 

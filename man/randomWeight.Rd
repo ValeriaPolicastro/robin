@@ -22,9 +22,4 @@ An igraph object, a randomly rewired graph.
 This function randomly rewires the edges while preserving the original graph's
 degree distribution.
 }
-\examples{
-my_file <- system.file("example/football.gml", package="robin")
-graph <- prepGraph(file=my_file, file.format="gml")
-E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
-graphRandom <- randomWeight(graph=graph)
-}
+\keyword{internal}

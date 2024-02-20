@@ -11,13 +11,9 @@
 #'
 #' @return An igraph object, a randomly rewired graph.
 #' @import igraph
-#' @export
+#' @keywords internal
 #'
-#' @examples
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
-#' graphRandom <- randomWeight(graph=graph)
+
 randomWeight <- function(graph, distrib="NegBinom", verbose=FALSE)
 {
     if(verbose) cat("Randomizing the graph edges.\n")
@@ -75,14 +71,7 @@ randomWeight <- function(graph, distrib="NegBinom", verbose=FALSE)
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #'
 #' @import igraph parallel perturbR
-#' @export
-#'
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' E(graph)$weight <- round(runif(ecount(graph), min=1, max=10))
-#' robinCompareFastWeight(graph=graph, method1="louvain",
-#'     method2="fastGreedy", measure="vi")
+#' @keywords internal
 
 
 robinCompareFastWeight <- function(graph,
@@ -99,7 +88,6 @@ robinCompareFastWeight <- function(graph,
                                    FUN1=NULL, FUN2=NULL,
                                    measure=c("vi", "nmi","split.join", "adjusted.rand"),
                                    ncores=2,
-                                   type=NULL,
                                    verbose=TRUE, distrib="NegBinom")
 {
     method1 <- match.arg(method1)
@@ -218,78 +206,78 @@ robinCompareFastWeight <- function(graph,
 
 
 
-#' rewireComplWeight
-#'
-#' @description rewires the weighted graph, creates the communities and
-#' compares the communities through different measures.
-#'
-#' @param data The output of prepGraph.
-#' @param number Number of rewiring trials to perform.
-#' @param community Community to compare with.
-#' @param method The clustering method, one of "walktrap", "edgeBetweenness",
-#' "fastGreedy", "louvain", "spinglass","leadingEigen", "labelProp", "infomap",
-#' "optimal","leiden", "other".
-#' @param FUN see \code{\link{methodCommunity}}.
-#' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand".
-#' @param weights this argument is not settable for "infomap" method.
-#' @param steps this argument is settable only for "leadingEigen"and"walktrap"
-#' method.
-#' @param spins This argument is settable only for "infomap" method.
-#' @param e.weights This argument is settable only for "infomap" method.
-#' @param v.weights This argument is settable only for "infomap" method.
-#' @param nb.trials This argument is settable only for "infomap" method.
-#' @param directed This argument is settable only for "edgeBetweenness" method
-#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
-#' modularity. Must be either "CPM" or "modularity".
-#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
-#' Each iteration may improve the partition further.This argument is settable 
-#' only for "leiden".
-#' @param resolution only for "louvain" and "leiden". Optional resolution
-#'  parameter, lower values typically yield fewer, larger clusters (default=1).
-#' @param distrib Option to rewire in a manner that retains overall graph weight 
-#' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "NegBinom" for negative binomial.
-#' @keywords internal
-#'
-rewireComplWeight <- function(data, number, community,
-                              method=c("walktrap", "edgeBetweenness",
-                                       "fastGreedy", "louvain", "spinglass",
-                                       "leadingEigen", "labelProp", "infomap",
-                                       "optimal","leiden", "other"),
-                              FUN=NULL,
-                              measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                              distrib="NegBinom",
-                              ...)
-                              # directed=FALSE, weights=NULL, steps=4, spins=25,
-                              # e.weights=NULL, v.weights=NULL, nb.trials=10, 
-                              # resolution=1, n_iterations=2,
-                              # objective_function = c("CPM", "modularity"),
-                              # )
-{
-    method <- match.arg(method)
-    measure <- match.arg (measure)
-    adj <- as_adjacency_matrix(data, attr="weight", sparse = FALSE)
-    graphRewire <- as.matrix(perturbR::rewireR(adj, number,dist=distrib))
-    graphRewire <- graph_from_adjacency_matrix(graphRewire, weighted=TRUE, mode="undirected")
-    args <- c(list(graph=graphRewire), method=method, FUN=FUN, ...)
-    comR <- do.call(membershipCommunities, args)
-    # comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
-    #                               directed=directed, weights=weights, steps=steps,
-    #                               spins=spins, e.weights=e.weights,
-    #                               v.weights=v.weights, nb.trials=nb.trials,
-    #                               resolution=resolution,
-    #                               objective_function = objective_function,
-    #                               n_iterations=n_iterations)
-    Measure <- igraph::compare(community, comR, method=measure)
-    output <- list(Measure=Measure, graphRewire=graphRewire)
-    
-    return(output)
-}
+#' #' rewireComplWeight
+#' #'
+#' #' @description rewires the weighted graph, creates the communities and
+#' #' compares the communities through different measures.
+#' #'
+#' #' @param data The output of prepGraph.
+#' #' @param number Number of rewiring trials to perform.
+#' #' @param community Community to compare with.
+#' #' @param method The clustering method, one of "walktrap", "edgeBetweenness",
+#' #' "fastGreedy", "louvain", "spinglass","leadingEigen", "labelProp", "infomap",
+#' #' "optimal","leiden", "other".
+#' #' @param FUN see \code{\link{methodCommunity}}.
+#' #' @param measure The measure for the comparison of the communities "vi", "nmi",
+#' #' "split.join", "adjusted.rand".
+#' #' @param weights this argument is not settable for "infomap" method.
+#' #' @param steps this argument is settable only for "leadingEigen"and"walktrap"
+#' #' method.
+#' #' @param spins This argument is settable only for "infomap" method.
+#' #' @param e.weights This argument is settable only for "infomap" method.
+#' #' @param v.weights This argument is settable only for "infomap" method.
+#' #' @param nb.trials This argument is settable only for "infomap" method.
+#' #' @param directed This argument is settable only for "edgeBetweenness" method
+#' #' @param objective_function Whether to use the Constant Potts Model (CPM) or 
+#' #' modularity. Must be either "CPM" or "modularity".
+#' #' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
+#' #' Each iteration may improve the partition further.This argument is settable 
+#' #' only for "leiden".
+#' #' @param resolution only for "louvain" and "leiden". Optional resolution
+#' #'  parameter, lower values typically yield fewer, larger clusters (default=1).
+#' #' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' #' regardless of distribution of edge weights. This option is invoked by putting 
+#' #' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' #' @keywords internal
+#' #'
+#' rewireComplWeight <- function(data, number, community,
+#'                               method=c("walktrap", "edgeBetweenness",
+#'                                        "fastGreedy", "louvain", "spinglass",
+#'                                        "leadingEigen", "labelProp", "infomap",
+#'                                        "optimal","leiden", "other"),
+#'                               FUN=NULL,
+#'                               measure= c("vi", "nmi","split.join", "adjusted.rand"),
+#'                               distrib="NegBinom",
+#'                               ...)
+#'                               # directed=FALSE, weights=NULL, steps=4, spins=25,
+#'                               # e.weights=NULL, v.weights=NULL, nb.trials=10, 
+#'                               # resolution=1, n_iterations=2,
+#'                               # objective_function = c("CPM", "modularity"),
+#'                               # )
+#' {
+#'     method <- match.arg(method)
+#'     measure <- match.arg (measure)
+#'     adj <- as_adjacency_matrix(data, attr="weight", sparse = FALSE)
+#'     graphRewire <- as.matrix(perturbR::rewireR(adj, number,dist=distrib))
+#'     graphRewire <- graph_from_adjacency_matrix(graphRewire, weighted=TRUE, mode="undirected")
+#'     args <- c(list(graph=graphRewire), method=method, FUN=FUN, ...)
+#'     comR <- do.call(membershipCommunities, args)
+#'     # comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
+#'     #                               directed=directed, weights=weights, steps=steps,
+#'     #                               spins=spins, e.weights=e.weights,
+#'     #                               v.weights=v.weights, nb.trials=nb.trials,
+#'     #                               resolution=resolution,
+#'     #                               objective_function = objective_function,
+#'     #                               n_iterations=n_iterations)
+#'     Measure <- igraph::compare(community, comR, method=measure)
+#'     output <- list(Measure=Measure, graphRewire=graphRewire)
+#'     
+#'     return(output)
+#' }
 
 ########### ROBIN ROBUST WEIGHTED #########
 
-#' robinRobustWeighted
+#' robinRobustFastWeighted
 #'
 #' @description This functions implements a procedure to examine the stability
 #' of the partition recovered by some algorithm against random perturbations
@@ -329,232 +317,122 @@ rewireComplWeight <- function(data, number, community,
 #' @return A list object with two matrices:
 #' - the matrix "Mean" with the means of the procedure for the graph
 #' - the matrix "MeanRandom" with the means of the procedure for the random graph.
-#'
-#' @import igraph perturbR
-#' @export
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
-#' graphRandom <- randomWeight(graph=graph)
-#' robinRobustWeighted(graph=graph, graphRandom=graphRandom,
-#'     method="louvain", measure="vi")
-robinRobustWeighted <- function(graph, graphRandom,
-                                method=c("walktrap", "edgeBetweenness",
-                                         "fastGreedy", "louvain", "spinglass",
-                                         "leadingEigen", "labelProp", "infomap",
-                                         "optimal","leiden", "other"),
-                                FUN=NULL, measure= c("vi", "nmi","split.join", 
-                                                     "adjusted.rand"),
-                                ...,
-                                # directed=FALSE, weights=NULL,
-                                # steps=4, spins=25, e.weights=NULL, v.weights=NULL,
-                                # nb.trials=10, resolution = 1, n_iterations=2,
-                                # objective_function = c("CPM", "modularity"),
-                                distrib="NegBinom",
-                                verbose=TRUE)
-{
-    measure <- match.arg(measure)
+#' @keywords internal
+#' @import igraph parallel perturbR
+
+robinRobustFastWeighted <- function(graph, graphRandom, 
+                                                method=c("walktrap", "edgeBetweenness", 
+                                                         "fastGreedy", "louvain", "spinglass", 
+                                                         "leadingEigen", "labelProp", "infomap",
+                                                         "optimal", "leiden", "other"),
+                                                ...,
+                                                FUN=NULL, measure= c("vi", "nmi", "split.join", 
+                                                                     "adjusted.rand"),
+                                                ncores=2, verbose=TRUE, distrib="NegBinom")
+{   
     method <- match.arg(method)
-    nrep <- 10
-    args <- c(list(graph=graph), method=method, FUN=FUN, ...)
-    comReal <- do.call(membershipCommunities, args)
-    # comReal <- membershipCommunities(graph=graph, method=method,
-    #                                  FUN=FUN,
-    #                                  directed=directed,
-    #                                  weights=weights,
-    #                                  steps=steps,
-    #                                  spins=spins,
-    #                                  e.weights=e.weights,
-    #                                  v.weights=v.weights,
-    #                                  nb.trials=nb.trials,
-    #                                  resolution=resolution,
-    #                                  objective_function = objective_function,
-    #                                  n_iterations=n_iterations) # real network
-    args <- c(list(graph=graphRandom), method=method, FUN=FUN, ...)
-    comRandom <- do.call(membershipCommunities, args)
-    # comRandom <- membershipCommunities(graph=graphRandom, method=method,
-    #                                    FUN=FUN,
-    #                                    directed=directed,
-    #                                    weights=weights,
-    #                                    steps=steps,
-    #                                    spins=spins,
-    #                                    e.weights=e.weights,
-    #                                    v.weights=v.weights,
-    #                                    nb.trials=nb.trials,
-    #                                    resolution=resolution,
-    #                                    objective_function = objective_function,
-    #                                    n_iterations=n_iterations) # random network
-    #stopifnot(length(table(comRandom))>1)
-    #if(length(table(comRandom))==1) {stop("Not random graph")}
+    measure <- match.arg(measure)
+    comReal1 <- membershipCommunities(graph=graph, method=method,
+                                      FUN=FUN, ...=...) 
+    comReal2 <- membershipCommunities(graph=graphRandom, method=method,
+                                      FUN=FUN, ...=...)
+    de <- igraph::gsize(graph)
     N <- igraph::vcount(graph)
-    de <- round((N*(N-1))/2, 0)
-    Measure <- NULL
-    vector <- NULL
-    vectRandom <- NULL
-    graphRewireRandom <- NULL
-    graphRewire <- NULL
-    count <- 1
     nRewire <- seq(0,60,5)
-    if(verbose) cat("Detected robin method \n")
-    
-    #OUTPUT MATRIX
-    measureReal <- matrix(0, nrep^2, length(nRewire))
-    measureRandom <- matrix(0, nrep^2, length(nRewire))
-    MeanRandom <- matrix(0, nrep, length(nRewire))
-    Mean <- matrix(0, nrep, length(nRewire))
-    vet1 <- seq(5, 60, 5) #each step
-    vet <- round(vet1*de/100, 0) #the numbers of edges to rewire
-    #arrotonda a 0 cifre decimali
-    
-    for(z in vet)
+    if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
+    vet1 <- seq(5, 60, 5) 
+    vet <- round(vet1*de/100, 0)
+    cl <- parallel::makeCluster(ncores)
+    #parallel::clusterExport(cl,varlist =c("graph","method","...","comReal1",
+    #                                      "comReal2","N","verbose","FUN"), 
+    #                        envir=environment())
+    zlist <- parallel::clusterApply(cl,vet, function(z) 
     {
-        count2 <- 0
-        count <- count+1
-        for(s in c(1:nrep))
+        
+        
+        
+        MeansList <- lapply(1:10, function(s)
         {
-            count2 <- count2+1
-            k <- 1
-            #REAL
-            Real <- rewireComplWeight(data=graph,
-                                      number=z,
-                                      community=comReal,
-                                      method=method,
-                                      measure=measure,
-                                      ...,
-                                      # directed=directed,
-                                      # weights=weights,
-                                      # steps=steps,
-                                      # spins=spins,
-                                      # e.weights=e.weights,
-                                      # v.weights=v.weights,
-                                      # nb.trials=nb.trials,
-                                      # resolution=resolution,
-                                      # objective_function = objective_function,
-                                      # n_iterations=n_iterations,
-                                      distrib=distrib)
-            if (measure=="vi")
-            {
-                vector[k] <- (Real$Measure)/log2(N)
-            } else if(measure=="split.join"){
-                vector[k] <- (Real$Measure)/(2*N)
-            } else {
-                vector[k] <- 1-(Real$Measure)
-            }
-            measureReal[count2, count] <- vector[k]
-            graphRewire <- Real$graphRewire
             
-            #RANDOM
-            Random <- rewireComplWeight(data=graphRandom,
-                                        number=z,
-                                        community=comRandom,
-                                        method=method,
-                                        measure=measure,
-                                        ...,
-                                        # directed=directed,
-                                        # weights=weights,
-                                        # steps=steps,
-                                        # spins=spins,
-                                        # e.weights=e.weights,
-                                        # v.weights=v.weights,
-                                        # nb.trials=nb.trials,
-                                        # resolution=resolution,
-                                        # objective_function = objective_function,
-                                        # n_iterations=n_iterations,
-                                        distrib=distrib)
-            if (measure=="vi")
+            adj <- igraph::as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
+            gR <- as.matrix(perturbR::rewireR(adj, z,dist = distrib))
+            graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
+                                                              mode="undirected")
+            
+            
+            comr1 <- robin::membershipCommunities(graph=graphRList,
+                                                  method=method,
+                                                  FUN=FUN,
+                                                  ...=...)
+            
+            if(measure=="vi")
             {
-                vectRandom[k] <- (Random$Measure)/log2(N)
+                measure1 <- igraph::compare(comr1, comReal1, 
+                                            method=measure)/log2(N)
             } else if(measure=="split.join")
             {
-                vectRandom[k] <- (Random$Measure)/(2*N)
-            } else {
-                vectRandom[k] <- 1-(Random$Measure)
+                measure1 <- igraph::compare(comr1, comReal1, 
+                                            method=measure)/(2*N)
+            }else{
+                measure1 <- 1-(igraph::compare(comr1, comReal1, 
+                                               method=measure))
+                
             }
-            measureRandom[count2, count] <- vectRandom[k]
-            graphRewireRandom <- Random$graphRewire
-            for(k in c(2:nrep))
+            
+            adj <- igraph::as_adjacency_matrix(graphRandom, attr="weight", sparse = FALSE)
+            gR <- as.matrix(perturbR::rewireR(adj, z,dist = distrib))
+            graphRandomList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
+                                                              mode="undirected")
+            
+          
+            comr2 <- robin::membershipCommunities(graph=graphRandomList, 
+                                                  FUN=FUN,
+                                                  method=method,
+                                                  ...=...)
+            if(measure=="vi")
             {
-                count2 <- count2+1
-                Real <- rewireComplWeight(data=graphRewire,
-                                          number=round(0.01*de),
-                                          community=comReal,
-                                          method=method,
-                                          measure=measure,
-                                          ...,
-                                          # directed=directed,
-                                          # weights=weights,
-                                          # steps=steps,
-                                          # spins=spins,
-                                          # e.weights=e.weights,
-                                          # v.weights=v.weights,
-                                          # nb.trials=nb.trials,
-                                          # resolution=resolution,
-                                          # objective_function = objective_function,
-                                          # n_iterations=n_iterations,
-                                          distrib=distrib)
-                if (measure=="vi")
-                {
-                    vector[k] <- (Real$Measure)/log2(N)
-                } else if(measure=="split.join")
-                {
-                    vector[k] <- (Real$Measure)/(2*N)
-                } else {
-                    vector[k] <- 1-(Real$Measure)
-                }
-                measureReal[count2, count] <- vector[k]
-                Random <- rewireComplWeight(data=graphRewireRandom,
-                                            number=round(0.01*de),
-                                            community=comRandom,
-                                            method=method,
-                                            measure=measure,
-                                            ...,
-                                            # directed=directed,
-                                            # weights=weights,
-                                            # steps=steps,
-                                            # spins=spins,
-                                            # e.weights=e.weights,
-                                            # v.weights=v.weights,
-                                            # nb.trials=nb.trials,
-                                            # resolution=resolution,
-                                            # objective_function = objective_function,
-                                            # n_iterations=n_iterations,
-                                            distrib=distrib)
-                if (measure=="vi")
-                {
-                    vectRandom[k] <- (Random$Measure)/log2(N)
-                } else if(measure=="split.join")
-                {
-                    vectRandom[k] <- (Random$Measure)/(2*N)
-                } else {
-                    vectRandom[k] <- 1-(Random$Measure)
-                }
-                measureRandom[count2, count] <- vectRandom[k]
+                
+                measure2 <-  igraph::compare(comr2, comReal2, 
+                                             method=measure)/log2(N)
+            } else if (measure=="split.join"){
+                measure2 <- igraph::compare(comr2, comReal2, 
+                                            method=measure)/(2*N)
+            } else{
+                
+                measure2 <- 1-(igraph::compare(comr2, comReal2, 
+                                               method=measure))
             }
-            MeanRandom[s, count] <- mean(vectRandom)
-            Mean[s, count] <- mean(vector)
-        }
-        if(verbose) cat("Perturbed ", z, " edges\n")
-    }
+            return(list("Measure1"=measure1, "Measure2"=measure2))
+        })
+        
+        
+        m1 <- unlist(lapply(MeansList, function(mm)
+        {
+            mm$Measure1
+        }))
+        
+        m2 <- unlist(lapply(MeansList, function(mm)
+        {
+            mm$Measure2
+        }))
+        
+        
+        
+        
+        
+        return(list("Measure1"=m1,"Measure2"=m2))
+    })
+    parallel::stopCluster(cl)
+    Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
+    Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     
-    colnames(measureRandom) <- nRewire
-    colnames(measureReal) <- nRewire
-    #the matrices "measureReal" and "measureRandom" with the
-    #measures calculated at each step of the procedure, respectively for the real and
-    #the random graph.
-    colnames(MeanRandom) <- nRewire
-    colnames(Mean) <- nRewire
-    output <- list( Mean=Mean,
-                    MeanRandom=MeanRandom)
-    return(output)
+    Measure1 <- cbind(rep(0, 10), Measure1)
+    Measure2 <- cbind(rep(0, 10), Measure2)
     
+    colnames(Measure1) <- nRewire 
+    colnames(Measure2) <- nRewire 
+    return(list(Mean=Measure1,
+                MeanRandom=Measure2))
 }
 
-########## READ NSL ###########
-read_nsl=function(file){
-    df=read.table(file,skip=1)
-    colnames(df)=c('V1','V2','weight')
-    gg=graph_from_data_frame(df,directed = FALSE)
-    # gg <- set_edge_attr(gg, "weight", value= df$weights)
-    return(gg)
-}
+

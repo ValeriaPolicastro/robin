@@ -4,14 +4,11 @@
 \alias{robinAUC}
 \title{robinAUC}
 \usage{
-robinAUC(model1, model2, verbose = FALSE)
+robinAUC(x, verbose = FALSE)
 }
 \arguments{
-\item{model1}{The Mean output of the robinRobust function (or the Mean1 
-output of the robinCompare function).}
-
-\item{model2}{The MeanRandom output of the robinRobust function (or the 
-Mean2 output of the robinCompare function).}
+\item{x}{A robin class object. The output of the functions:
+\code{\link{robinRobust}} and \code{\link{robinCompare}}.}
 
 \item{verbose}{flag for verbose output (default as FALSE).}
 }
@@ -25,7 +22,7 @@ This function calculates the area under two curves with a spline approach.
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
 graphRandom <- random(graph=graph)
-Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-measure="vi",type="independent")
-robinAUC(model1=Proc$Mean, model2=Proc$MeanRandom)
+proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
+measure="vi")
+robinAUC(proc)
 }

@@ -74,8 +74,8 @@ prepGraph <- function(file, file.format=c("edgelist", "pajek", "ncol", "lgl",
 }
 
 
-####### GRAPH RANDOM #########
-#' random
+####### GRAPH RANDOM NO W #########
+#' randomNoW
 #'
 #' @description This function randomly rewires the edges while preserving the original graph's 
 #' degree distribution.
@@ -84,13 +84,9 @@ prepGraph <- function(file, file.format=c("edgelist", "pajek", "ncol", "lgl",
 #' 
 #' @return An igraph object, a randomly rewired graph.
 #' @import igraph
-#' @export
-#'
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' graphRandom <- random(graph=graph)
-random <- function(graph, verbose=FALSE)
+#' @keywords internal
+
+randomNoW <- function(graph, verbose=FALSE)
 {
     if(verbose) cat("Randomizing the graph edges.\n")
     z <- igraph::gsize(graph) ## number of edges
@@ -1128,10 +1124,8 @@ robinFDATest <- function(x, verbose=FALSE)
 #' robinAUC
 #'
 #' @description This function calculates the area under two curves with a spline approach. 
-#' @param model1 The Mean output of the robinRobust function (or the Mean1 
-#' output of the robinCompare function).
-#' @param model2 The MeanRandom output of the robinRobust function (or the 
-#' Mean2 output of the robinCompare function).
+#' @param x A robin class object. The output of the functions:  
+#' \code{\link{robinRobust}} and \code{\link{robinCompare}}.
 #' @param verbose flag for verbose output (default as FALSE).
 #' 
 #' @return A list
@@ -1143,12 +1137,21 @@ robinFDATest <- function(x, verbose=FALSE)
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-#' measure="vi",type="independent")
-#' robinAUC(model1=Proc$Mean, model2=Proc$MeanRandom)
-robinAUC <- function( model1, model2, verbose=FALSE)
+#' proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
+#' measure="vi")
+#' robinAUC(proc)
+robinAUC <- function( x, verbose=FALSE)
 {
     if(verbose) cat("Computing area under the curve (AUC).\n")
+    
+    if (length(x$Mean1)==0)
+    {
+        model1 <- x$Mean
+        model2 <- x$MeanRandom 
+    }else{
+        model1 <- x$Mean1
+        model2 <- x$Mean2 
+    }
     
         mvimeanmodel1 <- cbind(as.vector((apply(model1, 2, mean))))
         mvimeanmodel2 <- cbind(as.vector((apply(model2, 2, mean))))
@@ -1159,7 +1162,7 @@ robinAUC <- function( model1, model2, verbose=FALSE)
                           method ="spline")
     
     output <- c(area1,area2)
-    names(output) <- c("Area 1","Area 2")
+    names(output) <- c(paste("Area",x$model1),paste("Area", x$model2))
     
 return(output)
 }
