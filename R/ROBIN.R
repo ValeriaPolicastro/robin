@@ -383,6 +383,8 @@ robinRobustNoParallel <- function(graph, graphRandom,
                     vector[k] <- (Real$Measure)/log2(N)
                 } else if(measure=="split.join"){
                      vector[k] <- (Real$Measure)/(2*N)
+                } else if (measure=="adjusted.rand") {
+                    vector[k] <- 1-(Real$Measure)
                 } else {
                     vector[k] <- 1-(Real$Measure)
                 }
@@ -411,7 +413,9 @@ robinRobustNoParallel <- function(graph, graphRandom,
                 } else if(measure=="split.join")
                 {
                     vectRandom[k] <- (Random$Measure)/(2*N)
-                } else {
+                } else if (measure=="adjusted.rand") {
+                    vectRandom[k] <- (1-(Random$Measure))/2
+                }else {
                     vectRandom[k] <- 1-(Random$Measure)
                 }
                 measureRandom[count2, count] <- vectRandom[k]
@@ -440,6 +444,8 @@ robinRobustNoParallel <- function(graph, graphRandom,
                     } else if(measure=="split.join")
                     {
                         vector[k] <- (Real$Measure)/(2*N)
+                    } else if(measure=="adjusted.rand") {
+                        vector[k] <- (1-(Real$Measure))/2
                     } else {
                         vector[k] <- 1-(Real$Measure)
                     }
@@ -465,7 +471,11 @@ robinRobustNoParallel <- function(graph, graphRandom,
                     } else if(measure=="split.join")
                     {
                         vectRandom[k] <- (Random$Measure)/(2*N)
-                    } else {
+                    } else if (measure=="adjusted.rand") {
+                        
+                        vectRandom[k] <- (1-(Random$Measure))/2
+                    } else{
+                        
                         vectRandom[k] <- 1-(Random$Measure)
                     }
                     measureRandom[count2, count] <- vectRandom[k]
@@ -521,7 +531,10 @@ robinRobustNoParallel <- function(graph, graphRandom,
                 } else if(measure=="split.join")
                 {
                     vector[k] <- Measure/(2*N)
-                } else {
+                } else if (measure=="adjusted.rand") {
+                    
+                    vector[k] <- (1-Measure)/2
+                }else {
                     vector[k] <- 1-Measure
                 }
                 measureReal1[count2] <- vector[k]
@@ -551,7 +564,10 @@ robinRobustNoParallel <- function(graph, graphRandom,
                 } else if(measure=="split.join")
                 {
                     vectRandom[k] <- Measure/(2*N)
-                } else{
+                } else if (measure=="adjusted.rand") {
+                    
+                    vectRandom[k] <- (1-Measure)/2
+                }else{
                     vectRandom[k] <- 1-Measure
                 }
                 
@@ -564,8 +580,9 @@ robinRobustNoParallel <- function(graph, graphRandom,
                     ##REAL
                     Real <- rewireCompl(data=graphRewire, number=round(0.01*de),
                                         method=method,
-                                        measure=measure, ...=..., FUN=FUN)
-                                        # community=comReal,
+                                        measure=measure, ...=..., 
+                                        FUN=FUN, 
+                                        community=comReal)
                                         # directed=directed,
                                         # weights=weights,
                                         # steps=steps, 
@@ -582,7 +599,10 @@ robinRobustNoParallel <- function(graph, graphRandom,
                     } else if(measure=="split.join")
                     {
                         vector[k] <- (Real$Measure)/(2*N)
-                    } else{
+                    } else if (measure=="adjusted.rand") {
+                        
+                        vector[k] <- (1-(Real$Measure))/2
+                    }else{
                         vector[k] <- 1-(Real$Measure)
                     }
                     measureReal1[count2] <- vector[k]
@@ -592,8 +612,9 @@ robinRobustNoParallel <- function(graph, graphRandom,
                                             method=method,
                                             measure=measure,
                                             number=round(0.01*de), 
-                                            ...=..., FUN=FUN)
-                                          #   community=comRandom,
+                                            ...=..., 
+                                            FUN=FUN,
+                                          community=comRandom)
                                           #   directed=directed,
                                           #   weights=weights,
                                           #   steps=steps, 
@@ -610,6 +631,9 @@ robinRobustNoParallel <- function(graph, graphRandom,
                     } else if(measure=="split.join")
                     {
                         vectRandom[k] <- (Random$Measure)/(2*N)
+                    }else if (measure=="adjusted.rand") {
+                        
+                        vectRandom[k] <- (1-(Random$Measure))/2
                     } else{
                         vectRandom[k] <- 1-(Random$Measure)
                     }
@@ -753,7 +777,12 @@ robinCompareNoParallel <- function(graph,
                                                   method=measure)/(2*N)
                     vector2[k] <- igraph::compare(comr2, comReal2, 
                                                   method=measure)/(2*N)
-                } else {
+                }  else if(measure=="adjusted.rand"){
+                    vector1[k] <- (1-(igraph::compare(comr1, comReal1, 
+                                                     method=measure)))/2
+                    vector2[k] <- (1-(igraph::compare(comr2, comReal2, 
+                                                     method=measure)))/2}
+                else {
                     vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
                                                      method=measure))
                     vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
@@ -784,7 +813,12 @@ robinCompareNoParallel <- function(graph,
                                                       method=measure)/(2*N)
                         vector2[k] <- igraph::compare(comr2, comReal2, 
                                                       method=measure)/(2*N)
-                    } else{
+                    } else if(measure=="adjusted.rand"){
+                        vector1[k] <- (1-(igraph::compare(comr1, comReal1, 
+                                                         method=measure)))/2
+                        vector2[k] <- (1-(igraph::compare(comr2, comReal2, 
+                                                         method=measure)))/2
+                    }else{
                         vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
                                                          method=measure))
                         vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
@@ -843,12 +877,17 @@ robinCompareNoParallel <- function(graph,
                                                   method= measure)/(2*N)
                     vector2[k] <- igraph::compare(comr2, comReal2, 
                                                   method= measure)/(2*N)
-                } else{
+                } else if (measure=="adjusted.rand"){
+                    vector1[k] <- (1-(igraph::compare(comr1, comReal1, 
+                                                     method= measure)))/2
+                    vector2[k] <- (1-(igraph::compare(comr2, comReal2, 
+                                                     method= measure)))/2
+                }else{
                     vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
                                                      method= measure))
                     vector2[k] <- 1-(igraph::compare(comr2, comReal2, 
                                                      method= measure))
-                }
+                    }
                 
                 measureReal11[count2] <- vector1[k]
                 measureReal22[count2] <- vector2[k]
@@ -876,7 +915,12 @@ robinCompareNoParallel <- function(graph,
                                                       method=measure)/(2*N)
                         vector2[k] <- igraph::compare(comr2, comReal2, 
                                                       method=measure)/(2*N)
-                    } else{
+                    } else if(measure=="adjusted.rand"){
+                        vector1[k] <- (1-(igraph::compare(comr1, comReal1, 
+                                                         method=measure)))/2
+                        vector2[k] <- (1-(igraph::compare(comr2, comReal2, 
+                                                         method=measure)))/2
+                    }else{
                         vector1[k] <- 1-(igraph::compare(comr1, comReal1, 
                                                          method=measure))
                         vector2[k] <- 1-(igraph::compare(comr2, comReal2, 

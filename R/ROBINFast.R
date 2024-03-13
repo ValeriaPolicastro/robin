@@ -141,6 +141,10 @@ robinCompareFast <- function(graph,
             {
                 measure1 <- igraph::compare(comr1, comReal1, 
                                             method=measure)/(2*N)
+            }else if(measure=="adjusted.rand"){
+                measure1 <- (1-(igraph::compare(comr1, comReal1, 
+                                               method=measure)))/2
+                
             }else{
                 measure1 <- 1-(igraph::compare(comr1, comReal1, 
                                                method=measure))
@@ -171,7 +175,11 @@ robinCompareFast <- function(graph,
             } else if (measure=="split.join"){
                 measure2 <- igraph::compare(comr2, comReal2, 
                                             method=measure)/(2*N)
-            } else{
+            } else if (measure=="adjusted.rand"){
+                
+                measure2 <- (1-(igraph::compare(comr2, comReal2, 
+                                               method=measure)))/2
+            }else{
                 
                 measure2 <- 1-(igraph::compare(comr2, comReal2, 
                                                method=measure))
@@ -294,6 +302,10 @@ robinRobustFast <- function(graph, graphRandom,
             {
                 measure1 <- igraph::compare(comr1, comReal1, 
                                             method=measure)/(2*N)
+            }else if (measure=="adjusted.rand") {
+                measure1 <- (1-(igraph::compare(comr1, comReal1, 
+                                               method=measure)))/2
+                
             }else{
                 measure1 <- 1-(igraph::compare(comr1, comReal1, 
                                                method=measure))
@@ -316,6 +328,10 @@ robinRobustFast <- function(graph, graphRandom,
             } else if (measure=="split.join"){
                 measure2 <- igraph::compare(comr2, comReal2, 
                                             method=measure)/(2*N)
+            } else if (measure=="adjusted.rand"){
+                
+                measure2 <- (1-(igraph::compare(comr2, comReal2, 
+                                               method=measure)))/2
             } else{
                 
                 measure2 <- 1-(igraph::compare(comr2, comReal2, 
