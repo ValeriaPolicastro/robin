@@ -140,8 +140,8 @@ robinCompare <-  function(graph,
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-#'     resolution=0.8, measure="vi")
+#' robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
+#'    objective_function = "modularity", measure="vi")
 
 
 robinRobust <-  function(graph, graphRandom, 
