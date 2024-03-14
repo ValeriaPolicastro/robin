@@ -99,16 +99,23 @@ robinCompareFast <- function(graph,
     vet <- round(vet1*de/100, 0)
     cl <- parallel::makeCluster(ncores)
     
-    varli <- c(list(graph=graph),method1=method1, method2=method2, FUN1=FUN1, 
-                 FUN2=FUN2)
-    
-    varli <- c(names(args1),
-               names(args2),
-               names(varli))
+    #varli <- c(list(graph=graph),method1=method1, method2=method2, FUN1=FUN1, 
+    #             FUN2=FUN2)
+    #varli <- c(names(args1),
+    #           names(args2),
+    #           names(varli))
     #args11 <- c(cl=cl, varlist=varlist, envir=environment())
     #do.call(parallel::clusterExport, args11)
     
-     parallel::clusterExport(cl,varlist=varli, envir=environment())
+     parallel::clusterExport(cl,varlist=c("graph", 
+                                          "method1", 
+                                         "method2", 
+                                          "FUN1",
+                                         "FUN2",
+                                         "args1",
+                                         "args2",
+                                         "comReal1",
+                                         "comReal2"), envir=environment())
     #print(names(varlist))
     zlist <- parallel::clusterApply(cl, vet, function(z) 
     {
@@ -258,6 +265,12 @@ robinCompareFast <- function(graph,
 #' @import igraph
 #' @export
 #' @keywords internal
+#' @example 
+#'  my_file <- system.file("example/football.gml", package="robin")
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' graphRandom <- random(graph=graph)
+#' robinRobustFast(graph=graph, graphRandom=graphRandom, method="leiden",
+#'     resolution_parameter = 1, measure="vi")
 
 robinRobustFast <- function(graph, graphRandom, 
                             method=c("walktrap", "edgeBetweenness", 
