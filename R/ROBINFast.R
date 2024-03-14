@@ -99,13 +99,16 @@ robinCompareFast <- function(graph,
     vet <- round(vet1*de/100, 0)
     cl <- parallel::makeCluster(ncores)
     
-    #varlist <- c(list(graph=graph),method1=method1,args1=args1, method2=method2, 
-    #             args2=args2,FUN1=FUN1, FUN2=FUN2)
+    varli <- c(list(graph=graph),method1=method1, method2=method2, FUN1=FUN1, 
+                 FUN2=FUN2)
     
+    varli <- c(names(args1),
+               names(args2),
+               names(varli))
     #args11 <- c(cl=cl, varlist=varlist, envir=environment())
     #do.call(parallel::clusterExport, args11)
     
-    # parallel::clusterExport(cl,varlist=names(varlist), envir=environment())
+     parallel::clusterExport(cl,varlist=varli, envir=environment())
     #print(names(varlist))
     zlist <- parallel::clusterApply(cl, vet, function(z) 
     {
