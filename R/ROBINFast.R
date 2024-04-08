@@ -240,6 +240,7 @@ robinCompareFast <- function(graph,
 #' @description This functions implements a procedure to examine the stability 
 #' of the partition recovered by some algorithm against random perturbations 
 #' of the original graph structure.
+#'
 #' @param graph The output of prepGraph.
 #' @param graphRandom The output of random function.
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
@@ -255,23 +256,24 @@ robinCompareFast <- function(graph,
 #' (that can be NULL), and has to return a community object.
 #' @param ... other parameter
 #' @param verbose flag for verbose output (default as TRUE)
-#' @param ncores number of CPU cores to use.(default is 2) For a faster 
-#' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1) 
+#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
+#' specifies the back-end to be used for computations. See
+#'   \code{\link[BiocParallel]{bpparam}} for details.
 #' 
 #' @return A list object with two matrices:
 #' - the matrix "Mean" with the means of the procedure for the graph
 #' - the matrix "MeanRandom" with the means of the procedure for the random graph. 
 #' 
 #' @import igraph
+#' @importFrom BiocParallel bplapply bpparam
 #' @export
 #' @keywords internal
 #' @example 
-#'  my_file <- system.file("example/football.gml", package="robin")
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 #' robinRobustFast(graph=graph, graphRandom=graphRandom, method="leiden",
 #'     resolution_parameter = 1, measure="vi")
-
 robinRobustFast <- function(graph, graphRandom, 
                             method=c("walktrap", "edgeBetweenness", 
                                      "fastGreedy", "louvain", "spinglass", 
@@ -280,8 +282,8 @@ robinRobustFast <- function(graph, graphRandom,
                             ...,
                             FUN=NULL, measure= c("vi", "nmi", "split.join", 
                                                  "adjusted.rand"),
-                            ncores=2, verbose=TRUE)
-{   
+                            verbose=TRUE, BPPARAM=BiocParallel::bpparam())
+{
     method <- match.arg(method)
     measure <- match.arg(measure)
     comReal1 <- membershipCommunities(graph=graph, method=method,
@@ -294,15 +296,23 @@ robinRobustFast <- function(graph, graphRandom,
     if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
     vet <- round(vet1*de/100, 0)
-    cl <- parallel::makeCluster(ncores)
-    #parallel::clusterExport(cl,varlist =c("graph","method","...","comReal1",
-    #                                      "comReal2","N","verbose","FUN"), 
+    ## read ... and unpack -> create a list of character strings and pass it 
+    ## in varlist
+    # varlist <- list(...)
+    # varlist <- c(varlist, "graph","method","comReal1",
+    #              "comReal2","N","verbose","FUN", 
+    #              "measure")
+    # cl <- parallel::makeCluster(ncores)
+    # parallel::clusterExport(cl, varlist=c("...", "graph","method","comReal1",
+    #                                      "comReal2","N","verbose","FUN", 
+    #                                      "measure"),
     #                        envir=environment())
-    zlist <- parallel::clusterApply(cl,vet, function(z) 
+    # zlist <- parallel::clusterApply(cl, vet, function(z) 
+    
+    parfunct <- function(z, graph, method, comReal1, comReal2, N, 
+                         measure, ...)
     {
-        
-        
-        
+        print(list(...))
         MeansList <- lapply(1:10, function(s)
         {
             
@@ -314,7 +324,6 @@ robinRobustFast <- function(graph, graphRandom,
                                                   method=method,
                                                   FUN=FUN,
                                                   ...=...)
-            
             if(measure=="vi")
             {
                 measure1 <- igraph::compare(comr1, comReal1, 
@@ -330,9 +339,7 @@ robinRobustFast <- function(graph, graphRandom,
             }else{
                 measure1 <- 1-(igraph::compare(comr1, comReal1, 
                                                method=measure))
-                
             }
-            
             
             graphRandomList <- igraph::rewire(graphRandom, 
                                          with=igraph::keeping_degseq(loops=FALSE,
@@ -372,13 +379,14 @@ robinRobustFast <- function(graph, graphRandom,
             mm$Measure2
         }))
         
-        
-        
-        
-        
         return(list("Measure1"=m1,"Measure2"=m2))
-    })
-    parallel::stopCluster(cl)
+    }
+    
+    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
+            method=method, comReal1=comReal1, N=N, comReal2=comReal2, ...=...,
+            BPPARAM=BPPARAM)
+    
+    # parallel::stopCluster(cl)
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     
