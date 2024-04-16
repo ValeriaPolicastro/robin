@@ -50,7 +50,7 @@ robinCompareFast <- function(graph,
                          measure= c("vi", "nmi", "split.join", "adjusted.rand"),
                          ncores=2,
                          FUN1=NULL, FUN2=NULL,
-                         verbose=TRUE)
+                         verbose=TRUE, BPPARAM=bpparam())
 {   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
