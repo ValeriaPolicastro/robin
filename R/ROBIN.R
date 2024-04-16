@@ -187,7 +187,7 @@ membershipCommunities <- function(graph,
                                  FUN=NULL)
 {
     method <- match.arg(method)
-    members <- membership(methodCommunity(graph=graph, method=method, ...,
+    members <- membership(methodCommunity(graph=graph, method=method, ...=...,
                                             FUN=FUN))
     
     return(members)

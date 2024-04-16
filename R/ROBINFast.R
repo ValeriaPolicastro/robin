@@ -21,8 +21,6 @@
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param type The type of robin construction, dependent or independent.
-#' @param ncores number of CPU cores to use.(default is 2) For a faster 
-#' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1) 
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
@@ -30,13 +28,13 @@
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
 #' @import igraph parallel
+#' @importFrom BiocParallel bplapply bpparam
 #' @keywords internal
 #' @examples 
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' robinCompareFast(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-#'             method2="leiden", args2=list(objective_function ="modularity"),
-#'             ncores=2)
+#'             method2="leiden", args2=list(objective_function ="modularity"))
 
 robinCompareFast <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
@@ -107,18 +105,20 @@ robinCompareFast <- function(graph,
     #args11 <- c(cl=cl, varlist=varlist, envir=environment())
     #do.call(parallel::clusterExport, args11)
     
-     parallel::clusterExport(cl,varlist=c("graph", 
-                                          "method1", 
-                                         "method2", 
-                                          "FUN1",
-                                         "FUN2",
-                                         "args1",
-                                         "args2",
-                                         "comReal1",
-                                         "comReal2"), envir=environment())
+     # parallel::clusterExport(cl,varlist=c("graph", 
+     #                                      "method1", 
+     #                                     "method2", 
+     #                                      "FUN1",
+     #                                     "FUN2",
+     #                                     "args1",
+     #                                     "args2",
+     #                                     "comReal1",
+     #                                     "comReal2"), envir=environment())
     #print(names(varlist))
-    zlist <- parallel::clusterApply(cl, vet, function(z) 
-    {
+     parfunct <- function(z, graph, method1, method2, comReal1, comReal2, N, 
+                          measure, args1, args2, FUN1, FUN2)
+     {
+         print(list(args1,args2))
         
         
         
@@ -218,8 +218,13 @@ robinCompareFast <- function(graph,
         
         
         return(list("Measure1"=m1,"Measure2"=m2))
-    })
-    parallel::stopCluster(cl)
+    }
+    
+    
+    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
+                                    method1=method1, method2=method2, args1=args1, args2=args2,
+                                    comReal1=comReal1, N=N, comReal2=comReal2, FUN1=FUN1,
+                                    FUN2=FUN2, BPPARAM=BPPARAM)
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     
@@ -249,7 +254,6 @@ robinCompareFast <- function(graph,
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
-#' @param ... 
 #' @param FUN in case the @method parameter is "other" there is the possibility 
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights 
@@ -310,7 +314,7 @@ robinRobustFast <- function(graph, graphRandom,
     # zlist <- parallel::clusterApply(cl, vet, function(z) 
     
     parfunct <- function(z, graph, method, comReal1, comReal2, N, 
-                         measure, ...)
+                         measure, FUN, ...)
     {
         print(list(...))
         MeansList <- lapply(1:10, function(s)
@@ -383,7 +387,7 @@ robinRobustFast <- function(graph, graphRandom,
     }
     
     zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
-            method=method, comReal1=comReal1, N=N, comReal2=comReal2, ...=...,
+            method=method, comReal1=comReal1, N=N, FUN=FUN, comReal2=comReal2, ...=...,
             BPPARAM=BPPARAM)
     
     # parallel::stopCluster(cl)
