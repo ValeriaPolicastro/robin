@@ -59,11 +59,4 @@ A list object with two matrices:
 This function compares the robustness of two community 
 detection algorithms.
 }
-\examples{
-my_file <- system.file("example/football.gml", package="robin")
-graph <- prepGraph(file=my_file, file.format="gml")
-robinCompareNoParallel(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-            method2="leiden", args2=list(objective_function ="modularity"), 
-            measure="vi", type="independent")
-}
 \keyword{internal}

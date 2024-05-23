@@ -275,14 +275,14 @@ rewireOnl <- function(data, number)
 #' - the matrix "MeanRandom" with the means of the procedure for the random graph. 
 #' 
 #' @import igraph
-#' @export
+#' @keywords internal
 #'
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' graphRandom <- random(graph=graph)
-#' robinRobustNoParallel(graph=graph, graphRandom=graphRandom, method="louvain",
-#'     resolution=0.8, measure="vi", type="independent")
+# @examples 
+# my_file <- system.file("example/football.gml", package="robin")
+# graph <- prepGraph(file=my_file, file.format="gml")
+# graphRandom <- random(graph=graph)
+# robinRobustNoParallel(graph=graph, graphRandom=graphRandom, method="louvain",
+#     resolution=0.8, measure="vi", type="independent")
 robinRobustNoParallel <- function(graph, graphRandom, 
                 method=c("walktrap", "edgeBetweenness", 
                          "fastGreedy", "louvain", "spinglass", 
@@ -699,15 +699,14 @@ robinRobustNoParallel <- function(graph, graphRandom,
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
 #' @import igraph
-#' @export 
 #' @keywords internal
 #'
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' robinCompareNoParallel(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-#'             method2="leiden", args2=list(objective_function ="modularity"), 
-#'             measure="vi", type="independent")
+# @examples 
+# my_file <- system.file("example/football.gml", package="robin")
+# graph <- prepGraph(file=my_file, file.format="gml")
+# robinCompareNoParallel(graph=graph, method1="louvain", args1 = list(resolution=0.8),
+#             method2="leiden", args2=list(objective_function ="modularity"), 
+#             measure="vi", type="independent")
 robinCompareNoParallel <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen", "louvain", "spinglass",

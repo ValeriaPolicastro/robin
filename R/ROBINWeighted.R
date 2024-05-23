@@ -327,9 +327,8 @@ robinRobustFastWeighted <- function(graph, graphRandom,
                                                          "fastGreedy", "louvain", "spinglass", 
                                                          "leadingEigen", "labelProp", "infomap",
                                                          "optimal", "leiden", "other"),
-                                                ...,
-                                                FUN=NULL, measure= c("vi", "nmi", "split.join", 
-                                                                     "adjusted.rand"),
+                                                ...,FUN=NULL, 
+                                    measure= c("vi", "nmi", "split.join", "adjusted.rand"),
                                                 verbose=TRUE, dist="NegBinom",
                                     BPPARAM=bpparam())
 {   

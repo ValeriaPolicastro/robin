@@ -17,7 +17,7 @@ robinCompareFastWeight(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   verbose = TRUE,
   dist = "NegBinom",
-  BPPARAM = bpparam()
+  BPPARAM = BiocParallel::bpparam()
 )
 }
 \arguments{

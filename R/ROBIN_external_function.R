@@ -43,6 +43,10 @@
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8),
 #'             method2="leiden", args2=list(objective_function ="modularity"))
+# Weighted example:
+# E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
+# robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8), method2="leiden", args2=list(objective_function ="modularity"))
+
 robinCompare <-  function(graph, 
                           method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                     "leadingEigen", "louvain", "spinglass",
@@ -56,7 +60,6 @@ robinCompare <-  function(graph,
                           args2=list(),
                           FUN1=NULL, FUN2=NULL,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
-                          ncores=2,
                           type=NULL,
                           verbose=TRUE, dist="NegBinom")
 {
@@ -66,17 +69,20 @@ robinCompare <-  function(graph,
     # Weigthed version
     if ( is.weighted(graph) )
     {
-        output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
+       print("Weighted Network")
+         output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
             method2=method2, args2=args2, FUN1=FUN1, FUN2=FUN2, measure=measure, 
-            ncores=ncores, verbose=verbose, dist=dist)
+            verbose=verbose, dist=dist)
     } else {
         if(any(type %in% c("independent", "dependent")))
         {
             
-            output <- robinCompareNoParallel(graph=graph, method1=method1, args1=args1,
+           print("Unweighted Network No Parallel Function")
+             output <- robinCompareNoParallel(graph=graph, method1=method1, args1=args1,
                                              method2=method2, args2=args2, measure=measure, 
                                              type=type) 
         }else{
+            print("Unweighted Network Parallel Function")
             output <- robinCompareFast(graph=graph, method1=method1, args1=args1, 
                                        method2=method2, args2=args2, 
                                        FUN1=FUN1, FUN2=FUN2, measure=measure, 
@@ -136,7 +142,11 @@ robinCompare <-  function(graph,
 #' graphRandom <- random(graph=graph)
 #' robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
 #'    objective_function = "modularity", measure="vi")
-
+#    Weighted Example:
+# E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
+# graphRandom <- randomWeight(graph=graph)
+# robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
+#    objective_function = "modularity", measure="vi")
 
 robinRobust <-  function(graph, graphRandom, 
                           method=c("walktrap", "edgeBetweenness", 
@@ -158,7 +168,7 @@ robinRobust <-  function(graph, graphRandom,
                                                       method=method,
                                                       ...,
                                                       FUN=FUN, measure=measure,
-                                                      ncores=ncores, verbose=verbose, 
+                                                      verbose=verbose, 
                                            dist=dist)
     } else {
         
@@ -177,7 +187,7 @@ robinRobust <-  function(graph, graphRandom,
                                       method=method,
                                       ...,
                                       FUN=FUN, measure=measure,
-                                      ncores=ncores, verbose=verbose)
+                                      verbose=verbose)
         }
         
         

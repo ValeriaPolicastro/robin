@@ -51,10 +51,4 @@ This functions implements a procedure to examine the stability
 of the partition recovered by some algorithm against random perturbations 
 of the original graph structure.
 }
-\examples{
-my_file <- system.file("example/football.gml", package="robin")
-graph <- prepGraph(file=my_file, file.format="gml")
-graphRandom <- random(graph=graph)
-robinRobustNoParallel(graph=graph, graphRandom=graphRandom, method="louvain",
-    resolution=0.8, measure="vi", type="independent")
-}
+\keyword{internal}

@@ -15,7 +15,6 @@ robinCompare(
   FUN1 = NULL,
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  ncores = 2,
   type = NULL,
   verbose = TRUE,
   dist = "NegBinom"

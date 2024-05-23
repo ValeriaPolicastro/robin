@@ -61,10 +61,4 @@ A list object with two matrices:
 This function compares two community detection algorithms.
 Is the parallelized and faster version of \code{\link{robinCompare}}
 }
-\examples{
-my_file <- system.file("example/football.gml", package="robin")
-graph <- prepGraph(file=my_file, file.format="gml")
-robinCompareFast(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-            method2="leiden", args2=list(objective_function ="modularity"))
-}
 \keyword{internal}

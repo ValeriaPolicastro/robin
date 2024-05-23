@@ -126,8 +126,7 @@ The *graph* argument must be the one returned by **prepGraph** function.
 The *graphRandom* must be the one returned by **random** function or own random graph.
 
 ```{r}
-proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", 
-                  method="louvain")
+proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain")
 ```
 As output **robinRobust** will give all the measures at different level of perturbation from 0% to 60% for the real and random graph.
 
@@ -213,8 +212,7 @@ Secondly, we compare them with **robinCompare** function.
 **robinCompare** function compares two detection algorithms on the same network to choose the one that better fits the network of interest.
 
 ```{r}
-comp <- robinCompare(graph=graph, method1="fastGreedy",
-                method2="louvain", measure="vi")
+comp <- robinCompare(graph=graph, method1="fastGreedy", method2="louvain")
 ```
 
 

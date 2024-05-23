@@ -33,11 +33,10 @@
 #' @import igraph
 #' @importFrom BiocParallel bplapply bpparam
 #' @keywords internal
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' robinCompareFast(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-#'             method2="leiden", args2=list(objective_function ="modularity"))
+# @examples my_file <- system.file("example/football.gml", package="robin")
+# graph <- prepGraph(file=my_file, file.format="gml")
+# robinCompareFast(graph=graph, method1="louvain", args1 = list(resolution=0.8),
+# method2="leiden", args2=list(objective_function ="modularity"))
 
 robinCompareFast <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
@@ -272,14 +271,12 @@ robinCompareFast <- function(graph,
 #' 
 #' @import igraph
 #' @importFrom BiocParallel bplapply bpparam
-#' @export
 #' @keywords internal
-#' @example 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' graphRandom <- random(graph=graph)
-#' robinRobustFast(graph=graph, graphRandom=graphRandom, method="leiden",
-#' resolution_parameter = 1, measure="vi")
+# @example my_file <- system.file("example/football.gml", package="robin")
+# graph <- prepGraph(file=my_file, file.format="gml")
+# graphRandom <- random(graph=graph)
+# robinRobustFast(graph=graph, graphRandom=graphRandom, method="leiden",
+# resolution_parameter = 1, measure="vi")
 robinRobustFast <- function(graph, graphRandom, 
                             method=c("walktrap", "edgeBetweenness", 
                                      "fastGreedy", "louvain", "spinglass", 
