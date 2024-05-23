@@ -31,7 +31,7 @@
 #' only for "leiden".
 #' @param resolution only for "louvain" and "leiden". Optional resolution
 #'  parameter, lower values typically yield fewer, larger clusters (default=1).
-#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @keywords internal
@@ -43,7 +43,7 @@ rewireComplWeight <- function(data, number, community,
                                        "optimal","leiden", "other"),
                               FUN=NULL,
                               measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                              distrib="NegBinom",
+                              dist="NegBinom",
                               ...)
                               # directed=FALSE, weights=NULL, steps=4, spins=25,
                               # e.weights=NULL, v.weights=NULL, nb.trials=10, 
@@ -54,7 +54,7 @@ rewireComplWeight <- function(data, number, community,
     method <- match.arg(method)
     measure <- match.arg (measure)
     adj <- as_adjacency_matrix(data, attr="weight", sparse = FALSE)
-    graphRewire <- as.matrix(perturbR::rewireR(adj, number,dist=distrib))
+    graphRewire <- as.matrix(perturbR::rewireR(adj, number,dist=dist))
     graphRewire <- graph_from_adjacency_matrix(graphRewire, weighted=TRUE, mode="undirected")
     args <- c(list(graph=graphRewire), method=method, FUN=FUN, ...)
     comR <- do.call(membershipCommunities, args)
@@ -80,9 +80,9 @@ robinRobustFastWeighted(
   ...,
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  ncores = 2,
   verbose = TRUE,
-  distrib = "NegBinom"
+  dist = "NegBinom",
+  BPPARAM = bpparam()
 )
 }
 \arguments{
@@ -105,9 +105,13 @@ The personal parameter has to take as input the @graph and the @weights
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+\item{dist}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "NegBinom" for negative binomial.}
+
+\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
+specifies the back-end to be used for computations. See
+  \code{\link[BiocParallel]{bpparam}} for details.}
 
 \item{weights}{this argument is not settable for "infomap" method.}
 

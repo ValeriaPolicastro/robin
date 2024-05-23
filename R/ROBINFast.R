@@ -2,6 +2,7 @@
 #'
 #' @description This function compares two community detection algorithms.
 #' Is the parallelized and faster version of \code{\link{robinCompare}}
+#'
 #' @param graph The output of prepGraph.
 #' @param method1 The first clustering method, one of "walktrap", 
 #' "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
@@ -20,14 +21,16 @@
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
-#' @param type The type of robin construction, dependent or independent.
 #' @param verbose flag for verbose output (default as TRUE).
+#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
+#' specifies the back-end to be used for computations. See
+#'   \code{\link[BiocParallel]{bpparam}} for details. 
 #' 
 #' @return A list object with two matrices:
 #' - the matrix "Mean1" with the means of the procedure for the first method 
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
-#' @import igraph parallel
+#' @import igraph
 #' @importFrom BiocParallel bplapply bpparam
 #' @keywords internal
 #' @examples 
@@ -48,7 +51,6 @@ robinCompareFast <- function(graph,
                                    "other"),
                          args2=list(),
                          measure= c("vi", "nmi", "split.join", "adjusted.rand"),
-                         ncores=2,
                          FUN1=NULL, FUN2=NULL,
                          verbose=TRUE, BPPARAM=bpparam())
 {   
@@ -95,7 +97,7 @@ robinCompareFast <- function(graph,
     if(verbose) cat("Detecting robin method independent parallelized type, wait it can take time it depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
     vet <- round(vet1*de/100, 0)
-    cl <- parallel::makeCluster(ncores)
+    #cl <- parallel::makeCluster(ncores)
     
     #varli <- c(list(graph=graph),method1=method1, method2=method2, FUN1=FUN1, 
     #             FUN2=FUN2)
@@ -277,15 +279,13 @@ robinCompareFast <- function(graph,
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 #' robinRobustFast(graph=graph, graphRandom=graphRandom, method="leiden",
-#'     resolution_parameter = 1, measure="vi")
+#' resolution_parameter = 1, measure="vi")
 robinRobustFast <- function(graph, graphRandom, 
                             method=c("walktrap", "edgeBetweenness", 
                                      "fastGreedy", "louvain", "spinglass", 
                                      "leadingEigen", "labelProp", "infomap",
-                                     "optimal", "leiden", "other"),
-                            ...,
-                            FUN=NULL, measure= c("vi", "nmi", "split.join", 
-                                                 "adjusted.rand"),
+                                     "optimal", "leiden", "other"),...,FUN=NULL, 
+                            measure= c("vi", "nmi", "split.join","adjusted.rand"),
                             verbose=TRUE, BPPARAM=BiocParallel::bpparam())
 {
     method <- match.arg(method)

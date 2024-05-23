@@ -13,9 +13,8 @@ robinRobust(
   FUN = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = NULL,
-  ncores = 2,
   verbose = TRUE,
-  distrib = "NegBinom"
+  dist = "NegBinom"
 )
 }
 \arguments{
@@ -42,12 +41,9 @@ The personal parameter has to take as input the @graph and the @weights
 robin type contruction. If NULL the new faster version is computed 
 (default NULL).}
 
-\item{ncores}{number of CPU cores to use.(default is 2) For a faster 
-execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)}
-
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+\item{dist}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "NegBinom" for negative binomial.}
 }

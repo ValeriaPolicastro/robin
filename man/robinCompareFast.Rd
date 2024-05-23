@@ -13,10 +13,10 @@ robinCompareFast(
     "spinglass", "labelProp", "infomap", "optimal", "leiden", "other"),
   args2 = list(),
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  ncores = 2,
   FUN1 = NULL,
   FUN2 = NULL,
-  verbose = TRUE
+  verbose = TRUE,
+  BPPARAM = bpparam()
 )
 }
 \arguments{
@@ -48,7 +48,9 @@ see \code{\link{methodCommunity}}.}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{type}{The type of robin construction, dependent or independent.}
+\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
+specifies the back-end to be used for computations. See
+  \code{\link[BiocParallel]{bpparam}} for details.}
 }
 \value{
 A list object with two matrices:
@@ -63,7 +65,6 @@ Is the parallelized and faster version of \code{\link{robinCompare}}
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
 robinCompareFast(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-            method2="leiden", args2=list(objective_function ="modularity"),
-            ncores=2)
+            method2="leiden", args2=list(objective_function ="modularity"))
 }
 \keyword{internal}

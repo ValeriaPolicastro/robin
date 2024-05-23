@@ -24,11 +24,11 @@ Imports:
     fdatest,
     methods,
     gridExtra,
-    parallel,
     spam,
     qpdf,
     Matrix,
-    perturbR
+    perturbR,
+    BiocParallel
 VignetteBuilder: knitr
 Suggests:
     devtools,

@@ -15,9 +15,9 @@ robinCompareFastWeight(
   FUN1 = NULL,
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  ncores = 2,
   verbose = TRUE,
-  distrib = "NegBinom"
+  dist = "NegBinom",
+  BPPARAM = bpparam()
 )
 }
 \arguments{
@@ -47,14 +47,18 @@ see \code{\link{methodCommunity}}.}
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
-\item{ncores}{number of CPU cores to use.(default is 2) For a faster
-execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)}
-
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+\item{dist}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "NegBinom" for negative binomial.}
+
+\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
+specifies the back-end to be used for computations. See
+  \code{\link[BiocParallel]{bpparam}} for details.}
+
+\item{ncores}{number of CPU cores to use.(default is 2) For a faster
+execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)}
 }
 \value{
 A list object with two matrices:

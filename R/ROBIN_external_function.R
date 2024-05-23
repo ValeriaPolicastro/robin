@@ -22,13 +22,10 @@
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
-#' @param ncores number of CPU cores to use.(default is 2) For a faster 
-#' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)
-#' maximum 12 cores
 #' @param type Character indicating "independent" or "dependent" for the old 
 #' robin type contruction. If NULL the new faster version is computed 
 #' (default NULL).
-#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @param verbose flag for verbose output (default as TRUE).
@@ -45,8 +42,7 @@
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-#'             method2="leiden", args2=list(objective_function ="modularity"),
-#'             ncores=2)
+#'             method2="leiden", args2=list(objective_function ="modularity"))
 robinCompare <-  function(graph, 
                           method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                     "leadingEigen", "louvain", "spinglass",
@@ -62,7 +58,7 @@ robinCompare <-  function(graph,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           ncores=2,
                           type=NULL,
-                          verbose=TRUE, distrib="NegBinom")
+                          verbose=TRUE, dist="NegBinom")
 {
     
     methods <- c(method1, method2)
@@ -72,7 +68,7 @@ robinCompare <-  function(graph,
     {
         output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
             method2=method2, args2=args2, FUN1=FUN1, FUN2=FUN2, measure=measure, 
-            ncores=ncores, verbose=verbose, distrib=distrib)
+            ncores=ncores, verbose=verbose, dist=dist)
     } else {
         if(any(type %in% c("independent", "dependent")))
         {
@@ -84,7 +80,7 @@ robinCompare <-  function(graph,
             output <- robinCompareFast(graph=graph, method1=method1, args1=args1, 
                                        method2=method2, args2=args2, 
                                        FUN1=FUN1, FUN2=FUN2, measure=measure, 
-                                       ncores=ncores, verbose=verbose)
+                                       verbose=verbose)
             
         }
         
@@ -121,10 +117,8 @@ robinCompare <-  function(graph,
 #' @param type Character indicating "independent" or "dependent" for the old 
 #' robin type contruction. If NULL the new faster version is computed 
 #' (default NULL).
-#' @param ncores number of CPU cores to use.(default is 2) For a faster 
-#' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)
 #' @param ... other parameter.
-#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @param verbose flag for verbose output (default as TRUE).
@@ -151,8 +145,7 @@ robinRobust <-  function(graph, graphRandom,
                                    "optimal", "leiden", "other"),
                           ...,
                           FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                          type=NULL,
-                         ncores=2,verbose=TRUE, distrib="NegBinom" )
+                          type=NULL,verbose=TRUE, dist="NegBinom" )
 {
 
     
@@ -166,7 +159,7 @@ robinRobust <-  function(graph, graphRandom,
                                                       ...,
                                                       FUN=FUN, measure=measure,
                                                       ncores=ncores, verbose=verbose, 
-                                           distrib=distrib)
+                                           dist=dist)
     } else {
         
         if(any(type %in% c("independent", "dependent")))
@@ -208,7 +201,7 @@ return(outputRobin)
 #' @description This function randomly rewires the edges while preserving the original graph's 
 #' degree distribution.
 #' @param graph The output of prepGraph.
-#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @param verbose flag for verbose output (default as FALSE)
@@ -221,13 +214,13 @@ return(outputRobin)
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-random <- function(graph, distrib="NegBinom", verbose=FALSE)
+random <- function(graph, dist="NegBinom", verbose=FALSE)
 {
 
     # Weigthed version
     if ( is.weighted(graph) )
     {
-        graphRandom <- randomWeight(graph=graph, distrib=distrib, 
+        graphRandom <- randomWeight(graph=graph, dist=dist, 
                                     verbose=verbose)
         
     }else{

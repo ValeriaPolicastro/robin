@@ -4,12 +4,12 @@
 \alias{randomWeight}
 \title{randomWeight}
 \usage{
-randomWeight(graph, distrib = "NegBinom", verbose = FALSE)
+randomWeight(graph, dist = "NegBinom", verbose = FALSE)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
 
-\item{distrib}{Option to rewire in a manner that retains overall graph weight 
+\item{dist}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "NegBinom" for negative binomial.}
 

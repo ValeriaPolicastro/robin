@@ -4,7 +4,7 @@
 #' @description This function randomly rewires the edges while preserving the original graph's
 #' degree distribution.
 #' @param graph The output of prepGraph.
-#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @param verbose flag for verbose output (default as FALSE)
@@ -14,7 +14,7 @@
 #' @keywords internal
 #'
 
-randomWeight <- function(graph, distrib="NegBinom", verbose=FALSE)
+randomWeight <- function(graph, dist="NegBinom", verbose=FALSE)
 {
     if(verbose) cat("Randomizing the graph edges.\n")
     v <- igraph::vcount(graph) ## number of vertex
@@ -22,7 +22,7 @@ randomWeight <- function(graph, distrib="NegBinom", verbose=FALSE)
     adj <- as_adjacency_matrix(graph, attr="weight", sparse=FALSE)
     graphRandom <- as.matrix(perturbR::rewireR(sym.matrix=adj, 
                                                nperturb=numberPerturbAll, 
-                                               dist=distrib))
+                                               dist=dist))
     #rewiring for z all the edges
     graphRandom <- graph_from_adjacency_matrix(graphRandom, weighted=TRUE, 
                                                mode="undirected")
@@ -58,21 +58,23 @@ randomWeight <- function(graph, distrib="NegBinom", verbose=FALSE)
 #' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)
 #' @param FUN1 personal designed function when method1 is "others".
 #' see \code{\link{methodCommunity}}.
-
 #' @param FUN2 personal designed function when method2 is "others".
 #' see \code{\link{methodCommunity}}.
 #' @param verbose flag for verbose output (default as TRUE).
-#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
+#' specifies the back-end to be used for computations. See
+#'   \code{\link[BiocParallel]{bpparam}} for details.
 #'
 #' @return A list object with two matrices:
 #' - the matrix "Mean1" with the means of the procedure for the first method
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #'
 #' @import igraph parallel perturbR
+#' @importFrom BiocParallel bplapply bpparam
 #' @keywords internal
-
 
 robinCompareFastWeight <- function(graph,
                                    method1=c("walktrap", "edgeBetweenness", "fastGreedy",
@@ -87,23 +89,16 @@ robinCompareFastWeight <- function(graph,
                                    args2=list(),
                                    FUN1=NULL, FUN2=NULL,
                                    measure=c("vi", "nmi","split.join", "adjusted.rand"),
-                                   ncores=2,
-                                   verbose=TRUE, distrib="NegBinom")
+                                   #ncores=2,
+                                   verbose=TRUE, dist="NegBinom", BPPARAM=bpparam())
 {
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
     measure <- match.arg(measure)
     args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
     args21 <- c(list(graph=graph), method=method2, FUN=FUN2, args2)
-    comReal1 <- do.call(membershipCommunities, args11)
-    comReal2 <- do.call(membershipCommunities, args21)
-    # comReal1 <- membershipCommunities(graph=graph, method=method1,
-    #                                   FUN=FUN1,
-    #                                   args1)
-    # comReal2 <- membershipCommunities(graph=graph, method=method2,
-    #                                   FUN=FUN2,
-    #                                   args2)
-    
+    comReal1 <- do.call(robin::membershipCommunities, args11)
+    comReal2 <- do.call(robin::membershipCommunities, args21)
     N <- igraph::vcount(graph)
     de <- round((N*(N-1))/2, 0)
     Measure <- NULL
@@ -115,31 +110,25 @@ robinCompareFastWeight <- function(graph,
     if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5)
     vet <- round(vet1*de/100, 0)
-    cl <- parallel::makeCluster(ncores)
-    # parallel::clusterExport(cl, varlist =c("graph","method1","method2","directed",
-                                          # "weights","steps","spins", "e.weights",
-                                          # "v.weights", "nb.trials","measure","comReal1",
-                                          # "comReal2","N","verbose","FUN1","FUN2","distrib",
-                                          # "resolution","objective_function",
-                                          # "n_iterations"),
-                            # envir=environment())
-    zlist <- parallel::clusterApply(cl, vet, function(z)
+ 
+    parfunct <- function(z, graph, method1, method2, comReal1, comReal2, N, 
+                         measure, args1, args2, FUN1, FUN2,dist)
     {
-        MeansList <- lapply(1:5, function(s)
+        print(list(args1,args2))
+        
+        
+        
+        MeansList <- lapply(1:10, function(s)
         {
-            
-            
+    
             adj <- igraph::as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
-            gR <- as.matrix(perturbR::rewireR(adj, z,dist = distrib))
+            gR <- as.matrix(perturbR::rewireR(adj, z,dist = dist))
             graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
                                                               mode="undirected")
             
             argsP <- c(list(graph=graphRList), method=method1, FUN=FUN1, args1)
             comr1 <- do.call(membershipCommunities, argsP)
-            # comr1 <- robin::membershipCommunities(graph=graphRList,
-            #                                       method=method1,
-            #                                       FUN=FUN1,
-            #                                       ...=args1)
+         
             
             if(measure=="vi")
             {
@@ -161,10 +150,7 @@ robinCompareFastWeight <- function(graph,
             
             argsP <- c(list(graph=graphRList), method=method2, FUN=FUN2, args2)
             comr2 <- do.call(membershipCommunities, argsP)
-            # comr2 <- robin::membershipCommunities(graph=graphRList,
-            #                                       FUN=FUN2,
-            #                                       method=method2,
-            #                                       ...=args2)
+           
             if(measure=="vi")
             {
                 
@@ -197,13 +183,18 @@ robinCompareFastWeight <- function(graph,
         }))
         
         return(list("Measure1"=m1,"Measure2"=m2))
-    })
-    parallel::stopCluster(cl)
+    }
+    
+    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
+                                    method1=method1, method2=method2, args1=args1, args2=args2,
+                                    comReal1=comReal1, N=N, comReal2=comReal2, FUN1=FUN1,
+                                    FUN2=FUN2, dist=dist, BPPARAM=BPPARAM)
+    
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     
-    Measure1 <- cbind(rep(0, 5), Measure1)
-    Measure2 <- cbind(rep(0, 5), Measure2)
+    Measure1 <- cbind(rep(0, 10), Measure1)
+    Measure2 <- cbind(rep(0, 10), Measure2)
     
     colnames(Measure1) <- nRewire
     colnames(Measure2) <- nRewire
@@ -242,7 +233,7 @@ robinCompareFastWeight <- function(graph,
 #' #' only for "leiden".
 #' #' @param resolution only for "louvain" and "leiden". Optional resolution
 #' #'  parameter, lower values typically yield fewer, larger clusters (default=1).
-#' #' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' #' regardless of distribution of edge weights. This option is invoked by putting 
 #' #' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' #' @keywords internal
@@ -254,7 +245,7 @@ robinCompareFastWeight <- function(graph,
 #'                                        "optimal","leiden", "other"),
 #'                               FUN=NULL,
 #'                               measure= c("vi", "nmi","split.join", "adjusted.rand"),
-#'                               distrib="NegBinom",
+#'                               dist="NegBinom",
 #'                               ...)
 #'                               # directed=FALSE, weights=NULL, steps=4, spins=25,
 #'                               # e.weights=NULL, v.weights=NULL, nb.trials=10, 
@@ -265,7 +256,7 @@ robinCompareFastWeight <- function(graph,
 #'     method <- match.arg(method)
 #'     measure <- match.arg (measure)
 #'     adj <- as_adjacency_matrix(data, attr="weight", sparse = FALSE)
-#'     graphRewire <- as.matrix(perturbR::rewireR(adj, number,dist=distrib))
+#'     graphRewire <- as.matrix(perturbR::rewireR(adj, number,dist=dist))
 #'     graphRewire <- graph_from_adjacency_matrix(graphRewire, weighted=TRUE, mode="undirected")
 #'     args <- c(list(graph=graphRewire), method=method, FUN=FUN, ...)
 #'     comR <- do.call(membershipCommunities, args)
@@ -316,16 +307,20 @@ robinCompareFastWeight <- function(graph,
 #' only for "leiden".
 #' @param resolution only for "louvain" and "leiden". Optional resolution 
 #' parameter, lower values typically yield fewer, larger clusters (default=1).
-#' @param distrib Option to rewire in a manner that retains overall graph weight 
+#' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
 #' @param verbose flag for verbose output (default as TRUE).
+#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
+#' specifies the back-end to be used for computations. See
+#'   \code{\link[BiocParallel]{bpparam}} for details.
 #'
 #' @return A list object with two matrices:
 #' - the matrix "Mean" with the means of the procedure for the graph
 #' - the matrix "MeanRandom" with the means of the procedure for the random graph.
 #' @keywords internal
 #' @import igraph parallel perturbR
+#' @importFrom BiocParallel bplapply bpparam
 
 robinRobustFastWeighted <- function(graph, graphRandom, 
                                                 method=c("walktrap", "edgeBetweenness", 
@@ -335,7 +330,8 @@ robinRobustFastWeighted <- function(graph, graphRandom,
                                                 ...,
                                                 FUN=NULL, measure= c("vi", "nmi", "split.join", 
                                                                      "adjusted.rand"),
-                                                ncores=2, verbose=TRUE, distrib="NegBinom")
+                                                verbose=TRUE, dist="NegBinom",
+                                    BPPARAM=bpparam())
 {   
     method <- match.arg(method)
     measure <- match.arg(measure)
@@ -349,20 +345,16 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
     vet <- round(vet1*de/100, 0)
-    cl <- parallel::makeCluster(ncores)
-    #parallel::clusterExport(cl,varlist =c("graph","method","...","comReal1",
-    #                                      "comReal2","N","verbose","FUN"), 
-    #                        envir=environment())
-    zlist <- parallel::clusterApply(cl,vet, function(z) 
+    
+    parfunct <- function(z, graph, method, comReal1, comReal2, N, 
+                         measure, dist, FUN, ...)
     {
-        
-        
-        
+        print(list(...))
         MeansList <- lapply(1:10, function(s)
         {
             
             adj <- igraph::as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
-            gR <- as.matrix(perturbR::rewireR(adj, z,dist = distrib))
+            gR <- as.matrix(perturbR::rewireR(adj, z,dist = dist))
             graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
                                                               mode="undirected")
             
@@ -390,7 +382,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
             }
             
             adj <- igraph::as_adjacency_matrix(graphRandom, attr="weight", sparse = FALSE)
-            gR <- as.matrix(perturbR::rewireR(adj, z,dist = distrib))
+            gR <- as.matrix(perturbR::rewireR(adj, z,dist = dist))
             graphRandomList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
                                                               mode="undirected")
             
@@ -435,8 +427,12 @@ robinRobustFastWeighted <- function(graph, graphRandom,
         
         
         return(list("Measure1"=m1,"Measure2"=m2))
-    })
-    parallel::stopCluster(cl)
+    }
+    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
+                                    method=method, comReal1=comReal1, N=N,
+                                    FUN=FUN, comReal2=comReal2, dist=dist,
+                                    ...=...,
+                                    BPPARAM=BPPARAM)
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     
