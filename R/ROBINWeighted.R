@@ -90,7 +90,7 @@ robinCompareFastWeight <- function(graph,
                                    FUN1=NULL, FUN2=NULL,
                                    measure=c("vi", "nmi","split.join", "adjusted.rand"),
                                    #ncores=2,
-                                   verbose=TRUE, dist="NegBinom", BPPARAM=bpparam())
+                                   verbose=TRUE, dist="NegBinom", BPPARAM=BiocParallel::bpparam())
 {
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
@@ -330,7 +330,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
                                                 ...,FUN=NULL, 
                                     measure= c("vi", "nmi", "split.join", "adjusted.rand"),
                                                 verbose=TRUE, dist="NegBinom",
-                                    BPPARAM=bpparam())
+                                    BPPARAM=BiocParallel::bpparam())
 {   
     method <- match.arg(method)
     measure <- match.arg(measure)

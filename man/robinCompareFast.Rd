@@ -16,7 +16,7 @@ robinCompareFast(
   FUN1 = NULL,
   FUN2 = NULL,
   verbose = TRUE,
-  BPPARAM = bpparam()
+  BPPARAM = BiocParallel::bpparam()
 )
 }
 \arguments{
