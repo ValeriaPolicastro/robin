@@ -43,7 +43,7 @@
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8),
 #'             method2="leiden", args2=list(objective_function ="modularity"))
-# Weighted example:
+## Weighted example:
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 # robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8), method2="leiden", args2=list(objective_function ="modularity"))
 
@@ -142,7 +142,7 @@ robinCompare <-  function(graph,
 #' graphRandom <- random(graph=graph)
 #' robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
 #'    objective_function = "modularity", measure="vi")
-#    Weighted Example:
+##    Weighted Example:
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 # graphRandom <- randomWeight(graph=graph)
 # robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
