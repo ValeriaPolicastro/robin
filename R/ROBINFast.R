@@ -313,7 +313,7 @@ robinRobustFast <- function(graph, graphRandom,
     parfunct <- function(z, graph, method, comReal1, comReal2, N, 
                          measure, FUN, ...)
     {
-        print(list(...))
+        # print(list(...))
         MeansList <- lapply(1:10, function(s)
         {
             
@@ -384,8 +384,8 @@ robinRobustFast <- function(graph, graphRandom,
     }
     
     zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, 
-            method=method, comReal1=comReal1, comReal2=comReal2, N=N, measure=measure, FUN=FUN, 
-            ...=..., BPPARAM=BPPARAM)
+            method=method, comReal1=comReal1, comReal2=comReal2, N=N, 
+            measure=measure, FUN=FUN, ...=..., BPPARAM=BPPARAM)
 
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
