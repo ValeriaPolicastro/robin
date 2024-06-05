@@ -2,6 +2,7 @@ robin v1.2.0
 - implementing robin class
 - adding weighted graph procedure
 - new parallelization method with BiocParallel::bpparam()
+- implemented the possibility to have different arguments for different community detection algorithms
 robin v1.1.2
 - fixed Note CRAN
 robin v1.1.1

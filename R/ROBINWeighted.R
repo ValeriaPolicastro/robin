@@ -348,7 +348,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     parfunct <- function(z, graph, method, comReal1, comReal2, N, 
                          measure, dist, FUN1, ...)
     {
-        print(list(...))
+        #print(list(...))
         MeansList <- lapply(1:10, function(s)
         {
             
