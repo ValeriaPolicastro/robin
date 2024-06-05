@@ -281,8 +281,8 @@ robinRobustFast <- function(graph, graphRandom,
                             method=c("walktrap", "edgeBetweenness", 
                                      "fastGreedy", "louvain", "spinglass", 
                                      "leadingEigen", "labelProp", "infomap",
-                                     "optimal", "leiden", "other"),...,FUN=NULL, 
-                            measure= c("vi", "nmi", "split.join","adjusted.rand"),
+                                     "optimal", "leiden", "other"), ..., FUN=NULL, 
+                            measure=c("vi", "nmi", "split.join","adjusted.rand"),
                             verbose=TRUE, BPPARAM=BiocParallel::bpparam())
 {
     method <- match.arg(method)
@@ -383,11 +383,10 @@ robinRobustFast <- function(graph, graphRandom,
         return(list("Measure1"=m1,"Measure2"=m2))
     }
     
-    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
-            method=method, comReal1=comReal1, N=N, FUN=FUN, comReal2=comReal2, ...=...,
-            BPPARAM=BPPARAM)
-    
-    # parallel::stopCluster(cl)
+    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, 
+            method=method, comReal1=comReal1, comReal2=comReal2, N=N, measure=measure, FUN=FUN, 
+            ...=..., BPPARAM=BPPARAM)
+
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     

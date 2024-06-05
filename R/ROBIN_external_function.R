@@ -158,9 +158,7 @@ robinRobust <-  function(graph, graphRandom,
                           type=NULL,verbose=TRUE, dist="NegBinom" )
 {
 
-    
     methods <- c("real data", "null model")
-
     # Weigthed version
     if ( is.weighted(graph) )
     {
@@ -181,7 +179,6 @@ robinRobust <-  function(graph, graphRandom,
                                             FUN=FUN, measure=measure,
                                             type=type, verbose=verbose) 
         }else{
-            
             # Parallel version: 
             output <- robinRobustFast(graph=graph, graphRandom=graphRandom, 
                                       method=method,
@@ -189,21 +186,12 @@ robinRobust <-  function(graph, graphRandom,
                                       FUN=FUN, measure=measure,
                                       verbose=verbose)
         }
-        
-        
-            
- 
     }
-    
-   
-    
     outputRobin <- c(output, model=methods, list(graph=graph))
-    
 
 class(outputRobin) <- "robin"
 return(outputRobin)
 }
-                          
 
 ####### GRAPH RANDOM #########
 #' random
@@ -226,24 +214,14 @@ return(outputRobin)
 #' graphRandom <- random(graph=graph)
 random <- function(graph, dist="NegBinom", verbose=FALSE)
 {
-
     # Weigthed version
     if ( is.weighted(graph) )
     {
         graphRandom <- randomWeight(graph=graph, dist=dist, 
                                     verbose=verbose)
-        
     }else{
-        
         graphRandom <- randomNoW(graph=graph, verbose=verbose)
     }
-    
-    
     return(graphRandom)
-    
 }
-
-
-                          
-            
 
