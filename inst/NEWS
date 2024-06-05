@@ -1,3 +1,6 @@
+robin v1.2.0
+- implementing robin class
+- adding weighted graph procedure
 robin v1.1.2
 - fixed Note CRAN
 robin v1.1.1

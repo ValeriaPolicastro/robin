@@ -78,7 +78,7 @@ robinRobustFastWeighted(
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
     "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
   ...,
-  FUN = NULL,
+  FUN1 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   verbose = TRUE,
   dist = "NegBinom",
@@ -94,11 +94,6 @@ robinRobustFastWeighted(
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "leiden","optimal".}
 
-\item{FUN}{in case the @method parameter is "other" there is the possibility
-to use a personal function passing its name through this parameter.
-The personal parameter has to take as input the @graph and the @weights
-(that can be NULL), and has to return a community object.}
-
 \item{measure}{The stability measure, one of "vi", "nmi", "split.join",
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
@@ -112,6 +107,11 @@ any text into this field. Defaults to "NegBinom" for negative binomial.}
 \item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
 specifies the back-end to be used for computations. See
   \code{\link[BiocParallel]{bpparam}} for details.}
+
+\item{FUN}{in case the @method parameter is "other" there is the possibility
+to use a personal function passing its name through this parameter.
+The personal parameter has to take as input the @graph and the @weights
+(that can be NULL), and has to return a community object.}
 
 \item{weights}{this argument is not settable for "infomap" method.}
 
