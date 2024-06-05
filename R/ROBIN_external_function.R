@@ -165,7 +165,7 @@ robinRobust <-  function(graph, graphRandom,
         output <- robinRobustFastWeighted (graph=graph, graphRandom=graphRandom, 
                                                       method=method,
                                                       ...,
-                                                      FUN=FUN, measure=measure,
+                                                      FUN1=FUN, measure=measure,
                                                       verbose=verbose, 
                                            dist=dist)
     } else {
@@ -183,7 +183,7 @@ robinRobust <-  function(graph, graphRandom,
             output <- robinRobustFast(graph=graph, graphRandom=graphRandom, 
                                       method=method,
                                       ...,
-                                      FUN=FUN, measure=measure,
+                                      FUN1=FUN, measure=measure,
                                       verbose=verbose)
         }
     }

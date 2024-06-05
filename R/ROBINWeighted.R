@@ -327,7 +327,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
                                                          "fastGreedy", "louvain", "spinglass", 
                                                          "leadingEigen", "labelProp", "infomap",
                                                          "optimal", "leiden", "other"),
-                                                ...,FUN=NULL, 
+                                                ..., FUN1=NULL, 
                                     measure= c("vi", "nmi", "split.join", "adjusted.rand"),
                                                 verbose=TRUE, dist="NegBinom",
                                     BPPARAM=BiocParallel::bpparam())
@@ -335,9 +335,9 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     method <- match.arg(method)
     measure <- match.arg(measure)
     comReal1 <- membershipCommunities(graph=graph, method=method,
-                                      FUN=FUN, ...=...) 
+                                      FUN=FUN1, ...=...) 
     comReal2 <- membershipCommunities(graph=graphRandom, method=method,
-                                      FUN=FUN, ...=...)
+                                      FUN=FUN1, ...=...)
     de <- igraph::gsize(graph)
     N <- igraph::vcount(graph)
     nRewire <- seq(0,60,5)
@@ -346,7 +346,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     vet <- round(vet1*de/100, 0)
     
     parfunct <- function(z, graph, method, comReal1, comReal2, N, 
-                         measure, dist, FUN, ...)
+                         measure, dist, FUN1, ...)
     {
         print(list(...))
         MeansList <- lapply(1:10, function(s)
@@ -360,7 +360,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
             
             comr1 <- robin::membershipCommunities(graph=graphRList,
                                                   method=method,
-                                                  FUN=FUN,
+                                                  FUN=FUN1,
                                                   ...=...)
             
             if(measure=="vi")
@@ -387,7 +387,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
             
           
             comr2 <- robin::membershipCommunities(graph=graphRandomList, 
-                                                  FUN=FUN,
+                                                  FUN=FUN1,
                                                   method=method,
                                                   ...=...)
             if(measure=="vi")
@@ -429,9 +429,10 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     }
     zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
                                     method=method, comReal1=comReal1, N=N,
-                                    FUN=FUN, comReal2=comReal2, dist=dist,
+                                    FUN1=FUN1, comReal2=comReal2, dist=dist,
                                     ...=...,
                                     BPPARAM=BPPARAM)
+    
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     
