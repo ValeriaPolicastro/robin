@@ -17,7 +17,8 @@ robinCompare(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = NULL,
   verbose = TRUE,
-  dist = "NegBinom"
+  dist = "NegBinom",
+  BPPARAM = BiocParallel::bpparam()
 )
 }
 \arguments{
@@ -56,6 +57,10 @@ robin type contruction. If NULL the new faster version is computed
 \item{dist}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "NegBinom" for negative binomial.}
+
+\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
+specifies the back-end to be used for computations. See
+  \code{\link[BiocParallel]{bpparam}} for details.}
 }
 \value{
 A list object with two matrices:
