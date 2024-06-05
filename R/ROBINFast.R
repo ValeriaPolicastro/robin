@@ -119,7 +119,7 @@ robinCompareFast <- function(graph,
      parfunct <- function(z, graph, method1, method2, comReal1, comReal2, N, 
                           measure, args1, args2, FUN1, FUN2)
      {
-         print(list(args1,args2))
+        # print(list(args1,args2))
         
         
         
