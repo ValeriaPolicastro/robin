@@ -281,37 +281,25 @@ robinRobustFast <- function(graph, graphRandom,
                             method=c("walktrap", "edgeBetweenness", 
                                      "fastGreedy", "louvain", "spinglass", 
                                      "leadingEigen", "labelProp", "infomap",
-                                     "optimal", "leiden", "other"), ..., FUN=NULL, 
+                                     "optimal", "leiden", "other"), ..., FUN1=NULL, 
                             measure=c("vi", "nmi", "split.join","adjusted.rand"),
                             verbose=TRUE, BPPARAM=BiocParallel::bpparam())
 {
     method <- match.arg(method)
     measure <- match.arg(measure)
     comReal1 <- membershipCommunities(graph=graph, method=method,
-                                      FUN=FUN, ...=...) 
+                                      FUN=FUN1, ...=...)
     comReal2 <- membershipCommunities(graph=graphRandom, method=method,
-                                      FUN=FUN, ...=...)
+                                      FUN=FUN1, ...=...)
     de <- igraph::gsize(graph)
     N <- igraph::vcount(graph)
-    nRewire <- seq(0,60,5)
-    if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
+    nRewire <- seq(0, 60, 5)
+    if(verbose) cat("Detected robin method type independent\nIt can take time ... It depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
     vet <- round(vet1*de/100, 0)
-    ## read ... and unpack -> create a list of character strings and pass it 
-    ## in varlist
-    # varlist <- list(...)
-    # varlist <- c(varlist, "graph","method","comReal1",
-    #              "comReal2","N","verbose","FUN", 
-    #              "measure")
-    # cl <- parallel::makeCluster(ncores)
-    # parallel::clusterExport(cl, varlist=c("...", "graph","method","comReal1",
-    #                                      "comReal2","N","verbose","FUN", 
-    #                                      "measure"),
-    #                        envir=environment())
-    # zlist <- parallel::clusterApply(cl, vet, function(z) 
     
     parfunct <- function(z, graph, method, comReal1, comReal2, N, 
-                         measure, FUN, ...)
+                         measure, FUN1, ...)
     {
         # print(list(...))
         MeansList <- lapply(1:10, function(s)
@@ -323,7 +311,7 @@ robinRobustFast <- function(graph, graphRandom,
             
             comr1 <- robin::membershipCommunities(graph=graphRList,
                                                   method=method,
-                                                  FUN=FUN,
+                                                  FUN=FUN1,
                                                   ...=...)
             if(measure=="vi")
             {
@@ -346,7 +334,7 @@ robinRobustFast <- function(graph, graphRandom,
                                          with=igraph::keeping_degseq(loops=FALSE,
                                                                      niter=z))
             comr2 <- robin::membershipCommunities(graph=graphRandomList, 
-                                                  FUN=FUN,
+                                                  FUN=FUN1,
                                                   method=method,
                                                   ...=...)
             if(measure=="vi")
@@ -369,7 +357,6 @@ robinRobustFast <- function(graph, graphRandom,
             return(list("Measure1"=measure1, "Measure2"=measure2))
         })
         
-        
         m1 <- unlist(lapply(MeansList, function(mm)
         {
             mm$Measure1
@@ -383,9 +370,9 @@ robinRobustFast <- function(graph, graphRandom,
         return(list("Measure1"=m1,"Measure2"=m2))
     }
     
-    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, 
+    zlist <- BiocParallel::bplapply(vet, FUN=parfunct, graph=graph, 
             method=method, comReal1=comReal1, comReal2=comReal2, N=N, 
-            measure=measure, FUN=FUN, ...=..., BPPARAM=BPPARAM)
+            measure=measure, FUN1=FUN1, ...=..., BPPARAM=BPPARAM)
 
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
