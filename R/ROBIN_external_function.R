@@ -28,6 +28,9 @@
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
+#' specifies the back-end to be used for computations. See
+#'   \code{\link[BiocParallel]{bpparam}} for details.
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' 
@@ -61,7 +64,7 @@ robinCompare <-  function(graph,
                           FUN1=NULL, FUN2=NULL,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           type=NULL,
-                          verbose=TRUE, dist="NegBinom")
+                          verbose=TRUE, dist="NegBinom",BPPARAM=BiocParallel::bpparam())
 {
     
     methods <- c(method1, method2)
@@ -72,7 +75,7 @@ robinCompare <-  function(graph,
        print("Weighted Network")
          output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
             method2=method2, args2=args2, FUN1=FUN1, FUN2=FUN2, measure=measure, 
-            verbose=verbose, dist=dist)
+            verbose=verbose, dist=dist,BPPARAM=BPPARAM)
     } else {
         if(any(type %in% c("independent", "dependent")))
         {
@@ -86,7 +89,7 @@ robinCompare <-  function(graph,
             output <- robinCompareFast(graph=graph, method1=method1, args1=args1, 
                                        method2=method2, args2=args2, 
                                        FUN1=FUN1, FUN2=FUN2, measure=measure, 
-                                       verbose=verbose)
+                                       verbose=verbose,BPPARAM=BPPARAM)
             
         }
         
@@ -127,6 +130,9 @@ robinCompare <-  function(graph,
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
+#' specifies the back-end to be used for computations. See
+#'   \code{\link[BiocParallel]{bpparam}} for details.
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
@@ -144,7 +150,7 @@ robinCompare <-  function(graph,
 #'    objective_function = "modularity", measure="vi")
 ##    Weighted Example:
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
-# graphRandom <- randomWeight(graph=graph)
+# graphRandom <- random(graph=graph)
 # robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
 #    objective_function = "modularity", measure="vi")
 
@@ -155,23 +161,25 @@ robinRobust <-  function(graph, graphRandom,
                                    "optimal", "leiden", "other"),
                           ...,
                           FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                          type=NULL,verbose=TRUE, dist="NegBinom" )
+                          type=NULL,verbose=TRUE, dist="NegBinom",BPPARAM=BiocParallel::bpparam())
 {
 
     methods <- c("real data", "null model")
     # Weigthed version
     if ( is.weighted(graph) )
     {
+        print("Weighted Network")
         output <- robinRobustFastWeighted (graph=graph, graphRandom=graphRandom, 
                                                       method=method,
                                                       ...,
                                                       FUN1=FUN, measure=measure,
                                                       verbose=verbose, 
-                                           dist=dist)
+                                           dist=dist,BPPARAM=BPPARAM)
     } else {
         
         if(any(type %in% c("independent", "dependent")))
         {
+            print("Unweighted Network No Parallel Function")
             # No Parallel
             output <- robinRobustNoParallel(graph=graph, graphRandom= graphRandom, 
                                             method=method,
@@ -179,12 +187,13 @@ robinRobust <-  function(graph, graphRandom,
                                             FUN=FUN, measure=measure,
                                             type=type, verbose=verbose) 
         }else{
+            print("Unweighted Network Parallel Function")
             # Parallel version: 
             output <- robinRobustFast(graph=graph, graphRandom=graphRandom, 
                                       method=method,
                                       ...,
                                       FUN1=FUN, measure=measure,
-                                      verbose=verbose)
+                                      verbose=verbose,BPPARAM=BPPARAM)
         }
     }
     outputRobin <- c(output, model=methods, list(graph=graph))
