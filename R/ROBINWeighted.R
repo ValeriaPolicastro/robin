@@ -107,7 +107,7 @@ robinCompareFastWeight <- function(graph,
     graphRewire <- NULL
     count <- 1
     nRewire <- seq(0,60,5)
-    if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
+    if(verbose) cat("Detected robin method type independent\nIt can take time ... It depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5)
     vet <- round(vet1*de/100, 0)
  
@@ -341,7 +341,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     de <- igraph::gsize(graph)
     N <- igraph::vcount(graph)
     nRewire <- seq(0,60,5)
-    if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
+    if(verbose) cat("Detected robin method type independent\nIt can take time ... It depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
     vet <- round(vet1*de/100, 0)
     
