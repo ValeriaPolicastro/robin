@@ -3,6 +3,8 @@ robin v1.2.0
 - adding weighted graph procedure
 - new parallelization method with BiocParallel::bpparam()
 - implemented the possibility to have different arguments for different community detection algorithms
+- created one function for robinRobust with inside parallelized and weighted version
+- created one function for robinCompare with inside parallelized and weighted version
 robin v1.1.2
 - fixed Note CRAN
 robin v1.1.1
