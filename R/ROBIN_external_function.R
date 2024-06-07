@@ -27,7 +27,8 @@
 #' (default NULL).
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' any text into this field. Defaults to "Other". See
+#'   \code{\link[perturbR]{rewireR}} for details.
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
@@ -48,7 +49,8 @@
 #'             method2="leiden", args2=list(objective_function ="modularity"))
 ## Weighted example:
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
-# robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8), method2="leiden", args2=list(objective_function ="modularity"))
+# robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8), 
+# method2="leiden", args2=list(objective_function ="modularity"), dist="NegBinom")
 
 robinCompare <-  function(graph, 
                           method1=c("walktrap", "edgeBetweenness", "fastGreedy",
@@ -64,7 +66,7 @@ robinCompare <-  function(graph,
                           FUN1=NULL, FUN2=NULL,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           type=NULL,
-                          verbose=TRUE, dist="NegBinom",BPPARAM=BiocParallel::bpparam())
+                          verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
 {
     
     methods <- c(method1, method2)
@@ -129,7 +131,8 @@ robinCompare <-  function(graph,
 #' @param ... other parameter.
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' any text into this field. Defaults to "Other". See
+#'   \code{\link[perturbR]{rewireR}} for details.
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
@@ -152,7 +155,7 @@ robinCompare <-  function(graph,
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 # graphRandom <- random(graph=graph)
 # robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
-#    objective_function = "modularity", measure="vi")
+#    objective_function = "modularity", measure="vi",dist="NegBinom")
 
 robinRobust <-  function(graph, graphRandom, 
                           method=c("walktrap", "edgeBetweenness", 
@@ -161,7 +164,7 @@ robinRobust <-  function(graph, graphRandom,
                                    "optimal", "leiden", "other"),
                           ...,
                           FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                          type=NULL,verbose=TRUE, dist="NegBinom",BPPARAM=BiocParallel::bpparam())
+                          type=NULL,verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
 {
 
     methods <- c("real data", "null model")

@@ -6,7 +6,8 @@
 #' @param graph The output of prepGraph.
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' any text into this field. Defaults to "Other". See
+#'   \code{\link[perturbR]{rewireR}} for details.
 #' @param verbose flag for verbose output (default as FALSE)
 #'
 #' @return An igraph object, a randomly rewired graph.
@@ -14,7 +15,7 @@
 #' @keywords internal
 #'
 
-randomWeight <- function(graph, dist="NegBinom", verbose=FALSE)
+randomWeight <- function(graph, dist="Other", verbose=FALSE)
 {
     if(verbose) cat("Randomizing the graph edges.\n")
     v <- igraph::vcount(graph) ## number of vertex
@@ -63,7 +64,8 @@ randomWeight <- function(graph, dist="NegBinom", verbose=FALSE)
 #' @param verbose flag for verbose output (default as TRUE).
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' any text into this field. Defaults to "Other". See
+#'   \code{\link[perturbR]{rewireR}} for details.
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
@@ -90,7 +92,7 @@ robinCompareFastWeight <- function(graph,
                                    FUN1=NULL, FUN2=NULL,
                                    measure=c("vi", "nmi","split.join", "adjusted.rand"),
                                    #ncores=2,
-                                   verbose=TRUE, dist="NegBinom", BPPARAM=BiocParallel::bpparam())
+                                   verbose=TRUE, dist="Other", BPPARAM=BiocParallel::bpparam())
 {
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
@@ -309,7 +311,8 @@ robinCompareFastWeight <- function(graph,
 #' parameter, lower values typically yield fewer, larger clusters (default=1).
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' any text into this field. Defaults to "Other". See 
+#' \code{\link[perturbR]{rewireR}} for details.
 #' @param verbose flag for verbose output (default as TRUE).
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
@@ -329,7 +332,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
                                                          "optimal", "leiden", "other"),
                                                 ..., FUN1=NULL, 
                                     measure= c("vi", "nmi", "split.join", "adjusted.rand"),
-                                                verbose=TRUE, dist="NegBinom",
+                                                verbose=TRUE, dist="Other",
                                     BPPARAM=BiocParallel::bpparam())
 {   
     method <- match.arg(method)

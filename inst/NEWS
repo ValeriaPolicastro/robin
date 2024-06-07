@@ -5,6 +5,7 @@ robin v1.2.0
 - implemented the possibility to have different arguments for different community detection algorithms
 - created one function for robinRobust with inside parallelized and weighted version
 - created one function for robinCompare with inside parallelized and weighted version
+- added new community detection algorithm Leiden
 robin v1.1.2
 - fixed Note CRAN
 robin v1.1.1

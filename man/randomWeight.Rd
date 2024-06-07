@@ -4,14 +4,15 @@
 \alias{randomWeight}
 \title{randomWeight}
 \usage{
-randomWeight(graph, dist = "NegBinom", verbose = FALSE)
+randomWeight(graph, dist = "Other", verbose = FALSE)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
 
 \item{dist}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
-any text into this field. Defaults to "NegBinom" for negative binomial.}
+any text into this field. Defaults to "Other". See
+  \code{\link[perturbR]{rewireR}} for details.}
 
 \item{verbose}{flag for verbose output (default as FALSE)}
 }

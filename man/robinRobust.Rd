@@ -14,7 +14,7 @@ robinRobust(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = NULL,
   verbose = TRUE,
-  dist = "NegBinom",
+  dist = "Other",
   BPPARAM = BiocParallel::bpparam()
 )
 }
@@ -46,7 +46,8 @@ robin type contruction. If NULL the new faster version is computed
 
 \item{dist}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
-any text into this field. Defaults to "NegBinom" for negative binomial.}
+any text into this field. Defaults to "Other". See
+  \code{\link[perturbR]{rewireR}} for details.}
 
 \item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
 specifies the back-end to be used for computations. See
