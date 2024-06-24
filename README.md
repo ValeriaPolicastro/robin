@@ -31,7 +31,7 @@ my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
 proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain")               
-plotRobin(proc)
+plot(proc)
 ```
 
 <p align="center">
@@ -52,7 +52,7 @@ robinGPTest(proc)
 my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
 comp <- robinCompare(graph=graph, method1="fastGreedy", method2="louvain")                
-plotRobin(comp)
+plot(comp)
 ```
 
 <p align="center">

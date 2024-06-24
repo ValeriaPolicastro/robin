@@ -73,10 +73,10 @@ plotComm <- function(graph, members)
 #' @export
 #'
 #' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
+#' \dontrun{my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
-#' comp <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
-#' plot(comp)
+#' comp <- robinCompare(graph=graph, method1="fastGreedy",method2="louvain")
+#' plot(comp)}
 #' 
 plot.robin <- function(x, title="Robin plot", ...)
 {   

@@ -22,9 +22,9 @@ This function plots two curves: the measure of the null model and the measure
 of the real graph or the measure of the two community detection algorithms.
 }
 \examples{
-my_file <- system.file("example/football.gml", package="robin")
+\dontrun{my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
-comp <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
-plot(comp)
+comp <- robinCompare(graph=graph, method1="fastGreedy",method2="louvain")
+plot(comp)}
 
 }

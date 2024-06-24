@@ -2,75 +2,7 @@
 % Please edit documentation in R/ROBINWeighted.R
 \name{robinRobustFastWeighted}
 \alias{robinRobustFastWeighted}
-\title{#' rewireComplWeight
-#'
-#' @description rewires the weighted graph, creates the communities and
-#' compares the communities through different measures.
-#'
-#' @param data The output of prepGraph.
-#' @param number Number of rewiring trials to perform.
-#' @param community Community to compare with.
-#' @param method The clustering method, one of "walktrap", "edgeBetweenness",
-#' "fastGreedy", "louvain", "spinglass","leadingEigen", "labelProp", "infomap",
-#' "optimal","leiden", "other".
-#' @param FUN see \code{\link{methodCommunity}}.
-#' @param measure The measure for the comparison of the communities "vi", "nmi",
-#' "split.join", "adjusted.rand".
-#' @param weights this argument is not settable for "infomap" method.
-#' @param steps this argument is settable only for "leadingEigen"and"walktrap"
-#' method.
-#' @param spins This argument is settable only for "infomap" method.
-#' @param e.weights This argument is settable only for "infomap" method.
-#' @param v.weights This argument is settable only for "infomap" method.
-#' @param nb.trials This argument is settable only for "infomap" method.
-#' @param directed This argument is settable only for "edgeBetweenness" method
-#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
-#' modularity. Must be either "CPM" or "modularity".
-#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
-#' Each iteration may improve the partition further.This argument is settable 
-#' only for "leiden".
-#' @param resolution only for "louvain" and "leiden". Optional resolution
-#'  parameter, lower values typically yield fewer, larger clusters (default=1).
-#' @param dist Option to rewire in a manner that retains overall graph weight 
-#' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "NegBinom" for negative binomial.
-#' @keywords internal
-#'
-rewireComplWeight <- function(data, number, community,
-                              method=c("walktrap", "edgeBetweenness",
-                                       "fastGreedy", "louvain", "spinglass",
-                                       "leadingEigen", "labelProp", "infomap",
-                                       "optimal","leiden", "other"),
-                              FUN=NULL,
-                              measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                              dist="NegBinom",
-                              ...)
-                              # directed=FALSE, weights=NULL, steps=4, spins=25,
-                              # e.weights=NULL, v.weights=NULL, nb.trials=10, 
-                              # resolution=1, n_iterations=2,
-                              # objective_function = c("CPM", "modularity"),
-                              # )
-{
-    method <- match.arg(method)
-    measure <- match.arg (measure)
-    adj <- as_adjacency_matrix(data, attr="weight", sparse = FALSE)
-    graphRewire <- as.matrix(perturbR::rewireR(adj, number,dist=dist))
-    graphRewire <- graph_from_adjacency_matrix(graphRewire, weighted=TRUE, mode="undirected")
-    args <- c(list(graph=graphRewire), method=method, FUN=FUN, ...)
-    comR <- do.call(membershipCommunities, args)
-    # comR <- membershipCommunities(graph=graphRewire, method=method, FUN=FUN,
-    #                               directed=directed, weights=weights, steps=steps,
-    #                               spins=spins, e.weights=e.weights,
-    #                               v.weights=v.weights, nb.trials=nb.trials,
-    #                               resolution=resolution,
-    #                               objective_function = objective_function,
-    #                               n_iterations=n_iterations)
-    Measure <- igraph::compare(community, comR, method=measure)
-    output <- list(Measure=Measure, graphRewire=graphRewire)
-    
-    return(output)
-}
-robinRobustFastWeighted}
+\title{robinRobustFastWeighted}
 \usage{
 robinRobustFastWeighted(
   graph,
