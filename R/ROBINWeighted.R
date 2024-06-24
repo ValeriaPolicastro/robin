@@ -55,8 +55,6 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 #' @param measure The stability measure, one of "vi", "nmi", "split.join",
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
-#' @param ncores number of CPU cores to use.(default is 2) For a faster
-#' execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)
 #' @param FUN1 personal designed function when method1 is "others".
 #' see \code{\link{methodCommunity}}.
 #' @param FUN2 personal designed function when method2 is "others".
@@ -64,11 +62,11 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 #' @param verbose flag for verbose output (default as TRUE).
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "Other". See
-#'   \code{\link[perturbR]{rewireR}} for details.
+#' any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
+#'  for details.
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
-#'   \code{\link[BiocParallel]{bpparam}} for details.
+#' \link[BiocParallel]{bpparam} for details.
 #'
 #' @return A list object with two matrices:
 #' - the matrix "Mean1" with the means of the procedure for the first method
@@ -287,36 +285,22 @@ robinCompareFastWeight <- function(graph,
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness",
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "leiden","optimal".
-#' @param FUN in case the @method parameter is "other" there is the possibility
+#' @param FUN1 in case the @method parameter is "other" there is the possibility
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights
 #' (that can be NULL), and has to return a community object.
 #' @param measure The stability measure, one of "vi", "nmi", "split.join",
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
-#' @param weights this argument is not settable for "infomap" method.
-#' @param steps this argument is settable only for "leadingEigen"and"walktrap"
-#' method.
-#' @param spins This argument is settable only for "infomap" method.
-#' @param e.weights This argument is settable only for "infomap" method.
-#' @param v.weights This argument is settable only for "infomap" method.
-#' @param nb.trials This argument is settable only for "infomap" method.
-#' @param directed This argument is settable only for "edgeBetweenness" method.
-#' @param objective_function Whether to use the Constant Potts Model (CPM) or 
-#' modularity. Must be either "CPM" or "modularity".
-#' @param n_iterations the number of iterations to iterate the Leiden algorithm. 
-#' Each iteration may improve the partition further.This argument is settable 
-#' only for "leiden".
-#' @param resolution only for "louvain" and "leiden". Optional resolution 
-#' parameter, lower values typically yield fewer, larger clusters (default=1).
+#' @param ... other parameter
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "Other". See 
-#' \code{\link[perturbR]{rewireR}} for details.
+#' any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
+#' for details.
 #' @param verbose flag for verbose output (default as TRUE).
-#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
-#' specifies the back-end to be used for computations. See
-#'   \code{\link[BiocParallel]{bpparam}} for details.
+#' @param BPPARAM the BiocParallel object of class bpparamClass that 
+#' specifies the back-end to be used for computations. See 
+#' \link[BiocParallel]{bpparam} for details.
 #'
 #' @return A list object with two matrices:
 #' - the matrix "Mean" with the means of the procedure for the graph
@@ -326,13 +310,13 @@ robinCompareFastWeight <- function(graph,
 #' @importFrom BiocParallel bplapply bpparam
 
 robinRobustFastWeighted <- function(graph, graphRandom, 
-                                                method=c("walktrap", "edgeBetweenness", 
-                                                         "fastGreedy", "louvain", "spinglass", 
-                                                         "leadingEigen", "labelProp", "infomap",
-                                                         "optimal", "leiden", "other"),
-                                                ..., FUN1=NULL, 
+                                    method=c("walktrap", "edgeBetweenness",
+                                             "fastGreedy", "louvain", "spinglass",
+                                             "leadingEigen", "labelProp", "infomap",
+                                             "optimal", "leiden", "other"),
+                                    ..., FUN1=NULL,
                                     measure= c("vi", "nmi", "split.join", "adjusted.rand"),
-                                                verbose=TRUE, dist="Other",
+                                    verbose=TRUE, dist="Other",
                                     BPPARAM=BiocParallel::bpparam())
 {   
     method <- match.arg(method)
@@ -433,8 +417,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
                                     method=method, comReal1=comReal1, N=N,
                                     FUN1=FUN1, comReal2=comReal2, dist=dist,
-                                    ...=...,
-                                    BPPARAM=BPPARAM)
+                                    ...=...,BPPARAM=BPPARAM)
     
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
@@ -446,6 +429,6 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     colnames(Measure2) <- nRewire 
     return(list(Mean=Measure1,
                 MeanRandom=Measure2))
-}
+    }
 
 

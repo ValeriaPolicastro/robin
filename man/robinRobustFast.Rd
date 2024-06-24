@@ -27,6 +27,11 @@ robinRobustFast(
 
 \item{...}{other parameter}
 
+\item{FUN1}{in case the @method parameter is "other" there is the possibility 
+to use a personal function passing its name through this parameter.
+The personal parameter has to take as input the @graph and the @weights 
+(that can be NULL), and has to return a community object.}
+
 \item{measure}{The stability measure, one of "vi", "nmi", "split.join", 
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
@@ -36,11 +41,6 @@ robinRobustFast(
 \item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
 specifies the back-end to be used for computations. See
   \code{\link[BiocParallel]{bpparam}} for details.}
-
-\item{FUN}{in case the @method parameter is "other" there is the possibility 
-to use a personal function passing its name through this parameter.
-The personal parameter has to take as input the @graph and the @weights 
-(that can be NULL), and has to return a community object.}
 }
 \value{
 A list object with two matrices:

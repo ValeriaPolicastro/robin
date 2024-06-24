@@ -51,15 +51,12 @@ see \code{\link{methodCommunity}}.}
 
 \item{dist}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
-any text into this field. Defaults to "Other". See
-  \code{\link[perturbR]{rewireR}} for details.}
+any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
+ for details.}
 
 \item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
 specifies the back-end to be used for computations. See
-  \code{\link[BiocParallel]{bpparam}} for details.}
-
-\item{ncores}{number of CPU cores to use.(default is 2) For a faster
-execution we suggest to use ncores=(parallel::detectCores(logical = FALSE)-1)}
+\link[BiocParallel]{bpparam} for details.}
 }
 \value{
 A list object with two matrices:

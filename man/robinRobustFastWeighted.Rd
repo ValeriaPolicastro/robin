@@ -94,6 +94,13 @@ robinRobustFastWeighted(
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "leiden","optimal".}
 
+\item{...}{other parameter}
+
+\item{FUN1}{in case the @method parameter is "other" there is the possibility
+to use a personal function passing its name through this parameter.
+The personal parameter has to take as input the @graph and the @weights
+(that can be NULL), and has to return a community object.}
+
 \item{measure}{The stability measure, one of "vi", "nmi", "split.join",
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
@@ -102,42 +109,12 @@ robinRobustFastWeighted(
 
 \item{dist}{Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
-any text into this field. Defaults to "Other". See 
-\code{\link[perturbR]{rewireR}} for details.}
+any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
+for details.}
 
-\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
-specifies the back-end to be used for computations. See
-  \code{\link[BiocParallel]{bpparam}} for details.}
-
-\item{FUN}{in case the @method parameter is "other" there is the possibility
-to use a personal function passing its name through this parameter.
-The personal parameter has to take as input the @graph and the @weights
-(that can be NULL), and has to return a community object.}
-
-\item{weights}{this argument is not settable for "infomap" method.}
-
-\item{steps}{this argument is settable only for "leadingEigen"and"walktrap"
-method.}
-
-\item{spins}{This argument is settable only for "infomap" method.}
-
-\item{e.weights}{This argument is settable only for "infomap" method.}
-
-\item{v.weights}{This argument is settable only for "infomap" method.}
-
-\item{nb.trials}{This argument is settable only for "infomap" method.}
-
-\item{directed}{This argument is settable only for "edgeBetweenness" method.}
-
-\item{objective_function}{Whether to use the Constant Potts Model (CPM) or 
-modularity. Must be either "CPM" or "modularity".}
-
-\item{n_iterations}{the number of iterations to iterate the Leiden algorithm. 
-Each iteration may improve the partition further.This argument is settable 
-only for "leiden".}
-
-\item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter, lower values typically yield fewer, larger clusters (default=1).}
+\item{BPPARAM}{the BiocParallel object of class bpparamClass that 
+specifies the back-end to be used for computations. See 
+\link[BiocParallel]{bpparam} for details.}
 }
 \value{
 A list object with two matrices:

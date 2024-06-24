@@ -172,7 +172,7 @@ robinRobust <-  function(graph, graphRandom,
     if ( is.weighted(graph) )
     {
         print("Weighted Network")
-        output <- robinRobustFastWeighted (graph=graph, graphRandom=graphRandom, 
+        output <- robinRobustFastWeighted(graph=graph, graphRandom=graphRandom, 
                                                       method=method,
                                                       ...,
                                                       FUN1=FUN, measure=measure,
