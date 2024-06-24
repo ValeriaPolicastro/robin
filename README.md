@@ -30,7 +30,7 @@ of chance, merely due to edge positions in the network.
 my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
-proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", method="louvain")               
+proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain")               
 plotRobin(proc)
 ```
 <p align="center">
@@ -47,7 +47,7 @@ robinGPTest(proc)
 ```{r}
 my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
-comp <- robinCompare(graph=graph, method1="fastGreedy", method2="louvain", measure="vi")                
+comp <- robinCompare(graph=graph, method1="fastGreedy", method2="louvain")                
 plotRobin(comp)
 ```
 <p align="center">
