@@ -30,8 +30,8 @@ of chance, merely due to edge positions in the network.
 my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
 graphRandom <- random(graph=graph)
-proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", method="louvain", type="independent")               
-plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, legend=c("real data", "null model"))
+proc <- robinRobust(graph=graph, graphRandom=graphRandom, measure="vi", method="louvain")               
+plotRobin(proc)
 ```
 <p align="center">
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotRobin.png" width="500" height="500" />
@@ -39,26 +39,26 @@ plotRobin(graph=graph, model1=proc$Mean, model2=proc$MeanRandom, legend=c("real 
 
 ```{r}
 #For the testing:
-robinFDATest(graph=graph, model1=proc$Mean, model2=proc$MeanRandom)
-robinGPTest(model1=proc$Mean, model2=proc$MeanRandom)
+robinFDATest(proc)
+robinGPTest(proc)
 ```
 
 ## Example 2:   "Comparison of two community detection algorithms"
 ```{r}
 my_network <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_network, file.format="gml")
-comp <- robinCompare(graph=graph, method1="fastGreedy", method2="louvain", measure="vi", type="independent")                
-plotRobin(graph=graph, model1=comp$Mean1, model2=comp$Mean2, legend=c("fastGreedy", "louvain"), title="FastGreedy vs Louvain")
+comp <- robinCompare(graph=graph, method1="fastGreedy", method2="louvain", measure="vi")                
+plotRobin(comp)
 ```
 <p align="center">
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotCompare.png" width="500" height="500"/>
 </p>
 In this example, the Louvain algorithm fits better the network of interest, as the curve of the stability measure varies less than the one obtained by the Fast greedy method.
-
+Lower the curve more stable is the community detection method.
 ```{r}
 #For the testing:
-robinFDATest(graph=graph, model1=comp$Mean1, model2=comp$Mean2)
-robinGPTest(model1=comp$Mean1, model2=comp$Mean2)
+robinFDATest(comp)
+robinGPTest(comp)
 ```
 ## Reference
 ROBustness In Network (robin): an R package for Comparison and Validation of communities Valeria Policastro, Dario Righelli, Annamaria Carissimo, Luisa Cutillo, Italia De Feis. The R Journal (2021) https://journal.r-project.org/archive/2021/RJ-2021-040/index.html
