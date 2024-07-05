@@ -110,18 +110,20 @@ robinCompareFastWeight <- function(graph,
     if(verbose) cat("Detected robin method type independent\nIt can take time ... It depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5)
     vet <- round(vet1*de/100, 0)
- 
+     #print(vet)
     parfunct <- function(z, graph, method1, method2, comReal1, comReal2, N, 
                          measure, args1, args2, FUN1, FUN2,dist)
     {
         #print(list(args1,args2))
         
-        
+        #print(z)
         
         MeansList <- lapply(1:10, function(s)
         {
     
-            adj <- igraph::as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
+           #print(s)
+            #print(z)
+             adj <- igraph::as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
             gR <- as.matrix(perturbR::rewireR(adj, z,dist = dist))
             graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
                                                               mode="undirected")
@@ -170,7 +172,7 @@ robinCompareFastWeight <- function(graph,
             }
             return(list("Measure1"=measure1, "Measure2"=measure2))
         })
-        
+
         
         m1 <- unlist(lapply(MeansList, function(mm)
         {
@@ -182,6 +184,7 @@ robinCompareFastWeight <- function(graph,
             mm$Measure2
         }))
         
+    
         return(list("Measure1"=m1,"Measure2"=m2))
     }
     
@@ -192,7 +195,7 @@ robinCompareFastWeight <- function(graph,
     
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
-    
+
     Measure1 <- cbind(rep(0, 10), Measure1)
     Measure2 <- cbind(rep(0, 10), Measure2)
     
