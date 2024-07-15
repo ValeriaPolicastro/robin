@@ -35,9 +35,7 @@ plot(proc)
 ```
 
 <p align="center">
-
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotRobin.png" width="500" height="500"/>
-
 </p>
 
 ```{r}
@@ -56,9 +54,7 @@ plot(comp)
 ```
 
 <p align="center">
-
 <img src="https://github.com/ValeriaPolicastro/Paper-Robin/blob/master/images/PlotCompare.png" width="500" height="500"/>
-
 </p>
 
 In this example, the Louvain algorithm fits better the network of interest, as the curve of the stability measure varies less than the one obtained by the Fast greedy method. Lower the curve more stable is the community detection method.
