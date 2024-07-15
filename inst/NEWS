@@ -1,4 +1,5 @@
 robin v1.2.0
+- new function plot multiple comaprison
 - implementing robin class
 - adding weighted graph procedure
 - new parallelization method with BiocParallel::bpparam()
