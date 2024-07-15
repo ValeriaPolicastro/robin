@@ -102,7 +102,7 @@ robinCompare <-  function(graph,
    
     outputRobin <- c(output, model=methods, list(graph=graph))
 
-   class(outputRobin) <- "robin"
+    class(outputRobin) <- "robin"
     return(outputRobin)
     
 }
