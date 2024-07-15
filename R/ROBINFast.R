@@ -2,99 +2,124 @@
 #'
 #' @description This function compares two community detection algorithms.
 #' Is the parallelized and faster version of \code{\link{robinCompare}}
+#'
 #' @param graph The output of prepGraph.
 #' @param method1 The first clustering method, one of "walktrap", 
 #' "edgeBetweenness", "fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal".
+#' @param args1 A \code{list} of arguments to be passed to the \code{method1} 
+#' (see i.e. \link[igraph]{cluster_leiden} for a list of possible method parameters).
 #' @param method2 The second custering method one of "walktrap",
 #' "edgeBetweenness","fastGreedy", "louvain", "spinglass", "leadingEigen",
 #' "labelProp", "infomap","optimal".
+#' @param args2 A \code{list} of arguments to be passed to the \code{method2}
+#' (see i.e. \link[igraph]{cluster_leiden} for a list of possible method parameters).
+#' @param FUN1 personal designed function when \code{method1} is "others". 
+#' see \code{\link{methodCommunity}}.
+#' @param FUN2 personal designed function when \code{method2} is "others". 
+#' see \code{\link{methodCommunity}}.
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
-#' @param ncores number of CPU cores to use.(default is 2) For a faster 
-#' execution we suggest to use ncores=(detectCores(logical = FALSE)-1) 
-#' @param FUN1 personal designed function when method1 is "others". 
-#' see \code{\link{methodCommunity}}.
-#' @param FUN2 personal designed function when method2 is "others". 
-#' see \code{\link{methodCommunity}}.
-#' @param weights This argument is not settable for "infomap" method.
-#' @param steps This argument is settable only for "leadingEigen"and"walktrap" 
-#' method.
-#' @param spins This argument is settable only for "infomap" method.
-#' @param e.weights This argument is settable only for "infomap" method.
-#' @param v.weights This argument is settable only for "infomap" method.
-#' @param nb.trials This argument is settable only for "infomap" method.
-#' @param directed This argument is settable only for "edgeBetweenness" method.
 #' @param verbose flag for verbose output (default as TRUE).
+#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
+#' specifies the back-end to be used for computations. See
+#'   \code{\link[BiocParallel]{bpparam}} for details. 
 #' 
 #' @return A list object with two matrices:
 #' - the matrix "Mean1" with the means of the procedure for the first method 
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
-#' @import igraph parallel
-#' @export
-#'
-#' @examples 
-#' my_file <- system.file("example/football.gml", package="robin")
-#' graph <- prepGraph(file=my_file, file.format="gml")
-#' robinCompareFast(graph=graph, method1="louvain", 
-#' method2="fastGreedy", measure="vi")
+#' @import igraph
+#' @importFrom BiocParallel bplapply bpparam
+#' @keywords internal
+# @examples my_file <- system.file("example/football.gml", package="robin")
+# graph <- prepGraph(file=my_file, file.format="gml")
+# robinCompareFast(graph=graph, method1="louvain", args1 = list(resolution=0.8),
+# method2="leiden", args2=list(objective_function ="modularity"))
 
 robinCompareFast <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen","louvain","spinglass",
-                                   "labelProp","infomap","optimal", "other"),
+                                   "labelProp","infomap","optimal","leiden",
+                                   "other"),
+                         args1=list(),
                          method2=c("walktrap", "edgeBetweenness", "fastGreedy",
                                    "leadingEigen","louvain","spinglass",
-                                   "labelProp","infomap","optimal", "other"),
-                         measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                         ncores=2,
+                                   "labelProp","infomap","optimal","leiden",
+                                   "other"),
+                         args2=list(),
+                         measure= c("vi", "nmi", "split.join", "adjusted.rand"),
                          FUN1=NULL, FUN2=NULL,
-                         directed=FALSE, weights=NULL, steps=4, 
-                         spins=25, e.weights=NULL, v.weights=NULL, 
-                         nb.trials=10, verbose=TRUE)
+                         verbose=TRUE, BPPARAM=BiocParallel::bpparam())
 {   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
     measure <- match.arg(measure)
-    comReal1 <- membershipCommunities(graph=graph, method=method1,
-                                      FUN=FUN1,
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps, 
-                                      spins=spins, 
-                                      e.weights=e.weights, 
-                                      v.weights=v.weights, 
-                                      nb.trials=nb.trials) 
-    comReal2 <- membershipCommunities(graph=graph, method=method2,
-                                      FUN=FUN2,
-                                      directed=directed,
-                                      weights=weights,
-                                      steps=steps, 
-                                      spins=spins, 
-                                      e.weights=e.weights, 
-                                      v.weights=v.weights, 
-                                      nb.trials=nb.trials)
+    args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
+    args21 <- c(list(graph=graph), method=method2, FUN=FUN2, args2)
+    comReal1 <- do.call(robin::membershipCommunities, args11)
+    comReal2 <- do.call(robin::membershipCommunities, args21)
+    
+    # comReal1 <- membershipCommunities(graph=graph, method=method1,
+    #                                   FUN=FUN1,
+    #                                   directed=directed,
+    #                                   weights=weights,
+    #                                   steps=steps, 
+    #                                   spins=spins, 
+    #                                   e.weights=e.weights, 
+    #                                   v.weights=v.weights, 
+    #                                   nb.trials=nb.trials,
+    #                                   resolution=resolution,
+    #                                   objective_function = objective_function,
+    #                                   n_iterations=n_iterations) 
+    # comReal2 <- membershipCommunities(graph=graph, method=method2,
+    #                                   FUN=FUN2,
+    #                                   directed=directed,
+    #                                   weights=weights,
+    #                                   steps=steps, 
+    #                                   spins=spins, 
+    #                                   e.weights=e.weights, 
+    #                                   v.weights=v.weights, 
+    #                                   nb.trials=nb.trials,
+    #                                   resolution=resolution,
+    #                                   objective_function = objective_function,
+    #                                   n_iterations=n_iterations)
     de <- igraph::gsize(graph)
     N <- igraph::vcount(graph)
-    Measure <- NULL
-    vector1 <- NULL
-    vector2 <- NULL
-    graphRewire <- NULL
-    count <- 1
+   # Measure <- NULL
+     # vector1 <- NULL
+   # vector2 <- NULL
+    # graphRewire <- NULL
+   # count <- 1
     nRewire <- seq(0,60,5)
-    if(verbose) cat("Detecting robin method independent type, wait it can take time it depends on the size of the network.\n")
+    if(verbose) cat("Detected robin method type independent\nIt can take time ... It depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
     vet <- round(vet1*de/100, 0)
-    cl <- parallel::makeCluster(ncores)
-    parallel::clusterExport(cl,varlist =c("graph","method1","method2","directed",
-                                "weights","steps","spins", "e.weights", 
-                                "v.weights", "nb.trials","measure","comReal1",
-                                "comReal2","N","verbose","FUN1","FUN2"), 
-                  envir=environment())
-    zlist <- parallel::clusterApply(cl,vet, function(z) 
-    {
+    #cl <- parallel::makeCluster(ncores)
+    
+    #varli <- c(list(graph=graph),method1=method1, method2=method2, FUN1=FUN1, 
+    #             FUN2=FUN2)
+    #varli <- c(names(args1),
+    #           names(args2),
+    #           names(varli))
+    #args11 <- c(cl=cl, varlist=varlist, envir=environment())
+    #do.call(parallel::clusterExport, args11)
+    
+     # parallel::clusterExport(cl,varlist=c("graph", 
+     #                                      "method1", 
+     #                                     "method2", 
+     #                                      "FUN1",
+     #                                     "FUN2",
+     #                                     "args1",
+     #                                     "args2",
+     #                                     "comReal1",
+     #                                     "comReal2"), envir=environment())
+    #print(names(varlist))
+     parfunct <- function(z, graph, method1, method2, comReal1, comReal2, N, 
+                          measure, args1, args2, FUN1, FUN2)
+     {
+        # print(list(args1,args2))
         
         
         
@@ -102,19 +127,27 @@ robinCompareFast <- function(graph,
         {
             
             graphRList <- igraph::rewire(graph, 
-                                         with=igraph::keeping_degseq(loops=FALSE,
-                                                                     niter=z))
+                                with=igraph::keeping_degseq(loops=FALSE,
+                                                             niter=z))
             
-            comr1 <- robin::membershipCommunities(graph=graphRList,
-                                                  method=method1,
-                                                  FUN=FUN1,
-                                                  directed=directed,
-                                                  weights=weights,
-                                                  steps=steps, 
-                                                  spins=spins, 
-                                                  e.weights=e.weights, 
-                                                  v.weights=v.weights, 
-                                                  nb.trials=nb.trials)
+            # comr1 <- robin::membershipCommunities(graph=graphRList,
+            #                                       method=method1,
+            #                                       FUN=FUN1,
+            #                                       directed=directed,
+            #                                       weights=weights,
+            #                                       steps=steps, 
+            #                                       spins=spins, 
+            #                                       e.weights=e.weights, 
+            #                                       v.weights=v.weights, 
+            #                                       nb.trials=nb.trials,
+            #                                       resolution=resolution,
+            #                                       objective_function = objective_function,
+            #                                       n_iterations=n_iterations)
+           
+            argsP <- c(list(graph=graphRList), method=method1, FUN=FUN1, args1)
+            comr1 <- do.call(robin::membershipCommunities, argsP)
+          
+            
             
             if(measure=="vi")
             {
@@ -124,6 +157,10 @@ robinCompareFast <- function(graph,
             {
                 measure1 <- igraph::compare(comr1, comReal1, 
                                             method=measure)/(2*N)
+            }else if(measure=="adjusted.rand"){
+                measure1 <- (1-(igraph::compare(comr1, comReal1, 
+                                               method=measure)))/2
+                
             }else{
                 measure1 <- 1-(igraph::compare(comr1, comReal1, 
                                                method=measure))
@@ -131,17 +168,21 @@ robinCompareFast <- function(graph,
             }
             
             
-            
-            comr2 <- robin::membershipCommunities(graph=graphRList, 
-                                                  FUN=FUN2,
-                                                  method=method2,
-                                                  directed=directed,
-                                                  weights=weights,
-                                                  steps=steps, 
-                                                  spins=spins, 
-                                                  e.weights=e.weights, 
-                                                  v.weights=v.weights, 
-                                                  nb.trials=nb.trials)
+            argsP <- c(list(graph=graphRList), method=method2, FUN=FUN2, args2)
+            comr2 <- do.call(robin::membershipCommunities, argsP)
+            # comr2 <- robin::membershipCommunities(graph=graphRList, 
+            #                                       FUN=FUN2,
+            #                                       method=method2,
+            #                                       directed=directed,
+            #                                       weights=weights,
+            #                                       steps=steps, 
+            #                                       spins=spins, 
+            #                                       e.weights=e.weights, 
+            #                                       v.weights=v.weights, 
+            #                                       nb.trials=nb.trials,
+            #                                       resolution=resolution,
+            #                                       objective_function = objective_function,
+            #                                       n_iterations=n_iterations)
             if(measure=="vi")
             {
                 
@@ -150,7 +191,11 @@ robinCompareFast <- function(graph,
             } else if (measure=="split.join"){
                 measure2 <- igraph::compare(comr2, comReal2, 
                                             method=measure)/(2*N)
-            } else{
+            } else if (measure=="adjusted.rand"){
+                
+                measure2 <- (1-(igraph::compare(comr2, comReal2, 
+                                               method=measure)))/2
+            }else{
                 
                 measure2 <- 1-(igraph::compare(comr2, comReal2, 
                                                method=measure))
@@ -174,8 +219,13 @@ robinCompareFast <- function(graph,
         
         
         return(list("Measure1"=m1,"Measure2"=m2))
-    })
-    parallel::stopCluster(cl)
+    }
+    
+    
+    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
+                                    method1=method1, method2=method2, args1=args1, args2=args2,
+                                    comReal1=comReal1, N=N, comReal2=comReal2, FUN1=FUN1,
+                                    FUN2=FUN2, BPPARAM=BPPARAM)
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     
@@ -189,5 +239,151 @@ robinCompareFast <- function(graph,
 }
 
 
+
+
+#' robinRobustFast
+#'
+#' @description This functions implements a procedure to examine the stability 
+#' of the partition recovered by some algorithm against random perturbations 
+#' of the original graph structure.
+#'
+#' @param graph The output of prepGraph.
+#' @param graphRandom The output of random function.
+#' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
+#' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
+#' "leiden","optimal".
+#' @param measure The stability measure, one of "vi", "nmi", "split.join", 
+#' "adjusted.rand" all normalized and used as distances.
+#' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
+#' @param FUN1 in case the @method parameter is "other" there is the possibility 
+#' to use a personal function passing its name through this parameter.
+#' The personal parameter has to take as input the @graph and the @weights 
+#' (that can be NULL), and has to return a community object.
+#' @param ... other parameter
+#' @param verbose flag for verbose output (default as TRUE)
+#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
+#' specifies the back-end to be used for computations. See
+#'   \code{\link[BiocParallel]{bpparam}} for details.
+#' 
+#' @return A list object with two matrices:
+#' - the matrix "Mean" with the means of the procedure for the graph
+#' - the matrix "MeanRandom" with the means of the procedure for the random graph. 
+#' 
+#' @import igraph
+#' @importFrom BiocParallel bplapply bpparam
+#' @keywords internal
+# @example my_file <- system.file("example/football.gml", package="robin")
+# graph <- prepGraph(file=my_file, file.format="gml")
+# graphRandom <- random(graph=graph)
+# robinRobustFast(graph=graph, graphRandom=graphRandom, method="leiden",
+# resolution_parameter = 1, measure="vi")
+robinRobustFast <- function(graph, graphRandom, 
+                            method=c("walktrap", "edgeBetweenness", 
+                                     "fastGreedy", "louvain", "spinglass", 
+                                     "leadingEigen", "labelProp", "infomap",
+                                     "optimal", "leiden", "other"), ..., FUN1=NULL, 
+                            measure=c("vi", "nmi", "split.join","adjusted.rand"),
+                            verbose=TRUE, BPPARAM=BiocParallel::bpparam())
+{
+    method <- match.arg(method)
+    measure <- match.arg(measure)
+    comReal1 <- membershipCommunities(graph=graph, method=method,
+                                      FUN=FUN1, ...=...)
+    comReal2 <- membershipCommunities(graph=graphRandom, method=method,
+                                      FUN=FUN1, ...=...)
+    de <- igraph::gsize(graph)
+    N <- igraph::vcount(graph)
+    nRewire <- seq(0, 60, 5)
+    if(verbose) cat("Detected robin method type independent\nIt can take time ... It depends on the size of the network.\n")
+    vet1 <- seq(5, 60, 5) 
+    vet <- round(vet1*de/100, 0)
+    
+    parfunct <- function(z, graph, method, comReal1, comReal2, N, 
+                         measure, FUN1, ...)
+    {
+        # print(list(...))
+        MeansList <- lapply(1:10, function(s)
+        {
+            
+            graphRList <- igraph::rewire(graph, 
+                                         with=igraph::keeping_degseq(loops=FALSE,
+                                                                     niter=z))
+            
+            comr1 <- robin::membershipCommunities(graph=graphRList,
+                                                  method=method,
+                                                  FUN=FUN1,
+                                                  ...=...)
+            if(measure=="vi")
+            {
+                measure1 <- igraph::compare(comr1, comReal1, 
+                                            method=measure)/log2(N)
+            } else if(measure=="split.join")
+            {
+                measure1 <- igraph::compare(comr1, comReal1, 
+                                            method=measure)/(2*N)
+            }else if (measure=="adjusted.rand") {
+                measure1 <- (1-(igraph::compare(comr1, comReal1, 
+                                               method=measure)))/2
+                
+            }else{
+                measure1 <- 1-(igraph::compare(comr1, comReal1, 
+                                               method=measure))
+            }
+            
+            graphRandomList <- igraph::rewire(graphRandom, 
+                                         with=igraph::keeping_degseq(loops=FALSE,
+                                                                     niter=z))
+            comr2 <- robin::membershipCommunities(graph=graphRandomList, 
+                                                  FUN=FUN1,
+                                                  method=method,
+                                                  ...=...)
+            if(measure=="vi")
+            {
+                
+                measure2 <-  igraph::compare(comr2, comReal2, 
+                                             method=measure)/log2(N)
+            } else if (measure=="split.join"){
+                measure2 <- igraph::compare(comr2, comReal2, 
+                                            method=measure)/(2*N)
+            } else if (measure=="adjusted.rand"){
+                
+                measure2 <- (1-(igraph::compare(comr2, comReal2, 
+                                               method=measure)))/2
+            } else{
+                
+                measure2 <- 1-(igraph::compare(comr2, comReal2, 
+                                               method=measure))
+            }
+            return(list("Measure1"=measure1, "Measure2"=measure2))
+        })
+        
+        m1 <- unlist(lapply(MeansList, function(mm)
+        {
+            mm$Measure1
+        }))
+        
+        m2 <- unlist(lapply(MeansList, function(mm)
+        {
+            mm$Measure2
+        }))
+        
+        return(list("Measure1"=m1,"Measure2"=m2))
+    }
+    
+    zlist <- BiocParallel::bplapply(vet, FUN=parfunct, graph=graph, 
+            method=method, comReal1=comReal1, comReal2=comReal2, N=N, 
+            measure=measure, FUN1=FUN1, ...=..., BPPARAM=BPPARAM)
+
+    Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
+    Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
+    
+    Measure1 <- cbind(rep(0, 10), Measure1)
+    Measure2 <- cbind(rep(0, 10), Measure2)
+    
+    colnames(Measure1) <- nRewire 
+    colnames(Measure2) <- nRewire 
+    return(list(Mean=Measure1,
+                MeanRandom=Measure2))
+}
 
 

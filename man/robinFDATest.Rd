@@ -4,27 +4,11 @@
 \alias{robinFDATest}
 \title{robinFDATest}
 \usage{
-robinFDATest(
-  graph,
-  model1,
-  model2,
-  legend = c("model1", "model2"),
-  verbose = FALSE
-)
+robinFDATest(x, verbose = FALSE)
 }
 \arguments{
-\item{graph}{The output of prepGraph.}
-
-\item{model1}{The Mean output of the robinRobust function (or the Mean1 
-output of the robinCompare function).}
-
-\item{model2}{The MeanRandom output of the robinRobust function (or the 
-Mean2 output of the robinCompare function).}
-
-\item{legend}{The legend for the graph. The default is c("model1", 
-"model2"). If using robinRobust is recommended c("real data", "null model"), 
-if using robinCompare, enter the names of the community detection 
-algorithms.}
+\item{x}{A robin class object. The output of the functions:
+\code{\link{robinRobust}} and \code{\link{robinCompare}}.}
 
 \item{verbose}{flag for verbose output (default as FALSE).}
 }
@@ -38,9 +22,6 @@ test the difference between two curves.
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
-graphRandom <- random(graph=graph)
-Proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain",
-measure="vi",type="independent")
-\donttest{robinFDATest(graph=graph, model1=Proc$Mean, model2=Proc$MeanRandom, 
-legend=c("real data", "null model"))}
+comp <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
+\donttest{robinFDATest(comp)}
 }

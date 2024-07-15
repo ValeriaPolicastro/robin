@@ -9,17 +9,10 @@ rewireCompl(
   number,
   community,
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
-    "leadingEigen", "labelProp", "infomap", "optimal", "other"),
-  FUN = NULL,
+    "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
+  ...,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  directed = FALSE,
-  weights = NULL,
-  steps = 4,
-  spins = 25,
-  e.weights = NULL,
-  v.weights = NULL,
-  nb.trials = 10,
-  resolution = 1
+  FUN = NULL
 )
 }
 \arguments{
@@ -32,28 +25,14 @@ rewireCompl(
 \item{method}{The clustering method, one of "walktrap", "edgeBetweenness", 
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap".}
 
-\item{FUN}{see \code{\link{methodCommunity}}.}
+\item{...}{additional parameters to use with any of the previous described 
+methods (see igraph package community detection methods for more details 
+i.e. \link[igraph]{cluster_walktrap})}
 
 \item{measure}{The measure for the comparison of the communities "vi", "nmi",
 "split.join", "adjusted.rand"}
 
-\item{directed}{This argument is settable only for "edgeBetweenness" method}
-
-\item{weights}{this argument is not settable for "infomap" method}
-
-\item{steps}{this argument is settable only for "leadingEigen"and"walktrap" 
-method}
-
-\item{spins}{This argument is settable only for "infomap" method}
-
-\item{e.weights}{This argument is settable only for "infomap" method}
-
-\item{v.weights}{This argument is settable only for "infomap" method}
-
-\item{nb.trials}{This argument is settable only for "infomap" method}
-
-\item{resolution}{only for "louvain" and "leiden". Optional resolution 
-parameter, lower values typically yield fewer, larger clusters (default=1).}
+\item{FUN}{see \code{\link{methodCommunity}}.}
 }
 \description{
 rewires the graph, creates the communities and 
