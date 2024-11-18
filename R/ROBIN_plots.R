@@ -120,9 +120,9 @@ plot.robin <- function(x, title="Robin plot", ...)
 
 
 #' plotMultiCompare
-#' @description
+#' @description 
 #' 
-#' @param ... a list of robin objects
+#' @param ... robin objects
 #' @param title character a title for the plot (default is "Robin plot")
 #' @param ylim1 logical for spanning the y axis from 0 to 1 (default is FALSE)
 #'
@@ -132,8 +132,9 @@ plot.robin <- function(x, title="Robin plot", ...)
 #' @examples
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
-#' comp <- robinCompare(graph=graph, method1="fastGreedy",method2="louvain")
-#' plotMultiCompare(comp)
+#' comp1 <- robinCompare(graph=graph, method1="fastGreedy",method2="louvain")
+#' comp2 <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
+#' plotMultiCompare(comp1,comp2)
 plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
 {
     objs <- list(...)
