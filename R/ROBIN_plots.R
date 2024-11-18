@@ -130,7 +130,10 @@ plot.robin <- function(x, title="Robin plot", ...)
 #' @export
 #'
 #' @examples
-#' 
+#' my_file <- system.file("example/football.gml", package="robin")
+#' graph <- prepGraph(file=my_file, file.format="gml")
+#' comp <- robinCompare(graph=graph, method1="fastGreedy",method2="louvain")
+#' plotMultiCompare(comp)
 plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
 {
     objs <- list(...)
