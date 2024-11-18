@@ -130,6 +130,7 @@ plot.robin <- function(x, title="Robin plot", ...)
 #' @export
 #'
 #' @examples
+#' 
 plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
 {
     objs <- list(...)
