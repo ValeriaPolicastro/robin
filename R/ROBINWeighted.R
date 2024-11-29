@@ -31,8 +31,27 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 }
 
 
-
-
+#' ####### REWIRE WEIGHTED Internal #########
+#' 
+#' #' rewireWeight
+#' #' @description makes the rewire for weighted networks 
+#' #' @param data The output of prepGraph
+#' #' @param number Number of rewiring trials to perform.
+#' #' @keywords internal
+#' rewireWeight <- function(data, number)
+#' {
+#'     graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
+#'                                                             niter=number))
+#'     
+#'     
+#'    
+#'     
+#'      newWeight <- sample(E(difference(graph,graphRewire))$weight)
+#'      E(difference(graphRewire,graph))$weight <- newWeight
+#'  
+#'     
+#'     return(graphRewire)
+#' }
 
 
 ########## ROBIN COMPARE WEIGHTED#############
