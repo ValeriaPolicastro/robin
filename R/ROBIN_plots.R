@@ -120,10 +120,11 @@ plot.robin <- function(x, title="Robin plot", ...)
 
 
 #' plotMultiCompare
-#' @description 
+#' @description This function plots the curves of the measure of many community 
+#' detection algorithms compared.
 #' 
-#' @param ... all robin objects obtained from the comparison between one community detection method
-#' and all the others
+#' @param ... all robin objects obtained from the comparison between one 
+#' community detection algorithm and all the others
 #' @param title character a title for the plot (default is "Robin plot")
 #' @param ylim1 logical for spanning the y axis from 0 to 1 (default is FALSE)
 #'

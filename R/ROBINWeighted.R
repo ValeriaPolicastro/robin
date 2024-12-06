@@ -34,25 +34,30 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 #' ####### REWIRE WEIGHTED Internal #########
 #' 
 #' #' rewireWeight
-#' #' @description makes the rewire for weighted networks 
+#' #' @description makes the rewire for weighted networks
 #' #' @param data The output of prepGraph
 #' #' @param number Number of rewiring trials to perform.
 #' #' @keywords internal
 #' rewireWeight <- function(data, number)
 #' {
+#'     
+#'     
 #'     graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
 #'                                                             niter=number))
-#'     
-#'     
-#'    
-#'     
+#'      NotChaged <- igraph::intersection(graph, graphRewire)
 #'      newWeight <- sample(E(difference(graph,graphRewire))$weight)
-#'      E(difference(graphRewire,graph))$weight <- newWeight
-#'  
-#'     
-#'     return(graphRewire)
+#'      EdgeAggiunti <- E(difference(graphRewire,graph))
+#'      gg <- difference(graphRewire,graph)
+#'      E(gg)$weight <- newWeight
+#'      U <- union(gg,NotChaged)
+#'      E(U)$weight_1[which(is.na(E(U)$weight_1), arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight), arr.ind = TRUE)]
+#'      E(U)$weight <- E(U)$weight_1
+#'     U <- delete_edge_attr(U, "weight_1")
+#'     U <- delete_edge_attr(U, "weight_2")
+#'     E(U)$weight
+#'     return(U)
 #' }
-
+#' 
 
 ########## ROBIN COMPARE WEIGHTED#############
 

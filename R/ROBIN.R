@@ -145,7 +145,7 @@ methodCommunity <- function(graph,
             fastGreedy=igraph::cluster_fast_greedy(graph=graph, ...), 
             labelProp=igraph::cluster_label_prop(graph=graph, ...), 
             infomap=igraph::cluster_infomap(graph=graph, ...),
-            leiden=igraph::cluster_leiden(graph=graph, ...),
+            leiden=igraph::cluster_leiden(graph=graph, objective_function = c("modularity","CPM"),...),
             other=FUN(graph, ...)
     )
     return(communities)
