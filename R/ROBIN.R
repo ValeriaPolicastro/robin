@@ -129,6 +129,7 @@ methodCommunity <- function(graph,
                                     "fastGreedy", "louvain", "spinglass", 
                                     "leadingEigen", "labelProp", "infomap",
                                     "optimal", "leiden", "other"), 
+                            leiden_objective_function=c("modularity","CPM"), 
                                     ..., FUN=NULL, verbose=FALSE)
 {   
     
@@ -145,7 +146,7 @@ methodCommunity <- function(graph,
             fastGreedy=igraph::cluster_fast_greedy(graph=graph, ...), 
             labelProp=igraph::cluster_label_prop(graph=graph, ...), 
             infomap=igraph::cluster_infomap(graph=graph, ...),
-            leiden=igraph::cluster_leiden(graph=graph, objective_function = c("modularity","CPM"),...),
+            leiden=igraph::cluster_leiden(graph=graph, objective_function=leiden_objective_function,...),
             other=FUN(graph, ...)
     )
     return(communities)

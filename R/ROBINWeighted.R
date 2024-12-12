@@ -31,18 +31,20 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 }
 
 
-#' ####### REWIRE WEIGHTED Internal #########
+ ####### REWIRE WEIGHTED Internal #########
 #' 
 #' #' rewireWeight
 #' #' @description makes the rewire for weighted networks
 #' #' @param data The output of prepGraph
 #' #' @param number Number of rewiring trials to perform.
+#' #' @param type method to rewire weighted graphs
 #' #' @keywords internal
-#' rewireWeight <- function(data, number)
+#' rewireWeight <- function(data, number,type=NULL)
 #' {
-#'     
-#'     
-#'     graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
+#' 
+#'     if(type==NULL){
+#'     print("Rewire robin Method")
+#'      graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
 #'                                                             niter=number))
 #'      NotChaged <- igraph::intersection(graph, graphRewire)
 #'      newWeight <- sample(E(difference(graph,graphRewire))$weight)
@@ -50,14 +52,31 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 #'      gg <- difference(graphRewire,graph)
 #'      E(gg)$weight <- newWeight
 #'      U <- union(gg,NotChaged)
-#'      E(U)$weight_1[which(is.na(E(U)$weight_1), arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight), arr.ind = TRUE)]
+#'      E(U)$weight_1[which(is.na(E(U)$weight_1), arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight),
+#'                                                                                      arr.ind = TRUE)]
 #'      E(U)$weight <- E(U)$weight_1
-#'     U <- delete_edge_attr(U, "weight_1")
-#'     U <- delete_edge_attr(U, "weight_2")
-#'     E(U)$weight
+#'      U <- delete_edge_attr(U, "weight_1")
+#'      U <- delete_edge_attr(U, "weight_2")
+#'     
+#'     }else if(type=="weights")
+#'     {
+#'         print("Rewire weights Method")
+#'         
+#'          
+#'     }else if(type=="Garlaschelli"){
+#'         print("Garlaschelli Method")
+#'         
+#'         
+#'     }else{
+#'        
+#'         print("Chagpt Method") 
+#'     }
+#'     
+#'     
+#'     
 #'     return(U)
 #' }
-#' 
+
 
 ########## ROBIN COMPARE WEIGHTED#############
 

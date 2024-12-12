@@ -22,9 +22,7 @@
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
-#' @param type Character indicating "independent" or "dependent" for the old 
-#' robin type contruction. If NULL the new faster version is computed 
-#' (default NULL).
+#' @param type The type of robin construction, dependent or independent.
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
 #' any text into this field. Defaults to "Other". See
@@ -65,7 +63,7 @@ robinCompare <-  function(graph,
                           args2=list(),
                           FUN1=NULL, FUN2=NULL,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
-                          type=NULL,
+                          type=c("independent", "dependent"),
                           verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
 {
     
@@ -74,12 +72,12 @@ robinCompare <-  function(graph,
     # Weigthed version
     if ( is.weighted(graph) )
     {
-       print("Weighted Network")
+       print("Weighted Network Parallel Function")
          output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
             method2=method2, args2=args2, FUN1=FUN1, FUN2=FUN2, measure=measure, 
             verbose=verbose, dist=dist,BPPARAM=BPPARAM)
     } else {
-        if(any(type %in% c("independent", "dependent")))
+        if(type=="dependent")
         {
             
            print("Unweighted Network No Parallel Function")
@@ -125,9 +123,7 @@ robinCompare <-  function(graph,
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
-#' @param type Character indicating "independent" or "dependent" for the old 
-#' robin type contruction. If NULL the new faster version is computed 
-#' (default NULL).
+#' @param type The type of robin construction, dependent or independent.
 #' @param ... other parameter.
 #' @param dist Option to rewire in a manner that retains overall graph weight 
 #' regardless of distribution of edge weights. This option is invoked by putting 
@@ -164,14 +160,14 @@ robinRobust <-  function(graph, graphRandom,
                                    "optimal", "leiden", "other"),
                           ...,
                           FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                          type=NULL,verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
+                         type=c("independent", "dependent"),verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
 {
 
     methods <- c("real data", "null model")
     # Weigthed version
     if ( is.weighted(graph) )
     {
-        print("Weighted Network")
+        print("Weighted Network Parallel Function")
         output <- robinRobustFastWeighted(graph=graph, graphRandom=graphRandom, 
                                                       method=method,
                                                       ...,
@@ -180,7 +176,7 @@ robinRobust <-  function(graph, graphRandom,
                                            dist=dist,BPPARAM=BPPARAM)
     } else {
         
-        if(any(type %in% c("independent", "dependent")))
+        if(type=="dependent")
         {
             print("Unweighted Network No Parallel Function")
             # No Parallel
