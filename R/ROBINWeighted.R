@@ -39,7 +39,7 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 #' #' @param number Number of rewiring trials to perform.
 #' #' @param type method to rewire weighted graphs
 #' #' @keywords internal
-#' rewireWeight <- function(data, number,type=NULL)
+#' rewireWeight <- function(data, number, type=NULL)
 #' {
 #' 
 #'     if(type==NULL){
@@ -61,11 +61,12 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 #'     }else if(type=="weights")
 #'     {
 #'         print("Rewire weights Method")
-#'         
+#'            <- sample(E(graph)$weight)
 #'          
 #'     }else if(type=="Garlaschelli"){
 #'         print("Garlaschelli Method")
 #'         
+#'      
 #'         
 #'     }else{
 #'        

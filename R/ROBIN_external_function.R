@@ -164,6 +164,7 @@ robinRobust <-  function(graph, graphRandom,
 {
 
     methods <- c("real data", "null model")
+    
     # Weigthed version
     if ( is.weighted(graph) )
     {
@@ -220,6 +221,7 @@ return(outputRobin)
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
+
 random <- function(graph, dist="NegBinom", verbose=FALSE)
 {
     # Weigthed version
