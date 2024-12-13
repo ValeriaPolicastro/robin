@@ -41,8 +41,58 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 #' #' @keywords internal
 #' rewireWeight <- function(data, number, type=NULL)
 #' {
-#' 
-#'     if(type==NULL){
+#'     if(type=="Shuffle")
+#'     {
+#'         print("Shuffle weights Method")
+#'            <- sample(E(graph)$weight)
+#'            
+#'            
+#'          
+#'     }else if(type=="Garlaschelli"){
+#'         print("Garlaschelli Method")
+#'         
+#'      
+#'         
+#'     }else if(type=="Sum"){
+#'        
+#'         print("Keep Sum and distribution weight Method") 
+#'         # Set di n numeri
+# set.seed(123) # Imposta un seed per la riproducibilità
+# n_numbers <- rnorm(100, mean = 50, sd = 10) # Ad esempio, 100 numeri casuali da una distribuzione normale
+# 
+# # Subset di p numeri (p <= length(n_numbers))
+# p <- 10
+# p_subset <- sample(n_numbers, p)
+# 
+# # Funzione per ottenere un nuovo subset di p numeri mantenendo la somma e la distribuzione
+# generate_subset <- function(n_numbers, p_subset) {
+#     target_sum <- sum(p_subset) # La somma target da mantenere
+#     n_dist <- n_numbers / sum(n_numbers) # Distribuzione percentuale del set originale
+#     
+#     # Campiona p numeri dalla distribuzione di n_numbers
+#     sampled_indices <- sample(1:length(n_numbers), p, replace = TRUE)
+#     sampled_dist <- n_dist[sampled_indices]
+#     
+#     # Calcola i nuovi valori proporzionali alla distribuzione e alla somma target
+#     new_subset <- target_sum * (sampled_dist / sum(sampled_dist))
+#     
+#     # Aggiusta leggermente i valori per assicurarsi che la somma sia esattamente quella target
+#     diff <- target_sum - sum(new_subset)
+#     adjustment <- diff / p
+#     new_subset <- new_subset + adjustment
+#     
+#     return(new_subset)
+# }
+# 
+# # Applica la funzione
+# new_p_subset <- generate_subset(n_numbers, p_subset)
+# 
+# # Stampa il risultato
+# print(new_p_subset)
+# print(sum(new_p_subset)) # Dovrebbe essere uguale a sum(p_subset)
+#'         
+#'         
+#'     }else {
 #'     print("Rewire robin Method")
 #'      graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
 #'                                                             niter=number))
@@ -57,21 +107,7 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 #'      E(U)$weight <- E(U)$weight_1
 #'      U <- delete_edge_attr(U, "weight_1")
 #'      U <- delete_edge_attr(U, "weight_2")
-#'     
-#'     }else if(type=="weights")
-#'     {
-#'         print("Rewire weights Method")
-#'            <- sample(E(graph)$weight)
-#'          
-#'     }else if(type=="Garlaschelli"){
-#'         print("Garlaschelli Method")
-#'         
-#'      
-#'         
-#'     }else{
-#'        
-#'         print("Chagpt Method") 
-#'     }
+#'      }
 #'     
 #'     
 #'     
