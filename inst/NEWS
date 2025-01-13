@@ -1,12 +1,11 @@
-robin v1.2.0
-- new function plot multiple comaprison
+robin v2.0.0
 - implementing robin class
-- adding weighted graph procedure
+- adding plotMultiCompare function, to plot multiple community detection algorithms
 - new parallelization method with BiocParallel::bpparam()
 - implemented the possibility to have different arguments for different community detection algorithms
-- created one function for robinRobust with inside parallelized and weighted version
-- created one function for robinCompare with inside parallelized and weighted version
-- added new community detection algorithm Leiden
+- created one function for robinRobust with inside parallelized version
+- created one function for robinCompare with inside parallelized version
+- from igraph added Leiden new community detection algorithm
 robin v1.1.2
 - fixed Note CRAN
 robin v1.1.1
