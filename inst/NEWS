@@ -6,6 +6,7 @@ robin v2.0.0
 - created one function for robinRobust with inside parallelized version
 - created one function for robinCompare with inside parallelized version
 - from igraph added Leiden new community detection algorithm
+- vignette updated
 robin v1.1.2
 - fixed Note CRAN
 robin v1.1.1
