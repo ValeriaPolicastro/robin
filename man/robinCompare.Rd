@@ -15,7 +15,7 @@ robinCompare(
   FUN1 = NULL,
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  type = NULL,
+  type = "independent",
   verbose = TRUE,
   dist = "Other",
   BPPARAM = BiocParallel::bpparam()
@@ -48,9 +48,7 @@ see \code{\link{methodCommunity}}.}
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
-\item{type}{Character indicating "independent" or "dependent" for the old 
-robin type contruction. If NULL the new faster version is computed 
-(default NULL).}
+\item{type}{The type of robin construction, dependent or independent.}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 

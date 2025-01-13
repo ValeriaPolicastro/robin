@@ -8,6 +8,7 @@ methodCommunity(
   graph,
   method = c("walktrap", "edgeBetweenness", "fastGreedy", "louvain", "spinglass",
     "leadingEigen", "labelProp", "infomap", "optimal", "leiden", "other"),
+  leiden_objective_function = c("modularity", "CPM"),
   ...,
   FUN = NULL,
   verbose = FALSE

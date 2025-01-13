@@ -63,14 +63,14 @@ robinCompare <-  function(graph,
                           args2=list(),
                           FUN1=NULL, FUN2=NULL,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
-                          type=c("independent", "dependent"),
+                          type="independent",
                           verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
 {
     
     methods <- c(method1, method2)
     
     # Weigthed version
-    if ( is.weighted(graph) )
+    if ( is_weighted(graph) )
     {
        print("Weighted Network Parallel Function")
          output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
@@ -160,13 +160,13 @@ robinRobust <-  function(graph, graphRandom,
                                    "optimal", "leiden", "other"),
                           ...,
                           FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                         type=c("independent", "dependent"),verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
+                         type="independent",verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
 {
 
     methods <- c("real data", "null model")
     
     # Weigthed version
-    if ( is.weighted(graph) )
+    if ( is_weighted(graph) )
     {
         print("Weighted Network Parallel Function")
         output <- robinRobustFastWeighted(graph=graph, graphRandom=graphRandom, 
