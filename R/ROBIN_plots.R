@@ -133,11 +133,11 @@ plot.robin <- function(x, title="Robin plot", ...)
 #' @export
 #'
 #' @examples
-#' my_file <- system.file("example/football.gml", package="robin")
+#' \donttest{my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' comp1 <- robinCompare(graph=graph, method1="fastGreedy",method2="louvain")
 #' comp2 <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
-#' plotMultiCompare(comp1,comp2)
+#' plotMultiCompare(comp1,comp2)}
 plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
 {
     objs <- list(...)
