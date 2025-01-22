@@ -1,6 +1,6 @@
 Package: robin
 Title: ROBustness in Network
-Version: 1.2.0
+Version: 2.0.0
 Authors@R: c(
     person("Valeria", "Policastro", role=c("aut", "cre"), email="valeria.policastro@gmail.com"),
     person("Dario", "Righelli", role=c("aut"), email="dario.righelli@gmail.com"),
