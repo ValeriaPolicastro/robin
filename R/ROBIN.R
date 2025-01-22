@@ -110,6 +110,8 @@ randomNoW <- function(graph, verbose=FALSE)
 #' @param ... additional parameters to use with any of the previous described 
 #' methods (see igraph package community detection methods for more details 
 #' i.e. \link[igraph]{cluster_walktrap})
+#' @param leiden_objective_function objective_function parameter for leiden only
+#'  for method
 #' @param FUN in case the @method parameter is "other" there is the possibility 
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights 

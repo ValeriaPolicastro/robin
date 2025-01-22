@@ -129,6 +129,7 @@ plot.robin <- function(x, title="Robin plot", ...)
 #' @param ylim1 logical for spanning the y axis from 0 to 1 (default is FALSE)
 #'
 #' @return a ggplot2 object
+#' @importFrom reshape2 melt 
 #' @export
 #'
 #' @examples
@@ -175,17 +176,28 @@ plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
     m <- matrix(unlist(l), nrow = 13, byrow = FALSE)
     colnames(m) <- unlist(lapply(l,names))
     rownames(m) <- (seq(0,60,5)/100)
-    suppressWarnings(mm <- data.table::melt(m))
-    colnames(mm) <- c("perc", "Model", "measure")
-    mm$perc <- as.character(mm$perc)
-    ggp <- ggplot2::ggplot(mm, aes(x=perc, y=measure,
-                                    colour = Model,
-                                    group = Model)) +
-        geom_line() +
-        geom_point() +
-        xlab("Percentage of perturbation") +
-        ylab("Measure") +
-        ggtitle(title)
+    mm <- reshape2::melt(m)
+colnames(mm) <- c("perc", "Model", "measure")
+dataFrame <- data.frame(mm)
+ggp <- ggplot2::ggplot(dataFrame, aes(x=dataFrame$perc, y=dataFrame$measure,
+                                colour = dataFrame$Model,
+                                group = dataFrame$Model)) +
+    geom_line() +
+    geom_point() +
+    xlab("Percentage of perturbation") +
+    ylab("Measure") +
+    ggtitle(title)
+
+    
+    # ggp <- ggplot2::ggplot(mm, aes(x=Var1, y=value,
+    #                         colour = Var2,
+    #                         group = Var2)) +
+    #     geom_line() +
+    #     geom_point() +
+    #     xlab("Percentage of perturbation") +
+    #     ylab("Measure")+
+    #     labs(colour = "Model") + 
+    #     ggtitle(title)
     
     if(ylim1) ggp <- ggp+ggplot2::ylim(0,1)
     return(ggp)

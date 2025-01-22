@@ -21,6 +21,9 @@ methodCommunity(
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "optimal", "leiden","other".}
 
+\item{leiden_objective_function}{objective_function parameter for leiden only
+for method}
+
 \item{...}{additional parameters to use with any of the previous described 
 methods (see igraph package community detection methods for more details 
 i.e. \link[igraph]{cluster_walktrap})}

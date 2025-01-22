@@ -74,5 +74,5 @@ detection algorithms.
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
 robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-            method2="leiden", args2=list(objective_function ="modularity"))
+            method2="leiden")
 }

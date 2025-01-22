@@ -32,31 +32,30 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 
 
  ####### REWIRE WEIGHTED Internal #########
-#' 
-#' #' rewireWeight
-#' #' @description makes the rewire for weighted networks
-#' #' @param data The output of prepGraph
-#' #' @param number Number of rewiring trials to perform.
-#' #' @param type method to rewire weighted graphs
-#' #' @keywords internal
-#' rewireWeight <- function(data, number, type=NULL)
-#' {
-#'     if(type=="Shuffle")
-#'     {
-#'         print("Shuffle weights Method")
-#'            <- sample(E(graph)$weight)
-#'            
-#'            
-#'          
-#'     }else if(type=="Garlaschelli"){
-#'         print("Garlaschelli Method")
-#'         
-#'      
-#'         
-#'     }else if(type=="Sum"){
-#'        
-#'         print("Keep Sum and distribution weight Method") 
-#'         # Set di n numeri
+# 
+# #' rewireWeight
+# #' @description makes the rewire for weighted networks
+# #' @param data The output of prepGraph
+# #' @param number Number of rewiring trials to perform.
+# #' @param type method to rewire weighted graphs
+# #' @keywords internal
+# rewireWeight <- function(data, number, type=NULL)
+# {
+#     if(type=="Shuffle")
+#     {
+#         print("Shuffle weights Method")
+#            <- sample(E(graph)$weight)
+#            
+#            
+#          
+#     }else if(type=="Garlaschelli"){
+#         print("Garlaschelli Method")
+#         
+#      
+#              }else if(type=="Sum"){
+#        
+#         print("Keep Sum and distribution weight Method") 
+#         # Set di n numeri
 # set.seed(123) # Imposta un seed per la riproducibilità
 # n_numbers <- rnorm(100, mean = 50, sd = 10) # Ad esempio, 100 numeri casuali da una distribuzione normale
 # 
@@ -90,29 +89,26 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 # # Stampa il risultato
 # print(new_p_subset)
 # print(sum(new_p_subset)) # Dovrebbe essere uguale a sum(p_subset)
-#'         
-#'         
-#'     }else {
-#'     print("Rewire robin Method")
-#'      graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
-#'                                                             niter=number))
-#'      NotChaged <- igraph::intersection(graph, graphRewire)
-#'      newWeight <- sample(E(difference(graph,graphRewire))$weight)
-#'      EdgeAggiunti <- E(difference(graphRewire,graph))
-#'      gg <- difference(graphRewire,graph)
-#'      E(gg)$weight <- newWeight
-#'      U <- union(gg,NotChaged)
-#'      E(U)$weight_1[which(is.na(E(U)$weight_1), arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight),
-#'                                                                                      arr.ind = TRUE)]
-#'      E(U)$weight <- E(U)$weight_1
-#'      U <- delete_edge_attr(U, "weight_1")
-#'      U <- delete_edge_attr(U, "weight_2")
-#'      }
-#'     
-#'     
-#'     
-#'     return(U)
-#' }
+#         
+#         
+#     }else {
+#     print("Rewire robin Method")
+#     graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
+#                                                             niter=number))
+#      NotChaged <- igraph::intersection(graph, graphRewire)
+#      newWeight <- sample(E(difference(graph,graphRewire))$weight)
+#     EdgeAggiunti <- E(difference(graphRewire,graph))
+#      gg <- difference(graphRewire,graph)
+#      E(gg)$weight <- newWeight
+#     U <- union(gg,NotChaged)
+#      E(U)$weight_1[which(is.na(E(U)$weight_1), arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight),
+#                                                                                      arr.ind = TRUE)]
+#      E(U)$weight <- E(U)$weight_1
+#      U <- delete_edge_attr(U, "weight_1")
+#      U <- delete_edge_attr(U, "weight_2")
+#      }
+#     return(U)
+# }
 
 
 ########## ROBIN COMPARE WEIGHTED#############

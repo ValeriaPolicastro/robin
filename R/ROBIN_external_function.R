@@ -44,11 +44,11 @@
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-#'             method2="leiden", args2=list(objective_function ="modularity"))
+#'             method2="leiden")
 ## Weighted example:
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 # robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8), 
-# method2="leiden", args2=list(objective_function ="modularity"), dist="NegBinom")
+# method2="leiden", dist="NegBinom")
 
 robinCompare <-  function(graph, 
                           method1=c("walktrap", "edgeBetweenness", "fastGreedy",
@@ -145,13 +145,12 @@ robinCompare <-  function(graph,
 #' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
-#' robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
-#'    objective_function = "modularity", measure="vi")
+#' robinRobust(graph=graph, graphRandom=graphRandom, method="leiden")
 ##    Weighted Example:
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 # graphRandom <- random(graph=graph)
 # robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
-#    objective_function = "modularity", measure="vi",dist="NegBinom")
+# dist="NegBinom")
 
 robinRobust <-  function(graph, graphRandom, 
                           method=c("walktrap", "edgeBetweenness", 
