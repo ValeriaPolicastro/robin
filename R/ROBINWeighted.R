@@ -111,6 +111,8 @@ randomWeight <- function(graph, dist="Other", verbose=FALSE)
 # }
 
 
+
+
 ########## ROBIN COMPARE WEIGHTED#############
 
 #' robinCompareFastWeight
