@@ -13,6 +13,7 @@ robinRobustFastWeighted(
   FUN1 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   verbose = TRUE,
+  rewire.w.type = c("Rewire", "Shuffle", "Garlaschelli", "Sum"),
   dist = "Other",
   BPPARAM = BiocParallel::bpparam()
 )
@@ -39,7 +40,10 @@ The personal parameter has to take as input the @graph and the @weights
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{dist}{Option to rewire in a manner that retains overall graph weight 
+\item{rewire.w.type}{for weighted graph. Option to rewire one of "Rewire",
+"Shuffle","Garlaschelli","Sum"}
+
+\item{dist}{for weighted with Garlaschelli type. Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
 for details.}

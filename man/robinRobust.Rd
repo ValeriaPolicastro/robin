@@ -14,6 +14,7 @@ robinRobust(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = "independent",
   verbose = TRUE,
+  rewire.w.type = c("Rewire", "Shuffle", "Garlaschelli", "Sum"),
   dist = "Other",
   BPPARAM = BiocParallel::bpparam()
 )
@@ -27,7 +28,7 @@ robinRobust(
 "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 "leiden","optimal".}
 
-\item{...}{other parameter.}
+\item{...}{other parameters for the community detection methods.}
 
 \item{FUN}{in case the @method parameter is "other" there is the possibility 
 to use a personal function passing its name through this parameter.
@@ -42,10 +43,14 @@ The personal parameter has to take as input the @graph and the @weights
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{dist}{Option to rewire in a manner that retains overall graph weight 
-regardless of distribution of edge weights. This option is invoked by putting 
-any text into this field. Defaults to "Other". See
-  \code{\link[perturbR]{rewireR}} for details.}
+\item{rewire.w.type}{for weighted graph. Option to rewire one of "Rewire",
+"Shuffle","Garlaschelli","Sum"}
+
+\item{dist}{for weighted graph with "Garlaschelli" @rewire.w.type method. 
+Option to rewire in a manner that retains overall graph weight regardless of 
+distribution of edge weights. This option is invoked by putting any text into
+ this field. Defaults to "Other". See \code{\link[perturbR]{rewireR}} for 
+ details.}
 
 \item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
 specifies the back-end to be used for computations. See

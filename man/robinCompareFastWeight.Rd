@@ -15,6 +15,7 @@ robinCompareFastWeight(
   FUN1 = NULL,
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
+  rewire.w.type = c("Rewire", "Shuffle", "Garlaschelli", "Sum"),
   verbose = TRUE,
   dist = "Other",
   BPPARAM = BiocParallel::bpparam()
@@ -47,9 +48,12 @@ see \code{\link{methodCommunity}}.}
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
+\item{rewire.w.type}{for weighted graph. Option to rewire one of "Rewire",
+"Shuffle","Garlaschelli","Sum"}
+
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{dist}{Option to rewire in a manner that retains overall graph weight 
+\item{dist}{for weighted with Garlaschelli type. Option to rewire in a manner that retains overall graph weight 
 regardless of distribution of edge weights. This option is invoked by putting 
 any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
  for details.}

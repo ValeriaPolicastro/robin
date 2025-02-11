@@ -48,7 +48,7 @@
 ## Weighted example:
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 # robinCompare(graph=graph, method1="louvain", args1 = list(resolution=0.8), 
-# method2="leiden", dist="NegBinom")
+# method2="leiden")
 
 robinCompare <-  function(graph, 
                           method1=c("walktrap", "edgeBetweenness", "fastGreedy",
@@ -64,7 +64,8 @@ robinCompare <-  function(graph,
                           FUN1=NULL, FUN2=NULL,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           type="independent",
-                          verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
+                          verbose=TRUE,rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
+                          dist="Other",BPPARAM=BiocParallel::bpparam())
 {
     
     methods <- c(method1, method2)
@@ -75,7 +76,7 @@ robinCompare <-  function(graph,
        print("Weighted Network Parallel Function")
          output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
             method2=method2, args2=args2, FUN1=FUN1, FUN2=FUN2, measure=measure, 
-            verbose=verbose, dist=dist,BPPARAM=BPPARAM)
+            verbose=verbose, dist=dist,rewire.w.type=rewire.w.type, BPPARAM=BPPARAM)
     } else {
         if(type=="dependent")
         {
@@ -116,6 +117,7 @@ robinCompare <-  function(graph,
 #' @param method The clustering method, one of "walktrap", "edgeBetweenness", 
 #' "fastGreedy", "louvain", "spinglass", "leadingEigen", "labelProp", "infomap",
 #' "leiden","optimal".
+#' @param ... other parameters for the community detection methods.
 #' @param FUN in case the @method parameter is "other" there is the possibility 
 #' to use a personal function passing its name through this parameter.
 #' The personal parameter has to take as input the @graph and the @weights 
@@ -124,11 +126,13 @@ robinCompare <-  function(graph,
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param type The type of robin construction, dependent or independent.
-#' @param ... other parameter.
-#' @param dist Option to rewire in a manner that retains overall graph weight 
-#' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "Other". See
-#'   \code{\link[perturbR]{rewireR}} for details.
+#' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
+#' "Shuffle","Garlaschelli","Sum" 
+#' @param dist for weighted graph with "Garlaschelli" @rewire.w.type method. 
+#' Option to rewire in a manner that retains overall graph weight regardless of 
+#' distribution of edge weights. This option is invoked by putting any text into
+#'  this field. Defaults to "Other". See \code{\link[perturbR]{rewireR}} for 
+#'  details.
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
@@ -149,8 +153,7 @@ robinCompare <-  function(graph,
 ##    Weighted Example:
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 # graphRandom <- random(graph=graph)
-# robinRobust(graph=graph, graphRandom=graphRandom, method="leiden",
-# dist="NegBinom")
+# robinRobust(graph=graph, graphRandom=graphRandom, method="leiden")
 
 robinRobust <-  function(graph, graphRandom, 
                           method=c("walktrap", "edgeBetweenness", 
@@ -159,7 +162,10 @@ robinRobust <-  function(graph, graphRandom,
                                    "optimal", "leiden", "other"),
                           ...,
                           FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                         type="independent",verbose=TRUE, dist="Other",BPPARAM=BiocParallel::bpparam())
+                         type="independent",verbose=TRUE,
+                         rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
+                         dist="Other",
+                             BPPARAM=BiocParallel::bpparam())
 {
 
     methods <- c("real data", "null model")
@@ -172,8 +178,10 @@ robinRobust <-  function(graph, graphRandom,
                                                       method=method,
                                                       ...,
                                                       FUN1=FUN, measure=measure,
-                                                      verbose=verbose, 
-                                           dist=dist,BPPARAM=BPPARAM)
+                                                      verbose=verbose,
+                                          rewire.w.type=rewire.w.type, 
+                                           dist=dist,
+                                          BPPARAM=BPPARAM)
     } else {
         
         if(type=="dependent")
@@ -207,9 +215,13 @@ return(outputRobin)
 #' @description This function randomly rewires the edges while preserving the original graph's 
 #' degree distribution.
 #' @param graph The output of prepGraph.
-#' @param dist Option to rewire in a manner that retains overall graph weight 
-#' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "NegBinom" for negative binomial.
+#' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
+#' "Shuffle","Garlaschelli","Sum" 
+#' @param dist for weighted graph with "Garlaschelli" @rewire.w.type method. 
+#' Option to rewire in a manner that retains overall graph weight regardless of 
+#' distribution of edge weights. This option is invoked by putting any text into
+#'  this field. Defaults to "Other". See \code{\link[perturbR]{rewireR}} for 
+#'  details.
 #' @param verbose flag for verbose output (default as FALSE)
 #' 
 #' @return An igraph object, a randomly rewired graph.
@@ -221,12 +233,13 @@ return(outputRobin)
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 
-random <- function(graph, dist="NegBinom", verbose=FALSE)
+ random <- function(graph, dist="Other", rewire.w.type="Rewire", verbose=FALSE)
 {
     # Weigthed version
-    if ( is.weighted(graph) )
+    if ( is_weighted(graph) )
     {
-        graphRandom <- randomWeight(graph=graph, dist=dist, 
+        graphRandom <- randomWeight(graph=graph,rewire.w.type=rewire.w.type,
+                                    dist=dist, 
                                     verbose=verbose)
     }else{
         graphRandom <- randomNoW(graph=graph, verbose=verbose)
