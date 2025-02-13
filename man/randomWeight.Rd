@@ -4,7 +4,7 @@
 \alias{randomWeight}
 \title{randomWeight}
 \usage{
-randomWeight(graph, rewire.w.type, dist, verbose = FALSE)
+randomWeight(graph, rewire.w.type = "Rewire", dist = "Other", verbose = FALSE)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}

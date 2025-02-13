@@ -64,7 +64,8 @@ robinCompare <-  function(graph,
                           FUN1=NULL, FUN2=NULL,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           type="independent",
-                          verbose=TRUE,rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
+                          verbose=TRUE, rewire.w.type="Rewire",
+                          #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
                           dist="Other",BPPARAM=BiocParallel::bpparam())
 {
     

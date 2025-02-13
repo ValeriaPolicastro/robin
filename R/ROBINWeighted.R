@@ -14,14 +14,28 @@
 #' @import igraph
 #' @keywords internal
 #'
-
-randomWeight <- function(graph, rewire.w.type, dist, verbose=FALSE)
+# my_file <- system.file("example/football.gml", package="robin")
+# graph <- prepGraph(file=my_file, file.format="gml")
+# E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
+# randomWeight(graph)
+randomWeight <- function(graph, rewire.w.type="Rewire",
+                         dist="Other", verbose=FALSE)
 {
     if(verbose) cat("Randomizing the weight graph edges.")
-    v <- igraph::vcount(graph) ## number of vertex
-    numberPerturbAll <- round((v*(v-1))/2, 0)
-    graphRandom <- rewireWeight(data=graph, number=numberPerturbAll, 
-                                dist=dist, rewire.w.type=rewire.w.type)
+    if (rewire.w.type=="Garlaschelli"){
+        v <- igraph::vcount(graph) ## number of vertex
+        numberPerturbAll <- round((v*(v-1))/2, 0)
+        graphRandom <- rewireWeight(data=graph, number=numberPerturbAll, 
+                                    dist=dist, rewire.w.type=rewire.w.type) 
+    }else{
+        
+        z <- igraph::gsize(graph) ## number of edges
+        graphRandom <- rewireWeight(data=graph, number=z, 
+                                    rewire.w.type=rewire.w.type) 
+        
+    }
+ 
+ 
     return(graphRandom)
 }
 
@@ -47,7 +61,7 @@ rewireWeight <- function(data, number,rewire.w.type="Rewire",
    
     if(rewire.w.type=="Rewire"){
         
-        print("Rewire and shaffle weight method")
+        print("Rewire and shuffling weight method")
         graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
                                                                 niter=number))
         NotChaged <- igraph::intersection(graph, graphRewire)
@@ -180,8 +194,10 @@ robinCompareFastWeight <- function(graph,
                                    FUN1=NULL, FUN2=NULL,
                                    measure=c("vi", "nmi","split.join", "adjusted.rand"),
                                    #ncores=2,
-                                   rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
-                                   verbose=TRUE, dist="Other", BPPARAM=BiocParallel::bpparam())
+                                   #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
+                                   rewire.w.type="Rewire",
+                                   verbose=TRUE, dist="Other", 
+                                   BPPARAM=BiocParallel::bpparam())
 {
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
@@ -191,7 +207,10 @@ robinCompareFastWeight <- function(graph,
     comReal1 <- do.call(robin::membershipCommunities, args11)
     comReal2 <- do.call(robin::membershipCommunities, args21)
     N <- igraph::vcount(graph)
-    de <- round((N*(N-1))/2, 0)
+    de <- igraph::gsize(graph)
+    if(rewire.w.type=="Garlaschelli"){
+        de <- round((N*(N-1))/2, 0)
+    }
     Measure <- NULL
     vector1 <- NULL
     vector2 <- NULL
@@ -358,8 +377,12 @@ robinRobustFastWeighted <- function(graph, graphRandom,
                                       FUN=FUN1, ...=...) 
     comReal2 <- membershipCommunities(graph=graphRandom, method=method,
                                       FUN=FUN1, ...=...)
-    de <- igraph::gsize(graph)
+   
     N <- igraph::vcount(graph)
+    de <- igraph::gsize(graph)
+    if(rewire.w.type=="Garlaschelli"){
+        de <- round((N*(N-1))/2, 0)
+    }
     nRewire <- seq(0,60,5)
     if(verbose) cat("Detected robin method type independent\nIt can take time ... It depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 

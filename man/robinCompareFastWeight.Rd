@@ -15,7 +15,7 @@ robinCompareFastWeight(
   FUN1 = NULL,
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  rewire.w.type = c("Rewire", "Shuffle", "Garlaschelli", "Sum"),
+  rewire.w.type = "Rewire",
   verbose = TRUE,
   dist = "Other",
   BPPARAM = BiocParallel::bpparam()
