@@ -70,8 +70,10 @@ rewireWeight <- function(data, number,rewire.w.type="Rewire",
         gg <- difference(graphRewire,graph)
         E(gg)$weight <- newWeight
         U <- union(gg,NotChaged)
-        E(U)$weight_1[which(is.na(E(U)$weight_1), arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight),
-                                                                                        arr.ind = TRUE)]
+        E(U)$weight_1[which(is.na(E(U)$weight_1), 
+                            arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight),
+                                                                                       
+                                                                   arr.ind = TRUE)]
         E(U)$weight <- E(U)$weight_1
         U <- delete_edge_attr(U, "weight_1")
         U <- delete_edge_attr(U, "weight_2")
@@ -90,17 +92,17 @@ rewireWeight <- function(data, number,rewire.w.type="Rewire",
     
 
     }else if(rewire.w.type=="Garlaschelli"){
-        
+        # ONLY IF COUNT WEIGHT
         print("Garlaschelli Method")
         z <- number
         adj <- igraph::as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
-        gR <- as.matrix(perturbR::rewireR(adj, z,dist = dist))
+        gR <- as.matrix(perturbR::rewireR(adj, z,dist = "NegBinom"))
         graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
                                                           mode="undirected")
         return(graphRList)
         
      }else{
-         
+       # ONLY FOR CONTNOUS WWIGHT  
     print("Keep Sum and distribution weight method")
     n_numbers <- E(graph)$weight
     # Subset di p numeri (p <= length(n_numbers))
