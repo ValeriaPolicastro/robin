@@ -1,3 +1,5 @@
+robin v2.1.0
+- implemented weighted network method
 robin v2.0.0
 - implementing robin class
 - adding plotMultiCompare function, to plot multiple community detection algorithms

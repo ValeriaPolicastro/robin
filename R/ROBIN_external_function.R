@@ -22,11 +22,14 @@
 #' @param measure The stability measure, one of "vi", "nmi", "split.join", 
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
+#' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
+#' "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+#' "Sum" method only for continuous weights.  
 #' @param type The type of robin construction, dependent or independent.
-#' @param dist Option to rewire in a manner that retains overall graph weight 
-#' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "Other". See
-#'   \code{\link[perturbR]{rewireR}} for details.
+# @param dist Option to rewire in a manner that retains overall graph weight 
+# regardless of distribution of edge weights. This option is invoked by putting 
+# any text into this field. Defaults to "Other". See
+#   \code{\link[perturbR]{rewireR}} for details.
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
@@ -65,8 +68,8 @@ robinCompare <-  function(graph,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           type="independent",
                           verbose=TRUE, rewire.w.type="Rewire",
-                          #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
-                          dist="Other",BPPARAM=BiocParallel::bpparam())
+                          #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),dist="Other",
+                          BPPARAM=BiocParallel::bpparam())
 {
     
     methods <- c(method1, method2)
@@ -77,7 +80,7 @@ robinCompare <-  function(graph,
        print("Weighted Network Parallel Function")
          output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
             method2=method2, args2=args2, FUN1=FUN1, FUN2=FUN2, measure=measure, 
-            verbose=verbose, dist=dist,rewire.w.type=rewire.w.type, BPPARAM=BPPARAM)
+            verbose=verbose,rewire.w.type=rewire.w.type, BPPARAM=BPPARAM) #dist=dist
     } else {
         if(type=="dependent")
         {
@@ -128,12 +131,13 @@ robinCompare <-  function(graph,
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param type The type of robin construction, dependent or independent.
 #' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
-#' "Shuffle","Garlaschelli","Sum" 
-#' @param dist for weighted graph with "Garlaschelli" @rewire.w.type method. 
-#' Option to rewire in a manner that retains overall graph weight regardless of 
-#' distribution of edge weights. This option is invoked by putting any text into
-#'  this field. Defaults to "Other". See \code{\link[perturbR]{rewireR}} for 
-#'  details.
+#' "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+#' "Sum" method only for continuous weights.
+# @param dist for weighted graph with "Garlaschelli" @rewire.w.type method. 
+# Option to rewire in a manner that retains overall graph weight regardless of 
+# distribution of edge weights. This option is invoked by putting any text into
+#  this field. Defaults to "Other". See \code{\link[perturbR]{rewireR}} for 
+#  details.
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
@@ -165,7 +169,7 @@ robinRobust <-  function(graph, graphRandom,
                           FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
                          type="independent",verbose=TRUE,
                          rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
-                         dist="Other",
+                         #dist="Other",
                              BPPARAM=BiocParallel::bpparam())
 {
 
@@ -181,7 +185,7 @@ robinRobust <-  function(graph, graphRandom,
                                                       FUN1=FUN, measure=measure,
                                                       verbose=verbose,
                                           rewire.w.type=rewire.w.type, 
-                                           dist=dist,
+                                           #dist=dist,
                                           BPPARAM=BPPARAM)
     } else {
         
@@ -217,12 +221,13 @@ return(outputRobin)
 #' degree distribution.
 #' @param graph The output of prepGraph.
 #' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
-#' "Shuffle","Garlaschelli","Sum" 
-#' @param dist for weighted graph with "Garlaschelli" @rewire.w.type method. 
-#' Option to rewire in a manner that retains overall graph weight regardless of 
-#' distribution of edge weights. This option is invoked by putting any text into
-#'  this field. Defaults to "Other". See \code{\link[perturbR]{rewireR}} for 
-#'  details.
+#' "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+#' "Sum" method only for continuous weights.  
+# @param dist for weighted graph with "Garlaschelli" @rewire.w.type method. 
+# Option to rewire in a manner that retains overall graph weight regardless of 
+# distribution of edge weights. This option is invoked by putting any text into
+#  this field. Defaults to "Other". See \code{\link[perturbR]{rewireR}} for 
+#  details.
 #' @param verbose flag for verbose output (default as FALSE)
 #' 
 #' @return An igraph object, a randomly rewired graph.
@@ -234,13 +239,12 @@ return(outputRobin)
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 
- random <- function(graph, dist="Other", rewire.w.type="Rewire", verbose=FALSE)
+ random <- function(graph, rewire.w.type="Rewire", verbose=FALSE)
 {
     # Weigthed version
     if ( is_weighted(graph) )
     {
         graphRandom <- randomWeight(graph=graph,rewire.w.type=rewire.w.type,
-                                    dist=dist, 
                                     verbose=verbose)
     }else{
         graphRandom <- randomNoW(graph=graph, verbose=verbose)

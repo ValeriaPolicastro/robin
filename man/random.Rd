@@ -4,19 +4,14 @@
 \alias{random}
 \title{random}
 \usage{
-random(graph, dist = "Other", rewire.w.type = "Rewire", verbose = FALSE)
+random(graph, rewire.w.type = "Rewire", verbose = FALSE)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
 
-\item{dist}{for weighted graph with "Garlaschelli" @rewire.w.type method. 
-Option to rewire in a manner that retains overall graph weight regardless of 
-distribution of edge weights. This option is invoked by putting any text into
- this field. Defaults to "Other". See \code{\link[perturbR]{rewireR}} for 
- details.}
-
 \item{rewire.w.type}{for weighted graph. Option to rewire one of "Rewire",
-"Shuffle","Garlaschelli","Sum"}
+"Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+"Sum" method only for continuous weights.}
 
 \item{verbose}{flag for verbose output (default as FALSE)}
 }

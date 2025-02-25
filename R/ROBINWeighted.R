@@ -4,12 +4,11 @@
 #' @description This function randomly rewires the edges while preserving the original graph's
 #' degree distribution.
 #' @param graph The output of prepGraph.
-#' @param dist Option to rewire in a manner that retains overall graph weight 
-#' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "Other". See
-#'   \code{\link[perturbR]{rewireR}} for details.
 #' @param verbose flag for verbose output (default as FALSE)
-#'
+# @param dist Option to rewire in a manner that retains overall graph weight 
+# regardless of distribution of edge weights. This option is invoked by putting 
+# any text into this field. Defaults to "Other". See
+#   \code{\link[perturbR]{rewireR}} for details.
 #' @return An igraph object, a randomly rewired graph.
 #' @import igraph
 #' @keywords internal
@@ -18,15 +17,15 @@
 # graph <- prepGraph(file=my_file, file.format="gml")
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 # randomWeight(graph)
-randomWeight <- function(graph, rewire.w.type="Rewire",
-                         dist="Other", verbose=FALSE)
+randomWeight <- function(graph, rewire.w.type="Rewire", verbose=FALSE)
+                         #dist="Other")
 {
     if(verbose) cat("Randomizing the weight graph edges.")
     if (rewire.w.type=="Garlaschelli"){
         v <- igraph::vcount(graph) ## number of vertex
         numberPerturbAll <- round((v*(v-1))/2, 0)
-        graphRandom <- rewireWeight(data=graph, number=numberPerturbAll, 
-                                    dist=dist, rewire.w.type=rewire.w.type) 
+        graphRandom <- rewireWeight(data=graph, number=numberPerturbAll,
+                                    rewire.w.type=rewire.w.type) 
     }else{
         
         z <- igraph::gsize(graph) ## number of edges
@@ -46,34 +45,33 @@ randomWeight <- function(graph, rewire.w.type="Rewire",
 #' @description makes the rewire for weighted networks
 #' @param data The output of prepGraph
 #' @param number Number of rewiring trials to perform.
-#' @param rewire.w.type method to rewire weighted graphs
-#' @param dist distribution for Garlashelli method
+#' @param rewire.w.type method to rewire weighted graphs one of "Rewire",
+#' "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+#' "Sum" method only for continuous weights.    
+# @param dist distribution for Garlashelli method
 #' @keywords internal
 #@examples 
 # my_file <- system.file("example/football.gml", package="robin")
 # graph <- prepGraph(file=my_file, file.format="gml")
 # E(graph)$weight <- round(runif(ecount(graph),min=1,max=10))
 # rewireWeight(data=graph, number=5)
-rewireWeight <- function(data, number,rewire.w.type="Rewire",
-                         #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
-                         dist="Other")
+rewireWeight <- function(data, number,rewire.w.type="Rewire")
+                         #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),dist="Other")
 {
    
     if(rewire.w.type=="Rewire"){
         
         print("Rewire and shuffling weight method")
+       
         graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
                                                                 niter=number))
-        NotChaged <- igraph::intersection(graph, graphRewire)
-        newWeight <- sample(E(difference(graph,graphRewire))$weight)
-        EdgeAggiunti <- E(difference(graphRewire,graph))
-        gg <- difference(graphRewire,graph)
+        NotChaged <- igraph::intersection(data, graphRewire)
+        newWeight <- sample(E(difference(data,graphRewire))$weight)
+        EdgeAggiunti <- E(difference(graphRewire,data))
+        gg <- difference(graphRewire,data)
         E(gg)$weight <- newWeight
         U <- union(gg,NotChaged)
-        E(U)$weight_1[which(is.na(E(U)$weight_1), 
-                            arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight),
-                                                                                       
-                                                                   arr.ind = TRUE)]
+        E(U)$weight_1[which(is.na(E(U)$weight_1), arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight), arr.ind = TRUE)]
         E(U)$weight <- E(U)$weight_1
         U <- delete_edge_attr(U, "weight_1")
         U <- delete_edge_attr(U, "weight_2")
@@ -82,55 +80,61 @@ rewireWeight <- function(data, number,rewire.w.type="Rewire",
     {
         
     print("Shuffle weight method")
-    indA <- sample(1:length(E(graph)$weight),ceiling(number/2))
-    a <- E(graph)$weight[indA]
-    indB <- sample(1:length(E(graph)$weight), ceiling(number/2))
-    b <- E(graph)$weight[indB]
-    E(graph)$weight[indA] <- b
-    E(graph)$weight[indB] <- a
-    return(graph)
+    indA <- sample(1:length(E(data)$weight),ceiling(number/2))
+    a <- E(data)$weight[indA]
+    indB <- sample(1:length(E(data)$weight), ceiling(number/2))
+    b <- E(data)$weight[indB]
+    E(data)$weight[indA] <- b
+    E(data)$weight[indB] <- a
+    return(data)
     
 
     }else if(rewire.w.type=="Garlaschelli"){
         # ONLY IF COUNT WEIGHT
-        print("Garlaschelli Method")
-        z <- number
-        adj <- igraph::as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
-        gR <- as.matrix(perturbR::rewireR(adj, z,dist = "NegBinom"))
-        graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
-                                                          mode="undirected")
-        return(graphRList)
+        if (length(E(data)$weight[round(E(data)$weight) != E(data)$weight])==0) {
+            # All weights are integers
+            print("Garlaschelli Method")
+            adj <- igraph::as_adjacency_matrix(data, attr="weight", sparse = FALSE)
+            gR <- as.matrix(perturbR::rewireR(adj, number,dist = "NegBinom"))
+            graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
+                                                              mode="undirected")
+            return(graphRList)  
+        } else {
+            stop("Error: Some edge weights are not counts.")
+        }
         
-     }else{
-       # ONLY FOR CONTNOUS WWIGHT  
-    print("Keep Sum and distribution weight method")
-    n_numbers <- E(graph)$weight
-    # Subset di p numeri (p <= length(n_numbers))
-    p <- number
-    index <- sample(1:length(E(graph)$weight),p)
-    p_subset <-  E(graph)$weight[index]
+        }else{
+       # ONLY FOR CONTINOUS WEIGHT  
+            if (length(E(data)$weight[round(E(data)$weight) != E(data)$weight])==0) {
+                stop("Error: The edge weights are not continuous.")
 
-    # Funzione per ottenere un nuovo subset di p numeri mantenendo la somma e la distribuzione
-    target_sum <- sum(p_subset) # La somma target da mantenere
-    n_dist <- n_numbers / sum(n_numbers) # Distribuzione percentuale del set originale
-
-    # Campiona p numeri dalla distribuzione di n_numbers
-    sampled_indices <- sample(1:length(n_numbers), p, replace = TRUE)
-    sampled_dist <- n_dist[sampled_indices]
-
-    # Calcola i nuovi valori proporzionali alla distribuzione e alla somma target
-    new_subset <- target_sum * (sampled_dist / sum(sampled_dist))
-
-    # Aggiusta leggermente i valori per assicurarsi che la somma sia esattamente quella target
-    diff <- target_sum - sum(new_subset)
-    adjustment <- diff / p
-    new_subset <- new_subset + adjustment
-
-    # Applica la funzione
-    if(length(n_numbers[round(n_numbers) != n_numbers])==0 & length(new_subset[round(new_subset) !=new_subset])>0){
-    new_subset <- round(new_subset)}
-    E(graph)$weight[index] <- new_subset
-    return(graph)
+    } else {
+        print("Keep Sum and distribution weight method")
+        n_numbers <- E(data)$weight
+        # Subset di p numeri (p <= length(n_numbers))
+        p <- number
+        index <- sample(1:length(E(data)$weight),p)
+        p_subset <-  E(data)$weight[index]
+        
+        # Funzione per ottenere un nuovo subset di p numeri mantenendo la somma e la distribuzione
+        target_sum <- sum(p_subset) # La somma target da mantenere
+        n_dist <- n_numbers / sum(n_numbers) # Distribuzione percentuale del set originale
+        
+        # Campiona p numeri dalla distribuzione di n_numbers
+        sampled_indices <- sample(1:length(n_numbers), p, replace = TRUE)
+        sampled_dist <- n_dist[sampled_indices]
+        
+        # Calcola i nuovi valori proporzionali alla distribuzione e alla somma target
+        new_subset <- target_sum * (sampled_dist / sum(sampled_dist))
+        
+        # Aggiusta leggermente i valori per assicurarsi che la somma sia esattamente quella target
+        diff <- target_sum - sum(new_subset)
+        adjustment <- diff / p
+        new_subset <- new_subset + adjustment
+        new_subset <- round(new_subset)
+        E(data)$weight[index] <- new_subset
+        return(data)  
+    }
     
     } 
    
@@ -166,10 +170,10 @@ rewireWeight <- function(data, number,rewire.w.type="Rewire",
 #' @param verbose flag for verbose output (default as TRUE).
 #' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
 #' "Shuffle","Garlaschelli","Sum" 
-#' @param dist for weighted with Garlaschelli type. Option to rewire in a manner that retains overall graph weight 
-#' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
-#'  for details.
+# @param dist for weighted with Garlaschelli type. Option to rewire in a manner that retains overall graph weight 
+# regardless of distribution of edge weights. This option is invoked by putting 
+# any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
+# for details.
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #' \link[BiocParallel]{bpparam} for details.
@@ -198,7 +202,7 @@ robinCompareFastWeight <- function(graph,
                                    #ncores=2,
                                    #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
                                    rewire.w.type="Rewire",
-                                   verbose=TRUE, dist="Other", 
+                                   verbose=TRUE, #dist="Other", 
                                    BPPARAM=BiocParallel::bpparam())
 {
     method1 <- match.arg(method1)
@@ -224,7 +228,7 @@ robinCompareFastWeight <- function(graph,
     vet <- round(vet1*de/100, 0)
      #print(vet)
     parfunct <- function(z, graph, method1, method2, comReal1, comReal2, N, 
-                         measure, args1, args2, FUN1, FUN2, dist, rewire.w.type)
+                         measure, args1, args2, FUN1, FUN2, rewire.w.type)
     {
         #print(list(args1,args2))
         
@@ -240,8 +244,7 @@ robinCompareFastWeight <- function(graph,
             #graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
             #                                                  mode="undirected")
             
-        graphRList <- rewireWeight(data=graph, number=z, 
-                         dist=dist, rewire.w.type=rewire.w.type)
+        graphRList <- rewireWeight(data=graph, number=z, rewire.w.type=rewire.w.type)
             
             argsP <- c(list(graph=graphRList), method=method1, FUN=FUN1, args1)
             comr1 <- do.call(membershipCommunities, argsP)
@@ -306,7 +309,7 @@ robinCompareFastWeight <- function(graph,
     zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
                                     method1=method1, method2=method2, args1=args1, args2=args2,
                                     comReal1=comReal1, N=N, comReal2=comReal2, FUN1=FUN1,
-                                    FUN2=FUN2, dist=dist,rewire.w.type=rewire.w.type,
+                                    FUN2=FUN2, rewire.w.type=rewire.w.type,
                                     BPPARAM=BPPARAM)
     
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
@@ -345,11 +348,12 @@ robinCompareFastWeight <- function(graph,
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param ... other parameter
 #' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
-#' "Shuffle","Garlaschelli","Sum" 
-#' @param dist for weighted with Garlaschelli type. Option to rewire in a manner that retains overall graph weight 
-#' regardless of distribution of edge weights. This option is invoked by putting 
-#' any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
-#' for details.
+#' "Shuffle","Garlaschelli","Sum"."Garlaschelli" method only for count weights,
+#' "Sum" method only for continuous weights. 
+# @param dist for weighted with Garlaschelli type. Option to rewire in a manner that retains overall graph weight 
+# regardless of distribution of edge weights. This option is invoked by putting 
+# any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
+# for details.
 #' @param verbose flag for verbose output (default as TRUE).
 #' @param BPPARAM the BiocParallel object of class bpparamClass that 
 #' specifies the back-end to be used for computations. See 
@@ -370,7 +374,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
                                     ..., FUN1=NULL,
                                     measure= c("vi", "nmi", "split.join", "adjusted.rand"),
                                     verbose=TRUE, rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
-                                    dist="Other",
+                                    #dist="Other",
                                     BPPARAM=BiocParallel::bpparam())
 {   
     method <- match.arg(method)
@@ -391,7 +395,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     vet <- round(vet1*de/100, 0)
     
     parfunct <- function(z, graph, method, comReal1, comReal2, N, 
-                         measure, rewire.w.type, dist, FUN1, ...)
+                         measure, rewire.w.type,  FUN1, ...)
     {
         #print(list(...))
         MeansList <- lapply(1:10, function(s)
@@ -402,7 +406,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
             # graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
             #                                                   mode="undirected")
             graphRList <- rewireWeight(data=graph, number=z, 
-                                       rewire.w.type=rewire.w.type, dist=dist)
+                                       rewire.w.type=rewire.w.type)
             
             comr1 <- robin::membershipCommunities(graph=graphRList,
                                                   method=method,
@@ -431,7 +435,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
             #graphRandomList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
             #                                                  mode="undirected")
             graphRandomList <- rewireWeight(data=graphRandom, number=z, 
-                                       rewire.w.type=rewire.w.type, dist=dist)
+                                       rewire.w.type=rewire.w.type)
             
           
             
@@ -478,7 +482,7 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     }
     zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
                                     method=method, comReal1=comReal1, N=N,
-                                    FUN1=FUN1, comReal2=comReal2, dist=dist,
+                                    FUN1=FUN1, comReal2=comReal2,
                                     rewire.w.type=rewire.w.type,
                                     ...=...,BPPARAM=BPPARAM)
     

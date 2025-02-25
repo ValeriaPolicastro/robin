@@ -18,7 +18,6 @@ robinCompare(
   type = "independent",
   verbose = TRUE,
   rewire.w.type = "Rewire",
-  dist = "Other",
   BPPARAM = BiocParallel::bpparam()
 )
 }
@@ -53,10 +52,9 @@ see \code{\link{methodCommunity}}.}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{dist}{Option to rewire in a manner that retains overall graph weight 
-regardless of distribution of edge weights. This option is invoked by putting 
-any text into this field. Defaults to "Other". See
-  \code{\link[perturbR]{rewireR}} for details.}
+\item{rewire.w.type}{for weighted graph. Option to rewire one of "Rewire",
+"Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+"Sum" method only for continuous weights.}
 
 \item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
 specifies the back-end to be used for computations. See

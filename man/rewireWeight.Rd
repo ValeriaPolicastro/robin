@@ -4,16 +4,16 @@
 \alias{rewireWeight}
 \title{rewireWeight}
 \usage{
-rewireWeight(data, number, rewire.w.type = "Rewire", dist = "Other")
+rewireWeight(data, number, rewire.w.type = "Rewire")
 }
 \arguments{
 \item{data}{The output of prepGraph}
 
 \item{number}{Number of rewiring trials to perform.}
 
-\item{rewire.w.type}{method to rewire weighted graphs}
-
-\item{dist}{distribution for Garlashelli method}
+\item{rewire.w.type}{method to rewire weighted graphs one of "Rewire",
+"Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+"Sum" method only for continuous weights.}
 }
 \description{
 makes the rewire for weighted networks
