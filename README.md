@@ -2,6 +2,14 @@
 
 Available on CRAN <https://CRAN.R-project.org/package=robin> <br/><br>
 
+              install.packages("robin")
+
+For the installation of the updated github version:
+
+               devtools::install_github("ValeriaPolicastro/robin")
+
+
+
 ***ROBIN (ROBustness In Network)*** is an R package for the validation of community detection. It has a double aim: it **studies the robustness** of a community detection algorithm and it **compares** the robustness of **two community detection algorithms**.
 
 <p align="center">
