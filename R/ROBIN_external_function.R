@@ -36,10 +36,13 @@
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' 
-#' @return A list object with two matrices:
-#' - the matrix "Mean1" with the means of the procedure for the first method 
-#' - the matrix "Mean2" with the means of the procedure for the second method
-#' 
+#' @return A robin object a list with:
+#' - "Mean1" and "Mean2" matrices with the means of the procedure for the first 
+#' and the second method respectively. 
+#' - "Communities1" and "Communities2" output communities with the first and
+#'  second method respectively.
+#' - "Method1" and "Method2" the two community detection algorithm used
+#' - "graph" the input graph.
 #' @import igraph
 #' @export 
 #'
@@ -103,7 +106,7 @@ robinCompare <-  function(graph,
     
    
    
-    outputRobin <- c(output, model=methods, list(graph=graph))
+    outputRobin <- c(output, Method=methods, list(graph=graph))
 
     class(outputRobin) <- "robin"
     return(outputRobin)
@@ -143,10 +146,11 @@ robinCompare <-  function(graph,
 #'   \code{\link[BiocParallel]{bpparam}} for details.
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
-#' @return A list object with two matrices:
-#' - the matrix "Mean" with the means of the procedure for the graph
-#' - the matrix "MeanRandom" with the means of the procedure for the random graph. 
-#' 
+#' @return A robin object a list with:
+#' - "Mean" and "MeanRandom" matrices with the means of the procedure for the 
+#' graph and the random graph respectively. 
+#' - "Communities" the output communities with the method used.
+#' - "graph" the real data graph.
 #' @import igraph
 #' @export
 #'
@@ -208,7 +212,7 @@ robinRobust <-  function(graph, graphRandom,
                                       verbose=verbose,BPPARAM=BPPARAM)
         }
     }
-    outputRobin <- c(output, model=methods, list(graph=graph))
+    outputRobin <- c(output, Method=methods, list(graph=graph))
 
 class(outputRobin) <- "robin"
 return(outputRobin)

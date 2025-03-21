@@ -80,7 +80,7 @@ plotComm <- function(graph, members)
 plot.robin <- function(x, title="Robin plot", ...)
 {
     stopifnot(is(object=x, "robin"))
-    legend <- c(x$model1, x$model2)
+    legend <- c(x$Method1, x$Method2)
     if (length(x$Mean1)==0)
     {
         model1 <- x$Mean
@@ -143,7 +143,7 @@ plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
     lapply(objs, function(x){stopifnot(is(object=x, "robin"))}) 
     modelsl <- lapply(objs, function(x)
     {
-        legend <- c(x$model1, x$model2)
+        legend <- c(x$Method1, x$Method2)
         if (length(x$Mean1)==0)
         {
             model1 <- x$Mean
@@ -178,9 +178,9 @@ plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
     mm <- reshape2::melt(m)
 colnames(mm) <- c("perc", "Model", "measure")
 dataFrame <- data.frame(mm)
-ggp <- ggplot2::ggplot(dataFrame, aes(x=dataFrame$perc, y=dataFrame$measure,
-                                colour = dataFrame$Model,
-                                group = dataFrame$Model)) +
+ggp <- ggplot2::ggplot(dataFrame, aes(x=`perc`, y=`measure`,
+                                colour = `Model`,
+                                group = `Model`)) +
     geom_line() +
     geom_point() +
     xlab("Percentage of perturbation") +

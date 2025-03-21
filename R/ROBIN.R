@@ -45,13 +45,13 @@ prepGraph <- function(file, file.format=c("edgelist", "pajek", "ncol", "lgl",
     { 
         net <- file
         ind <- igraph::V(net)[igraph::degree(net) == 0] #isolate node
-        graph <- igraph::delete.vertices(net, ind)
+        graph <- igraph::delete_vertices(net, ind)
         graph <- igraph::simplify(graph)
         
     }else if (file.format == "gml") {
         net <- igraph::read_graph(file=file, format=file.format)
         ind <- igraph::V(net)[degree(net) == 0] #isolate node
-        graph <- igraph::delete.vertices(net, ind)
+        graph <- igraph::delete_vertices(net, ind)
         graph <- igraph::simplify(graph)
     }else if((file.format == "edgelist") & (numbers == TRUE))
     {
@@ -60,14 +60,14 @@ prepGraph <- function(file, file.format=c("edgelist", "pajek", "ncol", "lgl",
         edge <- as.matrix(edge)
         net <- igraph::graph_from_edgelist(edge, directed=directed)
         ind <- igraph::V(net)[degree(net) == 0] #isolate node
-        graph <- igraph::delete.vertices(net, ind)
+        graph <- igraph::delete_vertices(net, ind)
         graph <- igraph::simplify(graph)
     }else
     {
         net <- igraph::read_graph(file=file, format=file.format,
                                   directed=directed)
         ind <- igraph::V(net)[degree(net) == 0] #isolate node
-        graph <- igraph::delete.vertices(net, ind)
+        graph <- igraph::delete_vertices(net, ind)
         graph <- igraph::simplify(graph)
     }
     return(graph)
@@ -664,7 +664,8 @@ robinRobustNoParallel <- function(graph, graphRandom,
     colnames(MeanRandom) <- nRewire
     colnames(Mean) <- nRewire
     output <- list( Mean=Mean,
-                    MeanRandom=MeanRandom
+                    MeanRandom=MeanRandom,
+                    Communities=comReal
                     )
       return(output)
 
@@ -946,7 +947,9 @@ robinCompareNoParallel <- function(graph,
     colnames(Mean1) <- nRewire 
     colnames(Mean2) <- nRewire 
     output <- list(Mean1=Mean1,
-                   Mean2=Mean2)
+                   Mean2=Mean2,
+                   Communities1=comReal1,
+                   Communities2=comReal2)
     return(output)
 }
 
@@ -1098,7 +1101,7 @@ robinFDATest <- function(x, verbose=FALSE)
     if(verbose) cat("Computing Interval testing procedure.\n")
     
     graph <- x$graph
-    legend <- c(x$model1,x$model2)
+    legend <- c(x$Method1,x$Method2)
     if (length(x$Mean1)==0)
     {
         model1 <- x$Mean
@@ -1208,7 +1211,7 @@ robinAUC <- function( x, verbose=FALSE)
                           method ="spline")
     
     output <- c(area1,area2)
-    names(output) <- c(paste("Area",x$model1),paste("Area", x$model2))
+    names(output) <- c(paste("Area",x$Method1),paste("Area", x$Method2))
     
 return(output)
 }
