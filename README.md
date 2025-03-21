@@ -2,6 +2,7 @@
 
 Available on CRAN <https://CRAN.R-project.org/package=robin> <br/><br>
 
+              install.packages("robin")
 
 For the installation of the updated github version:
 
