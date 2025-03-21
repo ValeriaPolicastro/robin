@@ -61,9 +61,13 @@ specifies the back-end to be used for computations. See
   \code{\link[BiocParallel]{bpparam}} for details.}
 }
 \value{
-A list object with two matrices:
-- the matrix "Mean1" with the means of the procedure for the first method 
-- the matrix "Mean2" with the means of the procedure for the second method
+A robin object a list with:
+- "Mean1" and "Mean2" matrices with the means of the procedure for the first 
+and the second method respectively. 
+- "Communities1" and "Communities2" output communities with the first and
+ second method respectively.
+- "Method1" and "Method2" the two community detection algorithm used
+- "graph" the input graph.
 }
 \description{
 This function compares the robustness of two community 

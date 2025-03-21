@@ -321,7 +321,9 @@ robinCompareFastWeight <- function(graph,
     colnames(Measure1) <- nRewire
     colnames(Measure2) <- nRewire
     return(list(Mean1=Measure1,
-                Mean2=Measure2))
+                Mean2=Measure2,
+                Communities1=comReal1,
+                Communities2=comReal2))
 }
 
 
@@ -495,7 +497,8 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     colnames(Measure1) <- nRewire 
     colnames(Measure2) <- nRewire 
     return(list(Mean=Measure1,
-                MeanRandom=Measure2))
+                MeanRandom=Measure2,
+                Communities=comReal1))
     }
 
 

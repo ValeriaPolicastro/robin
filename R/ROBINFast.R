@@ -36,7 +36,7 @@
 # @examples my_file <- system.file("example/football.gml", package="robin")
 # graph <- prepGraph(file=my_file, file.format="gml")
 # robinCompareFast(graph=graph, method1="louvain", args1 = list(resolution=0.8),
-# method2="leiden", args2=list(objective_function ="modularity"))
+# method2="leiden", args2=list(leiden_objective_function ="modularity"))
 
 robinCompareFast <- function(graph, 
                          method1=c("walktrap", "edgeBetweenness", "fastGreedy",
@@ -235,7 +235,9 @@ robinCompareFast <- function(graph,
     colnames(Measure1) <- nRewire 
     colnames(Measure2) <- nRewire 
     return(list(Mean1=Measure1,
-                Mean2=Measure2))
+                Mean2=Measure2,
+                Communities1=comReal1,
+                Communities2=comReal2))
 }
 
 
@@ -383,7 +385,8 @@ robinRobustFast <- function(graph, graphRandom,
     colnames(Measure1) <- nRewire 
     colnames(Measure2) <- nRewire 
     return(list(Mean=Measure1,
-                MeanRandom=Measure2))
+                MeanRandom=Measure2,
+                Communities=comReal1))
 }
 
 

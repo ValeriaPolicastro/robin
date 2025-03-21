@@ -51,9 +51,11 @@ specifies the back-end to be used for computations. See
   \code{\link[BiocParallel]{bpparam}} for details.}
 }
 \value{
-A list object with two matrices:
-- the matrix "Mean" with the means of the procedure for the graph
-- the matrix "MeanRandom" with the means of the procedure for the random graph.
+A robin object a list with:
+- "Mean" and "MeanRandom" matrices with the means of the procedure for the 
+graph and the random graph respectively. 
+- "Communities" the output communities with the method used.
+- "graph" the real data graph.
 }
 \description{
 This functions implements a procedure to examine the stability 

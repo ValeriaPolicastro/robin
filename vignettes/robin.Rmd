@@ -242,3 +242,10 @@ robinGPTest(comp)
 robinAUC(comp)
 ```
 
+# Robin plot different algorithms
+```{r}
+comp1 <- robinCompare(graph=graph, method1="fastGreedy",method2="louvain")
+comp2 <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
+plotMultiCompare(comp1,comp2)
+```
+
