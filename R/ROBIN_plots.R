@@ -178,9 +178,9 @@ plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
     mm <- reshape2::melt(m)
 colnames(mm) <- c("perc", "Model", "measure")
 dataFrame <- data.frame(mm)
-ggp <- ggplot2::ggplot(dataFrame, aes(x=`perc`, y=`measure`,
-                                colour = `Model`,
-                                group = `Model`)) +
+ggp <- ggplot2::ggplot(dataFrame, aes(x=dataFrame$perc, y=dataFrame$measure,
+                                colour = dataFrame$Model,
+                                group = dataFrame$Model)) +
     geom_line() +
     geom_point() +
     xlab("Percentage of perturbation") +
