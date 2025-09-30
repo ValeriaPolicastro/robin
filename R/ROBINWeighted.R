@@ -133,6 +133,10 @@ rewireWeight <- function(data, number,rewire.w.type="Rewire")
         new_subset <- new_subset + adjustment
         new_subset <- round(new_subset)
         E(data)$weight[index] <- new_subset
+        if(length(table(E(data)$weight == 0))>1){
+            #print("yes there are zeros")
+            E(data)$weight[which(E(data)$weight==0)] <- 0.00000001
+        }
         return(data)  
     }
     
