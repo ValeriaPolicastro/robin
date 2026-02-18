@@ -132,11 +132,13 @@ plot.robin <- function(x, title="Robin plot", ...)
 #' @export
 #'
 #' @examples
-#' \donttest{my_file <- system.file("example/football.gml", package="robin")
+#' \donttest{
+#' my_file <- system.file("example/football.gml", package="robin")
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' comp1 <- robinCompare(graph=graph, method1="fastGreedy",method2="louvain")
 #' comp2 <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
-#' plotMultiCompare(comp1,comp2)}
+#' plotMultiCompare(comp1,comp2)
+#' }
 plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
 {
     objs <- list(...)
@@ -176,29 +178,17 @@ plotMultiCompare <- function(..., title="Robin plot", ylim1=FALSE)
     colnames(m) <- unlist(lapply(l,names))
     rownames(m) <- (seq(0,60,5)/100)
     mm <- reshape2::melt(m)
-colnames(mm) <- c("perc", "Model", "measure")
-dataFrame <- data.frame(mm)
-ggp <- ggplot2::ggplot(dataFrame, aes(x=dataFrame$perc, y=dataFrame$measure,
-                                colour = dataFrame$Model,
-                                group = dataFrame$Model)) +
+    ggp <- ggplot2::ggplot(mm, aes(x=Var1, y=value, colour = Var2, group = Var2)) +
     geom_line() +
     geom_point() +
     xlab("Percentage of perturbation") +
     ylab("Measure") +
-    ggtitle(title)
-
+    ggtitle(title)+ 
+    labs(color = "Methods")
     
-    # ggp <- ggplot2::ggplot(mm, aes(x=Var1, y=value,
-    #                         colour = Var2,
-    #                         group = Var2)) +
-    #     geom_line() +
-    #     geom_point() +
-    #     xlab("Percentage of perturbation") +
-    #     ylab("Measure")+
-    #     labs(colour = "Model") + 
-    #     ggtitle(title)
+    if(ylim1) 
+    {ggp <- ggp+ggplot2::ylim(0,1)}
     
-    if(ylim1) ggp <- ggp+ggplot2::ylim(0,1)
     return(ggp)
 }
 
