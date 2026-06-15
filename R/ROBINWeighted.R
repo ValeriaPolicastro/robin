@@ -5,6 +5,9 @@
 #' degree distribution.
 #' @param graph The output of prepGraph.
 #' @param verbose flag for verbose output (default as FALSE)
+#' @param rewire.w.type method to rewire weighted graphs one of "Rewire",
+#' "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+#' "Sum" method only for continuous weights.    
 # @param dist Option to rewire in a manner that retains overall graph weight 
 # regardless of distribution of edge weights. This option is invoked by putting 
 # any text into this field. Defaults to "Other". See
@@ -171,13 +174,14 @@ rewireWeight <- function(data, number,rewire.w.type="Rewire")
 #' see \code{\link{methodCommunity}}.
 #' @param FUN2 personal designed function when method2 is "others".
 #' see \code{\link{methodCommunity}}.
-#' @param verbose flag for verbose output (default as TRUE).
 #' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
 #' "Shuffle","Garlaschelli","Sum" 
 # @param dist for weighted with Garlaschelli type. Option to rewire in a manner that retains overall graph weight 
 # regardless of distribution of edge weights. This option is invoked by putting 
 # any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
 # for details.
+#' @param seed set seed (default seed=123)
+#' @param verbose flag for verbose output (default as TRUE).
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #' \link[BiocParallel]{bpparam} for details.
@@ -206,7 +210,8 @@ robinCompareFastWeight <- function(graph,
                                    #ncores=2,
                                    #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
                                    rewire.w.type="Rewire",
-                                   verbose=TRUE, #dist="Other", 
+                                   verbose=TRUE, #dist="Other",
+                                   seed=123,
                                    BPPARAM=BiocParallel::bpparam())
 {
     method1 <- match.arg(method1)
@@ -214,6 +219,7 @@ robinCompareFastWeight <- function(graph,
     measure <- match.arg(measure)
     args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
     args21 <- c(list(graph=graph), method=method2, FUN=FUN2, args2)
+    set.seed(seed)
     comReal1 <- do.call(robin::membershipCommunities, args11)
     comReal2 <- do.call(robin::membershipCommunities, args21)
     N <- igraph::vcount(graph)
