@@ -17,8 +17,8 @@ robinCompareFastWeight(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   rewire.w.type = "Rewire",
   verbose = TRUE,
-  seed = 123,
-  BPPARAM = BiocParallel::bpparam()
+  seed = NULL,
+  BPPARAM = NULL
 )
 }
 \arguments{
@@ -53,11 +53,12 @@ see \code{\link{methodCommunity}}.}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{seed}{set seed (default seed=123)}
+\item{seed}{set seed (default seed=NULL)}
 
-\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
-specifies the back-end to be used for computations. See
-\link[BiocParallel]{bpparam} for details.}
+\item{BPPARAM}{optional BiocParallel parameter object. If \code{NULL}
+(default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+\code{lapply} on Windows. If a BiocParallel object is supplied and the
+\pkg{BiocParallel} package is installed, it will be used instead.}
 }
 \value{
 A list object with two matrices:

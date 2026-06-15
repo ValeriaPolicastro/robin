@@ -15,9 +15,9 @@ robinCompareFast(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   FUN1 = NULL,
   FUN2 = NULL,
-  seed = 123,
+  seed = NULL,
   verbose = TRUE,
-  BPPARAM = BiocParallel::bpparam()
+  BPPARAM = NULL
 )
 }
 \arguments{
@@ -47,13 +47,14 @@ see \code{\link{methodCommunity}}.}
 \item{FUN2}{personal designed function when \code{method2} is "others". 
 see \code{\link{methodCommunity}}.}
 
-\item{seed}{set seed (default seed=123)}
+\item{seed}{set seed (default seed=NULL)}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
-specifies the back-end to be used for computations. See
-  \code{\link[BiocParallel]{bpparam}} for details.}
+\item{BPPARAM}{optional BiocParallel parameter object. If \code{NULL}
+(default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+\code{lapply} on Windows. If a BiocParallel object is supplied and the
+\pkg{BiocParallel} package is installed, it will be used instead.}
 }
 \value{
 A list object with two matrices:

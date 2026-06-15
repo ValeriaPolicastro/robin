@@ -30,11 +30,12 @@
 # regardless of distribution of edge weights. This option is invoked by putting 
 # any text into this field. Defaults to "Other". See
 #   \code{\link[perturbR]{rewireR}} for details.
-#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
-#' specifies the back-end to be used for computations. See
-#'   \code{\link[BiocParallel]{bpparam}} for details.
+#' @param BPPARAM optional BiocParallel parameter object. If \code{NULL}
+#' (default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+#' \code{lapply} on Windows. If a BiocParallel object is supplied and the
+#' \pkg{BiocParallel} package is installed, it will be used instead.
 #' @param verbose flag for verbose output (default as TRUE).
-#' @param seed set seed (default seed=123)
+#' @param seed set seed (default seed=NULL)
 #' 
 #' @return A robin object a list with:
 #' - "Mean1" and "Mean2" matrices with the means of the procedure for the first 
@@ -71,10 +72,10 @@ robinCompare <-  function(graph,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
                           type="independent", rewire.w.type="Rewire",
                           #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),dist="Other",
-                          seed=123, verbose=TRUE, BPPARAM=BiocParallel::bpparam())
+                          seed=NULL, verbose=TRUE, BPPARAM=NULL)
 {
     
-    methods <- c(method1, method2)
+    
     
     # Weigthed version
     if ( is_weighted(graph) )
@@ -101,9 +102,18 @@ robinCompare <-  function(graph,
         }
         
     }
-        
+    # Adding arguments to label  
+    args1_flat <- unlist(args2)
+    if (length(args1_flat) > 0) {
+        method1 <- paste(c(method1, rbind(names(args1_flat), args1_flat)), collapse = "_")
+    }
     
-   
+    args2_flat <- unlist(args2)
+    if (length(args2_flat) > 0) {
+        method2 <- paste(c(method2, rbind(names(args2_flat), args2_flat)), collapse = "_")
+    }
+        
+        methods <- c(method1, method2)
    
     outputRobin <- c(output, Method=methods, list(graph=graph))
 
@@ -140,11 +150,12 @@ robinCompare <-  function(graph,
 # distribution of edge weights. This option is invoked by putting any text into
 #  this field. Defaults to "Other". See \code{\link[perturbR]{rewireR}} for 
 #  details.
-#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
-#' specifies the back-end to be used for computations. See
-#'   \code{\link[BiocParallel]{bpparam}} for details.
+#' @param BPPARAM optional BiocParallel parameter object. If \code{NULL}
+#' (default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+#' \code{lapply} on Windows. If a BiocParallel object is supplied and the
+#' \pkg{BiocParallel} package is installed, it will be used instead.
 #' @param verbose flag for verbose output (default as TRUE).
-#' @param seed set seed (default seed=123)
+#' @param seed set seed (default seed=NULL)
 #' 
 #' @return A robin object a list with:
 #' - "Mean" and "MeanRandom" matrices with the means of the procedure for the 
@@ -174,7 +185,7 @@ robinRobust <-  function(graph, graphRandom,
                          type="independent",verbose=TRUE,
                          rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
                          #dist="Other",
-                          seed=123, BPPARAM=BiocParallel::bpparam())
+                          seed=NULL, BPPARAM=NULL)
 {
 
     methods <- c("real data", "null model")

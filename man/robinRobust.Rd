@@ -15,8 +15,8 @@ robinRobust(
   type = "independent",
   verbose = TRUE,
   rewire.w.type = c("Rewire", "Shuffle", "Garlaschelli", "Sum"),
-  seed = 123,
-  BPPARAM = BiocParallel::bpparam()
+  seed = NULL,
+  BPPARAM = NULL
 )
 }
 \arguments{
@@ -47,11 +47,12 @@ The personal parameter has to take as input the @graph and the @weights
 "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
 "Sum" method only for continuous weights.}
 
-\item{seed}{set seed (default seed=123)}
+\item{seed}{set seed (default seed=NULL)}
 
-\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
-specifies the back-end to be used for computations. See
-  \code{\link[BiocParallel]{bpparam}} for details.}
+\item{BPPARAM}{optional BiocParallel parameter object. If \code{NULL}
+(default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+\code{lapply} on Windows. If a BiocParallel object is supplied and the
+\pkg{BiocParallel} package is installed, it will be used instead.}
 }
 \value{
 A robin object a list with:

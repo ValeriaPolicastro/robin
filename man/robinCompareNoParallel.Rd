@@ -16,7 +16,7 @@ robinCompareNoParallel(
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = c("independent", "dependent"),
-  seed = 123,
+  seed = NULL,
   verbose = TRUE
 )
 }
@@ -49,7 +49,7 @@ see \code{\link{methodCommunity}}.}
 
 \item{type}{The type of robin construction, dependent or independent.}
 
-\item{seed}{set seed (default seed=123)}
+\item{seed}{set seed (default seed=NULL)}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 }

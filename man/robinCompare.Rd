@@ -17,9 +17,9 @@ robinCompare(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = "independent",
   rewire.w.type = "Rewire",
-  seed = 123,
+  seed = NULL,
   verbose = TRUE,
-  BPPARAM = BiocParallel::bpparam()
+  BPPARAM = NULL
 )
 }
 \arguments{
@@ -55,13 +55,14 @@ see \code{\link{methodCommunity}}.}
 "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
 "Sum" method only for continuous weights.}
 
-\item{seed}{set seed (default seed=123)}
+\item{seed}{set seed (default seed=NULL)}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 
-\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
-specifies the back-end to be used for computations. See
-  \code{\link[BiocParallel]{bpparam}} for details.}
+\item{BPPARAM}{optional BiocParallel parameter object. If \code{NULL}
+(default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+\code{lapply} on Windows. If a BiocParallel object is supplied and the
+\pkg{BiocParallel} package is installed, it will be used instead.}
 }
 \value{
 A robin object a list with:

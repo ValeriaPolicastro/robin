@@ -180,18 +180,18 @@ rewireWeight <- function(data, number,rewire.w.type="Rewire")
 # regardless of distribution of edge weights. This option is invoked by putting 
 # any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
 # for details.
-#' @param seed set seed (default seed=123)
+#' @param seed set seed (default seed=NULL)
 #' @param verbose flag for verbose output (default as TRUE).
-#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
-#' specifies the back-end to be used for computations. See
-#' \link[BiocParallel]{bpparam} for details.
+#' @param BPPARAM optional BiocParallel parameter object. If \code{NULL}
+#' (default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+#' \code{lapply} on Windows. If a BiocParallel object is supplied and the
+#' \pkg{BiocParallel} package is installed, it will be used instead.
 #'
 #' @return A list object with two matrices:
 #' - the matrix "Mean1" with the means of the procedure for the first method
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #'
 #' @import igraph parallel perturbR
-#' @importFrom BiocParallel bplapply bpparam
 #' @keywords internal
 
 robinCompareFastWeight <- function(graph,
@@ -211,18 +211,40 @@ robinCompareFastWeight <- function(graph,
                                    #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
                                    rewire.w.type="Rewire",
                                    verbose=TRUE, #dist="Other",
-                                   seed=123,
-                                   BPPARAM=BiocParallel::bpparam())
+                                   seed=NULL,
+                                   BPPARAM=NULL)
 {
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
     measure <- match.arg(measure)
+    N <- igraph::vcount(graph)
     args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
     args21 <- c(list(graph=graph), method=method2, FUN=FUN2, args2)
-    set.seed(seed)
+    if(!is.null(seed)){set.seed(seed)}
     comReal1 <- do.call(robin::membershipCommunities, args11)
+    n_communities1 <- length(table(comReal1))
+    
+    if (n_communities1 == N) {
+        warning("Each community has only one node with method1")
+    }
+    
+    if (n_communities1 == 1) {
+        warning("Only one community with method1")
+    }
+    
     comReal2 <- do.call(robin::membershipCommunities, args21)
-    N <- igraph::vcount(graph)
+    
+    n_communities2 <- length(table(comReal2))
+    
+    if (n_communities2 == N) {
+        warning("Each community has only one node with method2")
+    }
+    
+    if (n_communities2 == 1) {
+        warning("Only one community with method2")
+    }
+    
+    
     de <- igraph::gsize(graph)
     if(rewire.w.type=="Garlaschelli"){
         de <- round((N*(N-1))/2, 0)
@@ -247,13 +269,7 @@ robinCompareFastWeight <- function(graph,
         MeansList <- lapply(1:10, function(s)
         {
     
-           #print(s)
-            #print(z)
-            # adj <- igraph::as_adjacency_matrix(graph, attr="weight", sparse = FALSE)
-            #gR <- as.matrix(perturbR::rewireR(adj, z,dist = dist))
-            #graphRList <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
-            #                                                  mode="undirected")
-            
+        
         graphRList <- rewireWeight(data=graph, number=z, rewire.w.type=rewire.w.type)
             
             argsP <- c(list(graph=graphRList), method=method1, FUN=FUN1, args1)
@@ -316,11 +332,11 @@ robinCompareFastWeight <- function(graph,
         return(list("Measure1"=m1,"Measure2"=m2))
     }
     
-    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
-                                    method1=method1, method2=method2, args1=args1, args2=args2,
-                                    comReal1=comReal1, N=N, comReal2=comReal2, FUN1=FUN1,
-                                    FUN2=FUN2, rewire.w.type=rewire.w.type,
-                                    BPPARAM=BPPARAM)
+    zlist <- robin_lapply(vet, parfunct, graph=graph, measure=measure,
+                          method1=method1, method2=method2, args1=args1, args2=args2,
+                          comReal1=comReal1, N=N, comReal2=comReal2, FUN1=FUN1,
+                          FUN2=FUN2, rewire.w.type=rewire.w.type,
+                          BPPARAM=BPPARAM)
     
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
@@ -359,7 +375,7 @@ robinCompareFastWeight <- function(graph,
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param ... other parameter
-#' @param seed set seed (default seed=123)
+#' @param seed set seed (default seed=NULL)
 #' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
 #' "Shuffle","Garlaschelli","Sum"."Garlaschelli" method only for count weights,
 #' "Sum" method only for continuous weights. 
@@ -368,16 +384,16 @@ robinCompareFastWeight <- function(graph,
 # any text into this field. Defaults to "Other". See \link[perturbR]{rewireR}
 # for details.
 #' @param verbose flag for verbose output (default as TRUE).
-#' @param BPPARAM the BiocParallel object of class bpparamClass that 
-#' specifies the back-end to be used for computations. See 
-#' \link[BiocParallel]{bpparam} for details.
+#' @param BPPARAM optional BiocParallel parameter object. If \code{NULL}
+#' (default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+#' \code{lapply} on Windows. If a BiocParallel object is supplied and the
+#' \pkg{BiocParallel} package is installed, it will be used instead.
 #'
 #' @return A list object with two matrices:
 #' - the matrix "Mean" with the means of the procedure for the graph
 #' - the matrix "MeanRandom" with the means of the procedure for the random graph.
 #' @keywords internal
 #' @import igraph parallel perturbR
-#' @importFrom BiocParallel bplapply bpparam
 
 robinRobustFastWeighted <- function(graph, graphRandom, 
                                     method=c("walktrap", "edgeBetweenness",
@@ -388,18 +404,41 @@ robinRobustFastWeighted <- function(graph, graphRandom,
                                     measure= c("vi", "nmi", "split.join", "adjusted.rand"),
                                     verbose=TRUE, rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
                                     #dist="Other",
-                                    seed=123,
-                                    BPPARAM=BiocParallel::bpparam())
+                                    seed=NULL,
+                                    BPPARAM=NULL)
 {   
     method <- match.arg(method)
     measure <- match.arg(measure)
-    set.seed(seed)
+    N <- igraph::vcount(graph)
+    if(!is.null(seed)){set.seed(seed)}
     comReal1 <- membershipCommunities(graph=graph, method=method,
                                       FUN=FUN1, ...=...) 
+   
+    n_communitiesReal <- length(table(comReal1))
+    
+    if (n_communitiesReal == N) {
+        warning("Each community has only one node in the graph")
+    }
+    
+    if (n_communitiesReal == 1) {
+        warning("Only one community in the graph")
+    }
+    
     comReal2 <- membershipCommunities(graph=graphRandom, method=method,
                                       FUN=FUN1, ...=...)
-   
-    N <- igraph::vcount(graph)
+    # random network
+    n_communitiesRandom <- length(table(comReal2))
+    
+    if (n_communitiesRandom == N) {
+        warning("Each community has only one node in the graphRandom")
+    }
+    
+    if (n_communitiesRandom == 1) {
+        warning("Only one community in the graphRandom")
+    }
+    
+    
+  
     de <- igraph::gsize(graph)
     if(rewire.w.type=="Garlaschelli"){
         de <- round((N*(N-1))/2, 0)
@@ -495,11 +534,11 @@ robinRobustFastWeighted <- function(graph, graphRandom,
         
         return(list("Measure1"=m1,"Measure2"=m2))
     }
-    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
-                                    method=method, comReal1=comReal1, N=N,
-                                    FUN1=FUN1, comReal2=comReal2,
-                                    rewire.w.type=rewire.w.type,
-                                    ...=...,BPPARAM=BPPARAM)
+    zlist <- robin_lapply(vet, parfunct, graph=graph, measure=measure,
+                          method=method, comReal1=comReal1, N=N,
+                          FUN1=FUN1, comReal2=comReal2,
+                          rewire.w.type=rewire.w.type,
+                          ...=..., BPPARAM=BPPARAM)
     
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))

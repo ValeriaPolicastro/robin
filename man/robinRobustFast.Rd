@@ -12,9 +12,9 @@ robinRobustFast(
   ...,
   FUN1 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
-  seed = 123,
+  seed = NULL,
   verbose = TRUE,
-  BPPARAM = BiocParallel::bpparam()
+  BPPARAM = NULL
 )
 }
 \arguments{
@@ -37,13 +37,14 @@ The personal parameter has to take as input the @graph and the @weights
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
 
-\item{seed}{set seed (default seed=123)}
+\item{seed}{set seed (default seed=NULL)}
 
 \item{verbose}{flag for verbose output (default as TRUE)}
 
-\item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
-specifies the back-end to be used for computations. See
-  \code{\link[BiocParallel]{bpparam}} for details.}
+\item{BPPARAM}{optional BiocParallel parameter object. If \code{NULL}
+(default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+\code{lapply} on Windows. If a BiocParallel object is supplied and the
+\pkg{BiocParallel} package is installed, it will be used instead.}
 }
 \value{
 A list object with two matrices:

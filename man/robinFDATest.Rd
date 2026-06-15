@@ -22,6 +22,6 @@ test the difference between two curves.
 \examples{
 my_file <- system.file("example/football.gml", package="robin")
 graph <- prepGraph(file=my_file, file.format="gml")
-comp <- robinCompare(graph=graph, method1="fastGreedy",method2="infomap")
-\donttest{robinFDATest(comp)}
+comp <- robinCompare(graph=graph, method1="fastGreedy", method2="leiden")
+robinFDATest(comp)
 }

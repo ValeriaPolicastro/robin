@@ -22,17 +22,17 @@
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param verbose flag for verbose output (default as TRUE).
-#' @param seed set seed (default seed=123)
-#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
-#' specifies the back-end to be used for computations. See
-#'   \code{\link[BiocParallel]{bpparam}} for details. 
+#' @param seed set seed (default seed=NULL)
+#' @param BPPARAM optional BiocParallel parameter object. If \code{NULL}
+#' (default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+#' \code{lapply} on Windows. If a BiocParallel object is supplied and the
+#' \pkg{BiocParallel} package is installed, it will be used instead.
 #' 
 #' @return A list object with two matrices:
 #' - the matrix "Mean1" with the means of the procedure for the first method 
 #' - the matrix "Mean2" with the means of the procedure for the second method
 #' 
 #' @import igraph
-#' @importFrom BiocParallel bplapply bpparam
 #' @keywords internal
 # @examples my_file <- system.file("example/football.gml", package="robin")
 # graph <- prepGraph(file=my_file, file.format="gml")
@@ -51,73 +51,47 @@ robinCompareFast <- function(graph,
                                    "other"),
                          args2=list(),
                          measure= c("vi", "nmi", "split.join", "adjusted.rand"),
-                         FUN1=NULL, FUN2=NULL, seed=123,
-                         verbose=TRUE, BPPARAM=BiocParallel::bpparam())
+                         FUN1=NULL, FUN2=NULL, seed=NULL,
+                         verbose=TRUE, BPPARAM=NULL)
 {   
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
     measure <- match.arg(measure)
     args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
     args21 <- c(list(graph=graph), method=method2, FUN=FUN2, args2)
-    set.seed(seed)
+    if(!is.null(seed)){set.seed(seed)}
     comReal1 <- do.call(robin::membershipCommunities, args11)
-    comReal2 <- do.call(robin::membershipCommunities, args21)
-    
-    # comReal1 <- membershipCommunities(graph=graph, method=method1,
-    #                                   FUN=FUN1,
-    #                                   directed=directed,
-    #                                   weights=weights,
-    #                                   steps=steps, 
-    #                                   spins=spins, 
-    #                                   e.weights=e.weights, 
-    #                                   v.weights=v.weights, 
-    #                                   nb.trials=nb.trials,
-    #                                   resolution=resolution,
-    #                                   objective_function = objective_function,
-    #                                   n_iterations=n_iterations) 
-    # comReal2 <- membershipCommunities(graph=graph, method=method2,
-    #                                   FUN=FUN2,
-    #                                   directed=directed,
-    #                                   weights=weights,
-    #                                   steps=steps, 
-    #                                   spins=spins, 
-    #                                   e.weights=e.weights, 
-    #                                   v.weights=v.weights, 
-    #                                   nb.trials=nb.trials,
-    #                                   resolution=resolution,
-    #                                   objective_function = objective_function,
-    #                                   n_iterations=n_iterations)
-    de <- igraph::gsize(graph)
     N <- igraph::vcount(graph)
-   # Measure <- NULL
-     # vector1 <- NULL
-   # vector2 <- NULL
-    # graphRewire <- NULL
-   # count <- 1
+    
+    n_communities1 <- length(table(comReal1))
+    
+    if (n_communities1 == N) {
+        warning("Each community has only one node with method1")
+    }
+    
+    if (n_communities1 == 1) {
+        warning("Only one community with method1")
+    }
+    
+    comReal2 <- do.call(robin::membershipCommunities, args21)
+   
+    n_communities2 <- length(table(comReal2))
+    
+    if (n_communities2 == N) {
+        warning("Each community has only one node with method2")
+    }
+    
+    if (n_communities2 == 1) {
+        warning("Only one community with method2")
+    }
+    
+   
+    de <- igraph::gsize(graph)
     nRewire <- seq(0,60,5)
     if(verbose) cat("Detected robin method type independent\nIt can take time ... It depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
     vet <- round(vet1*de/100, 0)
-    #cl <- parallel::makeCluster(ncores)
-    
-    #varli <- c(list(graph=graph),method1=method1, method2=method2, FUN1=FUN1, 
-    #             FUN2=FUN2)
-    #varli <- c(names(args1),
-    #           names(args2),
-    #           names(varli))
-    #args11 <- c(cl=cl, varlist=varlist, envir=environment())
-    #do.call(parallel::clusterExport, args11)
-    
-     # parallel::clusterExport(cl,varlist=c("graph", 
-     #                                      "method1", 
-     #                                     "method2", 
-     #                                      "FUN1",
-     #                                     "FUN2",
-     #                                     "args1",
-     #                                     "args2",
-     #                                     "comReal1",
-     #                                     "comReal2"), envir=environment())
-    #print(names(varlist))
+   
      parfunct <- function(z, graph, method1, method2, comReal1, comReal2, N, 
                           measure, args1, args2, FUN1, FUN2)
      {
@@ -131,21 +105,7 @@ robinCompareFast <- function(graph,
             graphRList <- igraph::rewire(graph, 
                                 with=igraph::keeping_degseq(loops=FALSE,
                                                              niter=z))
-            
-            # comr1 <- robin::membershipCommunities(graph=graphRList,
-            #                                       method=method1,
-            #                                       FUN=FUN1,
-            #                                       directed=directed,
-            #                                       weights=weights,
-            #                                       steps=steps, 
-            #                                       spins=spins, 
-            #                                       e.weights=e.weights, 
-            #                                       v.weights=v.weights, 
-            #                                       nb.trials=nb.trials,
-            #                                       resolution=resolution,
-            #                                       objective_function = objective_function,
-            #                                       n_iterations=n_iterations)
-           
+          
             argsP <- c(list(graph=graphRList), method=method1, FUN=FUN1, args1)
             comr1 <- do.call(robin::membershipCommunities, argsP)
           
@@ -172,19 +132,7 @@ robinCompareFast <- function(graph,
             
             argsP <- c(list(graph=graphRList), method=method2, FUN=FUN2, args2)
             comr2 <- do.call(robin::membershipCommunities, argsP)
-            # comr2 <- robin::membershipCommunities(graph=graphRList, 
-            #                                       FUN=FUN2,
-            #                                       method=method2,
-            #                                       directed=directed,
-            #                                       weights=weights,
-            #                                       steps=steps, 
-            #                                       spins=spins, 
-            #                                       e.weights=e.weights, 
-            #                                       v.weights=v.weights, 
-            #                                       nb.trials=nb.trials,
-            #                                       resolution=resolution,
-            #                                       objective_function = objective_function,
-            #                                       n_iterations=n_iterations)
+          
             if(measure=="vi")
             {
                 
@@ -224,10 +172,10 @@ robinCompareFast <- function(graph,
     }
     
     
-    zlist <- BiocParallel::bplapply(vet, parfunct, graph=graph, measure=measure,
-                                    method1=method1, method2=method2, args1=args1, args2=args2,
-                                    comReal1=comReal1, N=N, comReal2=comReal2, FUN1=FUN1,
-                                    FUN2=FUN2, BPPARAM=BPPARAM)
+    zlist <- robin_lapply(vet, parfunct, graph=graph, measure=measure,
+                          method1=method1, method2=method2, args1=args1, args2=args2,
+                          comReal1=comReal1, N=N, comReal2=comReal2, FUN1=FUN1,
+                          FUN2=FUN2, BPPARAM=BPPARAM)
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
     
@@ -265,17 +213,17 @@ robinCompareFast <- function(graph,
 #' (that can be NULL), and has to return a community object.
 #' @param ... other parameter
 #' @param verbose flag for verbose output (default as TRUE)
-#' @param seed set seed (default seed=123)
-#' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
-#' specifies the back-end to be used for computations. See
-#'   \code{\link[BiocParallel]{bpparam}} for details.
+#' @param seed set seed (default seed=NULL)
+#' @param BPPARAM optional BiocParallel parameter object. If \code{NULL}
+#' (default), uses \code{parallel::mclapply} on Unix/macOS or sequential
+#' \code{lapply} on Windows. If a BiocParallel object is supplied and the
+#' \pkg{BiocParallel} package is installed, it will be used instead.
 #' 
 #' @return A list object with two matrices:
 #' - the matrix "Mean" with the means of the procedure for the graph
 #' - the matrix "MeanRandom" with the means of the procedure for the random graph. 
 #' 
 #' @import igraph
-#' @importFrom BiocParallel bplapply bpparam
 #' @keywords internal
 # @example my_file <- system.file("example/football.gml", package="robin")
 # graph <- prepGraph(file=my_file, file.format="gml")
@@ -288,18 +236,41 @@ robinRobustFast <- function(graph, graphRandom,
                                      "leadingEigen", "labelProp", "infomap",
                                      "optimal", "leiden", "other"), ..., FUN1=NULL, 
                             measure=c("vi", "nmi", "split.join","adjusted.rand"),
-                            seed=123,
-                            verbose=TRUE, BPPARAM=BiocParallel::bpparam())
+                            seed=NULL,
+                            verbose=TRUE, BPPARAM=NULL)
 {
     method <- match.arg(method)
     measure <- match.arg(measure)
-    set.seed(seed)
+    N <- igraph::vcount(graph)
+    if(!is.null(seed)){set.seed(seed)}
     comReal1 <- membershipCommunities(graph=graph, method=method,
                                       FUN=FUN1, ...=...)
+    
+     n_communitiesReal <- length(table(comReal1))
+    
+    if (n_communitiesReal == N) {
+        warning("Each community has only one node in the graph")
+    }
+    
+    if (n_communitiesReal == 1) {
+        warning("Only one community in the graph")
+    }
+    
     comReal2 <- membershipCommunities(graph=graphRandom, method=method,
-                                      FUN=FUN1, ...=...)
+                                       FUN=FUN1, ...=...)
+    # random network
+    n_communitiesRandom <- length(table(comReal2))
+    
+    if (n_communitiesRandom == N) {
+        warning("Each community has only one node in the graphRandom")
+    }
+    
+    if (n_communitiesRandom == 1) {
+        warning("Only one community in the graphRandom")
+    }
+    
+   
     de <- igraph::gsize(graph)
-    N <- igraph::vcount(graph)
     nRewire <- seq(0, 60, 5)
     if(verbose) cat("Detected robin method type independent\nIt can take time ... It depends on the size of the network.\n")
     vet1 <- seq(5, 60, 5) 
@@ -377,9 +348,9 @@ robinRobustFast <- function(graph, graphRandom,
         return(list("Measure1"=m1,"Measure2"=m2))
     }
     
-    zlist <- BiocParallel::bplapply(vet, FUN=parfunct, graph=graph, 
-            method=method, comReal1=comReal1, comReal2=comReal2, N=N, 
-            measure=measure, FUN1=FUN1, ...=..., BPPARAM=BPPARAM)
+    zlist <- robin_lapply(vet, FUN=parfunct, graph=graph,
+                          method=method, comReal1=comReal1, comReal2=comReal2, N=N,
+                          measure=measure, FUN1=FUN1, ...=..., BPPARAM=BPPARAM)
 
     Measure1 <- do.call(cbind, lapply(zlist, function(z) z$Measure1))
     Measure2 <- do.call(cbind, lapply(zlist, function(z) z$Measure2))
