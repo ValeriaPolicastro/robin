@@ -17,6 +17,7 @@ robinCompareFastWeight(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   rewire.w.type = "Rewire",
   verbose = TRUE,
+  seed = 123,
   BPPARAM = BiocParallel::bpparam()
 )
 }
@@ -51,6 +52,8 @@ see \code{\link{methodCommunity}}.}
 "Shuffle","Garlaschelli","Sum"}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
+
+\item{seed}{set seed (default seed=123)}
 
 \item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
 specifies the back-end to be used for computations. See

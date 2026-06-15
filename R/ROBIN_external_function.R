@@ -34,7 +34,7 @@
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
 #' @param verbose flag for verbose output (default as TRUE).
-#' 
+#' @param seed set seed (default seed=123)
 #' 
 #' @return A robin object a list with:
 #' - "Mean1" and "Mean2" matrices with the means of the procedure for the first 
@@ -69,10 +69,9 @@ robinCompare <-  function(graph,
                           args2=list(),
                           FUN1=NULL, FUN2=NULL,
                           measure=c("vi", "nmi","split.join", "adjusted.rand"),
-                          type="independent",
-                          verbose=TRUE, rewire.w.type="Rewire",
+                          type="independent", rewire.w.type="Rewire",
                           #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),dist="Other",
-                          BPPARAM=BiocParallel::bpparam())
+                          seed=123, verbose=TRUE, BPPARAM=BiocParallel::bpparam())
 {
     
     methods <- c(method1, method2)
@@ -83,7 +82,7 @@ robinCompare <-  function(graph,
        print("Weighted Network Parallel Function")
          output <- robinCompareFastWeight(graph=graph, method1=method1, args1=args1, 
             method2=method2, args2=args2, FUN1=FUN1, FUN2=FUN2, measure=measure, 
-            verbose=verbose,rewire.w.type=rewire.w.type, BPPARAM=BPPARAM) #dist=dist
+            seed=seed, verbose=verbose,rewire.w.type=rewire.w.type, BPPARAM=BPPARAM) #dist=dist
     } else {
         if(type=="dependent")
         {
@@ -91,13 +90,13 @@ robinCompare <-  function(graph,
            print("Unweighted Network No Parallel Function")
              output <- robinCompareNoParallel(graph=graph, method1=method1, args1=args1,
                                              method2=method2, args2=args2, measure=measure, 
-                                             type=type) 
+                                             type=type, seed=seed) 
         }else{
             print("Unweighted Network Parallel Function")
             output <- robinCompareFast(graph=graph, method1=method1, args1=args1, 
                                        method2=method2, args2=args2, 
                                        FUN1=FUN1, FUN2=FUN2, measure=measure, 
-                                       verbose=verbose,BPPARAM=BPPARAM)
+                                       seed=seed, verbose=verbose,BPPARAM=BPPARAM)
             
         }
         
@@ -145,6 +144,7 @@ robinCompare <-  function(graph,
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
 #' @param verbose flag for verbose output (default as TRUE).
+#' @param seed set seed (default seed=123)
 #' 
 #' @return A robin object a list with:
 #' - "Mean" and "MeanRandom" matrices with the means of the procedure for the 
@@ -174,7 +174,7 @@ robinRobust <-  function(graph, graphRandom,
                          type="independent",verbose=TRUE,
                          rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
                          #dist="Other",
-                             BPPARAM=BiocParallel::bpparam())
+                          seed=123, BPPARAM=BiocParallel::bpparam())
 {
 
     methods <- c("real data", "null model")
@@ -188,7 +188,7 @@ robinRobust <-  function(graph, graphRandom,
                                                       ...,
                                                       FUN1=FUN, measure=measure,
                                                       verbose=verbose,
-                                          rewire.w.type=rewire.w.type, 
+                                          rewire.w.type=rewire.w.type, seed=seed,
                                            #dist=dist,
                                           BPPARAM=BPPARAM)
     } else {
@@ -201,14 +201,14 @@ robinRobust <-  function(graph, graphRandom,
                                             method=method,
                                             ...,
                                             FUN=FUN, measure=measure,
-                                            type=type, verbose=verbose) 
+                                            type=type, seed=seed, verbose=verbose) 
         }else{
             print("Unweighted Network Parallel Function")
             # Parallel version: 
             output <- robinRobustFast(graph=graph, graphRandom=graphRandom, 
                                       method=method,
                                       ...,
-                                      FUN1=FUN, measure=measure,
+                                      FUN1=FUN, measure=measure, seed=seed,
                                       verbose=verbose,BPPARAM=BPPARAM)
         }
     }
@@ -222,11 +222,12 @@ return(outputRobin)
 #' random
 #'
 #' @description This function randomly rewires the edges while preserving the original graph's 
-#' degree distribution.
+#' degree distribution. For weighted graphs it rewires also the edges following
+#' the perturbation strategy rewire.w.type="Rewire". 
 #' @param graph The output of prepGraph.
-#' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
-#' "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
-#' "Sum" method only for continuous weights.  
+# Deciso solo con Rewire: @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
+# "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+# "Sum" method only for continuous weights.  
 # @param dist for weighted graph with "Garlaschelli" @rewire.w.type method. 
 # Option to rewire in a manner that retains overall graph weight regardless of 
 # distribution of edge weights. This option is invoked by putting any text into
@@ -243,12 +244,12 @@ return(outputRobin)
 #' graph <- prepGraph(file=my_file, file.format="gml")
 #' graphRandom <- random(graph=graph)
 
- random <- function(graph, rewire.w.type="Rewire", verbose=FALSE)
+ random <- function(graph, verbose=FALSE)
 {
     # Weigthed version
     if ( is_weighted(graph) )
     {
-        graphRandom <- randomWeight(graph=graph,rewire.w.type=rewire.w.type,
+        graphRandom <- randomWeight(graph=graph,rewire.w.type="Rewire",
                                     verbose=verbose)
     }else{
         graphRandom <- randomNoW(graph=graph, verbose=verbose)

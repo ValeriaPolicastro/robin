@@ -4,14 +4,10 @@
 \alias{random}
 \title{random}
 \usage{
-random(graph, rewire.w.type = "Rewire", verbose = FALSE)
+random(graph, verbose = FALSE)
 }
 \arguments{
 \item{graph}{The output of prepGraph.}
-
-\item{rewire.w.type}{for weighted graph. Option to rewire one of "Rewire",
-"Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
-"Sum" method only for continuous weights.}
 
 \item{verbose}{flag for verbose output (default as FALSE)}
 }
@@ -20,7 +16,8 @@ An igraph object, a randomly rewired graph.
 }
 \description{
 This function randomly rewires the edges while preserving the original graph's 
-degree distribution.
+degree distribution. For weighted graphs it rewires also the edges following
+the perturbation strategy rewire.w.type="Rewire".
 }
 \examples{
 my_file <- system.file("example/football.gml", package="robin")

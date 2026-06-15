@@ -9,6 +9,10 @@ randomWeight(graph, rewire.w.type = "Rewire", verbose = FALSE)
 \arguments{
 \item{graph}{The output of prepGraph.}
 
+\item{rewire.w.type}{method to rewire weighted graphs one of "Rewire",
+"Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
+"Sum" method only for continuous weights.}
+
 \item{verbose}{flag for verbose output (default as FALSE)}
 }
 \value{

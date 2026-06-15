@@ -15,6 +15,7 @@ robinCompareFast(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   FUN1 = NULL,
   FUN2 = NULL,
+  seed = 123,
   verbose = TRUE,
   BPPARAM = BiocParallel::bpparam()
 )
@@ -45,6 +46,8 @@ see \code{\link{methodCommunity}}.}
 
 \item{FUN2}{personal designed function when \code{method2} is "others". 
 see \code{\link{methodCommunity}}.}
+
+\item{seed}{set seed (default seed=123)}
 
 \item{verbose}{flag for verbose output (default as TRUE).}
 

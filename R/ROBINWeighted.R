@@ -353,6 +353,7 @@ robinCompareFastWeight <- function(graph,
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param ... other parameter
+#' @param seed set seed (default seed=123)
 #' @param rewire.w.type for weighted graph. Option to rewire one of "Rewire",
 #' "Shuffle","Garlaschelli","Sum"."Garlaschelli" method only for count weights,
 #' "Sum" method only for continuous weights. 
@@ -381,10 +382,12 @@ robinRobustFastWeighted <- function(graph, graphRandom,
                                     measure= c("vi", "nmi", "split.join", "adjusted.rand"),
                                     verbose=TRUE, rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
                                     #dist="Other",
+                                    seed=123,
                                     BPPARAM=BiocParallel::bpparam())
 {   
     method <- match.arg(method)
     measure <- match.arg(measure)
+    set.seed(seed)
     comReal1 <- membershipCommunities(graph=graph, method=method,
                                       FUN=FUN1, ...=...) 
     comReal2 <- membershipCommunities(graph=graphRandom, method=method,
@@ -502,7 +505,8 @@ robinRobustFastWeighted <- function(graph, graphRandom,
     colnames(Measure2) <- nRewire 
     return(list(Mean=Measure1,
                 MeanRandom=Measure2,
-                Communities=comReal1))
+                CommunitiesReal=comReal1,
+                CommunitiesRandom=comReal2))
     }
 
 

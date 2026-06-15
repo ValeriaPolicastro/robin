@@ -16,8 +16,9 @@ robinCompare(
   FUN2 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = "independent",
-  verbose = TRUE,
   rewire.w.type = "Rewire",
+  seed = 123,
+  verbose = TRUE,
   BPPARAM = BiocParallel::bpparam()
 )
 }
@@ -50,11 +51,13 @@ see \code{\link{methodCommunity}}.}
 
 \item{type}{The type of robin construction, dependent or independent.}
 
-\item{verbose}{flag for verbose output (default as TRUE).}
-
 \item{rewire.w.type}{for weighted graph. Option to rewire one of "Rewire",
 "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
 "Sum" method only for continuous weights.}
+
+\item{seed}{set seed (default seed=123)}
+
+\item{verbose}{flag for verbose output (default as TRUE).}
 
 \item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
 specifies the back-end to be used for computations. See

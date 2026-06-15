@@ -15,6 +15,7 @@ robinRobust(
   type = "independent",
   verbose = TRUE,
   rewire.w.type = c("Rewire", "Shuffle", "Garlaschelli", "Sum"),
+  seed = 123,
   BPPARAM = BiocParallel::bpparam()
 )
 }
@@ -45,6 +46,8 @@ The personal parameter has to take as input the @graph and the @weights
 \item{rewire.w.type}{for weighted graph. Option to rewire one of "Rewire",
 "Shuffle","Garlaschelli","Sum". "Garlaschelli" method only for count weights,
 "Sum" method only for continuous weights.}
+
+\item{seed}{set seed (default seed=123)}
 
 \item{BPPARAM}{the BiocParallel object of class \code{bpparamClass} that 
 specifies the back-end to be used for computations. See

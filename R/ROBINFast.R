@@ -22,6 +22,7 @@
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param verbose flag for verbose output (default as TRUE).
+#' @param seed set seed (default seed=123)
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details. 
@@ -50,7 +51,7 @@ robinCompareFast <- function(graph,
                                    "other"),
                          args2=list(),
                          measure= c("vi", "nmi", "split.join", "adjusted.rand"),
-                         FUN1=NULL, FUN2=NULL,
+                         FUN1=NULL, FUN2=NULL, seed=123,
                          verbose=TRUE, BPPARAM=BiocParallel::bpparam())
 {   
     method1 <- match.arg(method1)
@@ -58,6 +59,7 @@ robinCompareFast <- function(graph,
     measure <- match.arg(measure)
     args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
     args21 <- c(list(graph=graph), method=method2, FUN=FUN2, args2)
+    set.seed(seed)
     comReal1 <- do.call(robin::membershipCommunities, args11)
     comReal2 <- do.call(robin::membershipCommunities, args21)
     
@@ -263,6 +265,7 @@ robinCompareFast <- function(graph,
 #' (that can be NULL), and has to return a community object.
 #' @param ... other parameter
 #' @param verbose flag for verbose output (default as TRUE)
+#' @param seed set seed (default seed=123)
 #' @param BPPARAM the BiocParallel object of class \code{bpparamClass} that 
 #' specifies the back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
@@ -285,10 +288,12 @@ robinRobustFast <- function(graph, graphRandom,
                                      "leadingEigen", "labelProp", "infomap",
                                      "optimal", "leiden", "other"), ..., FUN1=NULL, 
                             measure=c("vi", "nmi", "split.join","adjusted.rand"),
+                            seed=123,
                             verbose=TRUE, BPPARAM=BiocParallel::bpparam())
 {
     method <- match.arg(method)
     measure <- match.arg(measure)
+    set.seed(seed)
     comReal1 <- membershipCommunities(graph=graph, method=method,
                                       FUN=FUN1, ...=...)
     comReal2 <- membershipCommunities(graph=graphRandom, method=method,
@@ -386,7 +391,8 @@ robinRobustFast <- function(graph, graphRandom,
     colnames(Measure2) <- nRewire 
     return(list(Mean=Measure1,
                 MeanRandom=Measure2,
-                Communities=comReal1))
+                CommunitiesReal=comReal1,
+                CommunitiesRandom=comReal2))
 }
 
 

@@ -272,7 +272,7 @@ rewireOnl <- function(data, number)
 #' procedure.
 #' @param ... other parameter
 #' @param verbose flag for verbose output (default as TRUE).
-#' 
+#' @param seed set seed (default seed=123)
 #' @return A list object with two matrices:
 #' - the matrix "Mean" with the means of the procedure for the graph
 #' - the matrix "MeanRandom" with the means of the procedure for the random graph. 
@@ -298,13 +298,14 @@ robinRobustNoParallel <- function(graph, graphRandom,
                 # steps=4, spins=25, e.weights=NULL, v.weights=NULL, 
                 # nb.trials=10, resolution=1, n_iterations=2,
                 # objective_function = c("CPM", "modularity"), 
-                verbose=TRUE)
+                seed=123, verbose=TRUE)
 {   
     measure <- match.arg(measure)
     type<- match.arg(type)
     method <- match.arg(method)
     # dots <- list(...)
      nrep <- 10
+    set.seed(seed)
     comReal <- membershipCommunities(graph=graph, method=method, 
                                     ...=...,
                                     FUN=FUN) # real network
@@ -665,7 +666,8 @@ robinRobustNoParallel <- function(graph, graphRandom,
     colnames(Mean) <- nRewire
     output <- list( Mean=Mean,
                     MeanRandom=MeanRandom,
-                    Communities=comReal
+                    CommunitiesReal=comReal,
+                    CommunitiesRandom=comRandom
                     )
       return(output)
 
@@ -696,6 +698,7 @@ robinRobustNoParallel <- function(graph, graphRandom,
 #' "adjusted.rand" all normalized and used as distances.
 #' "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.
 #' @param type The type of robin construction, dependent or independent.
+#' @param seed set seed (default seed=123)
 #' @param verbose flag for verbose output (default as TRUE).
 #' 
 #' @return A list object with two matrices:
@@ -724,7 +727,8 @@ robinCompareNoParallel <- function(graph,
                          args2=list(),
                          FUN1=NULL, FUN2=NULL,
                          measure= c("vi", "nmi","split.join", "adjusted.rand"),
-                         type=c("independent", "dependent"), verbose=TRUE)
+                         type=c("independent", "dependent"), seed=123,
+                         verbose=TRUE)
 {
     method1 <- match.arg(method1)
     method2 <- match.arg(method2)
@@ -734,6 +738,7 @@ robinCompareNoParallel <- function(graph,
     N <- igraph::vcount(graph)
     args11 <- c(list(graph=graph), method=method1, FUN=FUN1, args1)
     args21 <- c(list(graph=graph), method=method2, FUN=FUN2, args2)
+    set.seed(seed)
     comReal1 <- do.call(membershipCommunities, args11)
     comReal2 <- do.call(membershipCommunities, args21)
     

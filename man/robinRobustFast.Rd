@@ -12,6 +12,7 @@ robinRobustFast(
   ...,
   FUN1 = NULL,
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
+  seed = 123,
   verbose = TRUE,
   BPPARAM = BiocParallel::bpparam()
 )
@@ -35,6 +36,8 @@ The personal parameter has to take as input the @graph and the @weights
 \item{measure}{The stability measure, one of "vi", "nmi", "split.join", 
 "adjusted.rand" all normalized and used as distances.
 "nmi" refers to 1- nmi and "adjusted.ran" refers to 1-adjusted.rand.}
+
+\item{seed}{set seed (default seed=123)}
 
 \item{verbose}{flag for verbose output (default as TRUE)}
 
