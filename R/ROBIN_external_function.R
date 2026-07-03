@@ -103,7 +103,7 @@ robinCompare <-  function(graph,
         
     }
     # Adding arguments to label  
-    args1_flat <- unlist(args2)
+    args1_flat <- unlist(args1)
     if (length(args1_flat) > 0) {
         method1 <- paste(c(method1, rbind(names(args1_flat), args1_flat)), collapse = "_")
     }
@@ -183,7 +183,7 @@ robinRobust <-  function(graph, graphRandom,
                           ...,
                           FUN=NULL, measure= c("vi", "nmi","split.join", "adjusted.rand"),
                          type="independent",verbose=TRUE,
-                         rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),
+                         rewire.w.type="Rewire",
                          #dist="Other",
                           seed=NULL, BPPARAM=NULL)
 {
