@@ -14,7 +14,7 @@ robinRobust(
   measure = c("vi", "nmi", "split.join", "adjusted.rand"),
   type = "independent",
   verbose = TRUE,
-  rewire.w.type = c("Rewire", "Shuffle", "Garlaschelli", "Sum"),
+  rewire.w.type = "Rewire",
   seed = NULL,
   BPPARAM = NULL
 )
