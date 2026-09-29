@@ -61,204 +61,197 @@ randomWeight <- function(graph, rewire.w.type="Rewire", verbose=FALSE)
 rewireWeight <- function(data, number,rewire.w.type="Rewire")
                          #rewire.w.type=c("Rewire","Shuffle","Garlaschelli","Sum"),dist="Other")
 {
+  if(E(data)$weight>0){
+      
+      if(rewire.w.type=="Rewire"){
+          
+          print("Rewire and shuffling weight method")
+          
+          graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
+                                                                  niter=number))
+          NotChaged <- igraph::intersection(data, graphRewire)
+          newWeight <- sample(E(difference(data,graphRewire))$weight)
+          EdgeAggiunti <- E(difference(graphRewire,data))
+          gg <- difference(graphRewire,data)
+          E(gg)$weight <- newWeight
+          U <- union(gg,NotChaged)
+          E(U)$weight_1[which(is.na(E(U)$weight_1), arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight), arr.ind = TRUE)]
+          E(U)$weight <- E(U)$weight_1
+          U <- delete_edge_attr(U, "weight_1")
+          U <- delete_edge_attr(U, "weight_2")
+          return(U)
+      } else if(rewire.w.type=="Shuffle")
+      {
+          
+          print("Shuffle weight method")
+          indA <- sample(1:length(E(data)$weight),ceiling(number/2))
+          a <- E(data)$weight[indA]
+          indB <- sample(1:length(E(data)$weight), ceiling(number/2))
+          b <- E(data)$weight[indB]
+          E(data)$weight[indA] <- b
+          E(data)$weight[indB] <- a
+          return(data)
+          
+          
+      }else if(rewire.w.type=="Garlaschelli"){
+          # ONLY IF COUNT WEIGHT
+          if (length(E(data)$weight[round(E(data)$weight) != E(data)$weight])==0) {
+              # All weights are integers
+              print("Garlaschelli Method")
+              adj <- igraph::as_adjacency_matrix(data, attr="weight", sparse = FALSE)
+              gR <- as.matrix(perturbR::rewireR(adj, number,dist = "NegBinom"))
+              graphG <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
+                                                            mode="undirected")
+              return(graphG)  
+          } else {
+              stop("Error: Some edge weights are not counts.")
+          }
+          
+      }else{
+          # ONLY FOR CONTINOUS WEIGHT  
+          if (length(E(data)$weight[round(E(data)$weight) != E(data)$weight])==0) {
+              stop("Error: The edge weights are not continuous.")
+              
+          } else {
+              
+              
+              if (rewire.w.type != "Sum") {
+                  stop("Error: this script runs only Sum perturbation.")
+              }
+              print("Keep Sum and distribution weight method")
+              
+              
+              number=number/2
+              
+              
+              adj <- igraph::as_adjacency_matrix(
+                  data,
+                  attr = "weight",
+                  sparse = FALSE, 
+                  type = "upper"
+              )
+              
+              adj <- as.matrix(adj)
+              
+              
+              
+              candidate_id <- which(
+                  upper.tri(adj))
+              
+              
+              # Source cells: only existing edges
+              
+              source_id_all <- candidate_id[
+                  adj[candidate_id] > 0 
+              ]
+              
+    
+              
+              from_id <- sample(
+                  source_id_all,
+                  number,
+                  replace = FALSE
+              )
+              
+              from_values <- adj[from_id]
+              S <- sum(from_values)
+              
+              # Distribution built from selected source weights
+              
+              
+              
+              # Target cells: existing and non-existing edges
+              
+              to_id <- sample(
+                  candidate_id,
+                  number,
+                  replace = FALSE
+              )
+              
+              # Added mass already present in target cells,
+              # excluding cells selected as source edges
+              
+              Sadd <- sum(
+                  adj[base::setdiff(to_id, from_id)]
+              )
+              
+              target_sum <- S + Sadd
+              
+              # Rescale sampled weights to S + Sadd
+              dist_values <- adj[source_id_all]
+              
+              p_e <- dist_values/sum(dist_values)
+              
+              sampled_values <- sample(
+                  p_e,
+                  size = number,
+                  replace = FALSE
+              )
+              
+              
+              q=sampled_values/sum(sampled_values)
+              
+              new_values <- target_sum * q
+             
+              # Remove source edges
+              
+              adj[from_id] <- 0 
+              
+              
+              
+              # Reassign weights
+              
+              adj[to_id] <- new_values
+              
+              
+              
+              graphS <- igraph::graph_from_adjacency_matrix(
+                  adj,
+                  weighted = TRUE,
+                  mode = "upper",
+                  diag = FALSE
+              )
+              return(graphS) 
+              # Old:
+              # print("Keep Sum and distribution weight method")
+              # n_numbers <- E(data)$weight
+              # # Subset di p numeri (p <= length(n_numbers))
+              # p <- number
+              # index <- sample(1:length(E(data)$weight),p)
+              # p_subset <-  E(data)$weight[index]
+              # 
+              # # Funzione per ottenere un nuovo subset di p numeri mantenendo la somma e la distribuzione
+              # target_sum <- sum(p_subset) # La somma target da mantenere
+              # n_dist <- n_numbers / sum(n_numbers) # Distribuzione percentuale del set originale
+              # 
+              # # Campiona p numeri dalla distribuzione di n_numbers
+              # sampled_indices <- sample(1:length(n_numbers), p, replace = TRUE)
+              # sampled_dist <- n_dist[sampled_indices]
+              # 
+              # # Calcola i nuovi valori proporzionali alla distribuzione e alla somma target
+              # new_subset <- target_sum * (sampled_dist / sum(sampled_dist))
+              # 
+              # # Aggiusta leggermente i valori per assicurarsi che la somma sia esattamente quella target
+              # diff <- target_sum - sum(new_subset)
+              # adjustment <- diff / p
+              # new_subset <- new_subset + adjustment
+              # #new_subset <- round(new_subset)
+              # E(data)$weight[index] <- new_subset
+              # if(length(table(E(data)$weight == 0))>1){
+              #     #print("yes there are zeros")
+              #     E(data)$weight[which(E(data)$weight==0)] <- 0.00000001
+              # }
+              # return(data)  
+          }
+          
+      } 
+      
+  }else{
+      stop("Error: the graph has no positive weights.")
+      
+      
+  }
    
-    if(rewire.w.type=="Rewire"){
-        
-        print("Rewire and shuffling weight method")
-       
-        graphRewire <- igraph::rewire(data, with=keeping_degseq(loops=FALSE,
-                                                                niter=number))
-        NotChaged <- igraph::intersection(data, graphRewire)
-        newWeight <- sample(E(difference(data,graphRewire))$weight)
-        EdgeAggiunti <- E(difference(graphRewire,data))
-        gg <- difference(graphRewire,data)
-        E(gg)$weight <- newWeight
-        U <- union(gg,NotChaged)
-        E(U)$weight_1[which(is.na(E(U)$weight_1), arr.ind = TRUE)] <- E(U)$weight[which(!is.na(E(U)$weight), arr.ind = TRUE)]
-        E(U)$weight <- E(U)$weight_1
-        U <- delete_edge_attr(U, "weight_1")
-        U <- delete_edge_attr(U, "weight_2")
-        return(U)
-    } else if(rewire.w.type=="Shuffle")
-    {
-        
-    print("Shuffle weight method")
-    indA <- sample(1:length(E(data)$weight),ceiling(number/2))
-    a <- E(data)$weight[indA]
-    indB <- sample(1:length(E(data)$weight), ceiling(number/2))
-    b <- E(data)$weight[indB]
-    E(data)$weight[indA] <- b
-    E(data)$weight[indB] <- a
-    return(data)
-    
-
-    }else if(rewire.w.type=="Garlaschelli"){
-        # ONLY IF COUNT WEIGHT
-        if (length(E(data)$weight[round(E(data)$weight) != E(data)$weight])==0) {
-            # All weights are integers
-            print("Garlaschelli Method")
-            adj <- igraph::as_adjacency_matrix(data, attr="weight", sparse = FALSE)
-            gR <- as.matrix(perturbR::rewireR(adj, number,dist = "NegBinom"))
-            graphG <- igraph::graph_from_adjacency_matrix(gR,weighted = TRUE,
-                                                              mode="undirected")
-            return(graphG)  
-        } else {
-            stop("Error: Some edge weights are not counts.")
-        }
-        
-        }else{
-       # ONLY FOR CONTINOUS WEIGHT  
-            if (length(E(data)$weight[round(E(data)$weight) != E(data)$weight])==0) {
-                stop("Error: The edge weights are not continuous.")
-
-    } else {
-        
-      
-        if (rewire.w.type != "Sum") {
-            stop("Error: this script runs only Sum perturbation.")
-        }
-    #     if (number == 0) {
-    #     return(data)
-    #   }
-    #         
-    #         if (number < 0) {
-    #             stop("Error: number must be non-negative.")
-    #         }
-        number=number/2
-      
-        
-        adj <- igraph::as_adjacency_matrix(
-            data,
-            attr = "weight",
-            sparse = FALSE, 
-            type = "upper"
-        )
-        
-        adj <- as.matrix(adj)
-        
-        
-        
-        candidate_id <- which(
-            upper.tri(adj))
-        
-        # if (number > length(candidate_id)) {
-        #     stop("Error: number is larger than the number of candidate matrix cells.")
-        # }
-        
-        # Source cells: only existing edges
-        
-        source_id_all <- candidate_id[
-            adj[candidate_id] > 0 
-        ]
-        
-        if (length(source_id_all) == 0) {
-            stop("Error: the adjacency matrix has no positive weights.")
-        }
-        
-        if (number > length(source_id_all)) {
-            stop("Error: number is larger than the number of positive matrix cells.")
-        }
-        
-        from_id <- sample(
-            source_id_all,
-            number,
-            replace = FALSE
-        )
-        
-        from_values <- adj[from_id]
-        S <- sum(from_values)
-        
-        # Distribution built from selected source weights
-        
-        
-        
-        # Target cells: existing and non-existing edges
-        
-        to_id <- sample(
-            candidate_id,
-            number,
-            replace = FALSE
-        )
-        
-        # Added mass already present in target cells,
-        # excluding cells selected as source edges
-        
-        Sadd <- sum(
-            adj[base::setdiff(to_id, from_id)]
-        )
-        
-        target_sum <- S + Sadd
-        
-        # Rescale sampled weights to S + Sadd
-        dist_values <- adj[source_id_all]
-        
-        p_e <- dist_values / sum(dist_values)
-        
-        sampled_values <- sample(
-            p_e,
-            size = number,
-            replace = FALSE
-        )
-        
-        
-        q=sampled_values / sum(sampled_values)
-        
-        new_values <- target_sum * q
-        
-        
-        adj_1 = adj
-        # Remove source edges
-        
-        adj_1[from_id] <- 0 #150 elementi diversi
-        
-        
-        
-        # Reassign weights
-        
-        adj_1[to_id] <- new_values
-        
-        
-        
-        graphS <- igraph::graph_from_adjacency_matrix(
-            adj_1,
-            weighted = TRUE,
-            mode = 
-                "upper",
-            diag = FALSE
-        )
-        return(graphS) 
-        # print("Keep Sum and distribution weight method")
-        # n_numbers <- E(data)$weight
-        # # Subset di p numeri (p <= length(n_numbers))
-        # p <- number
-        # index <- sample(1:length(E(data)$weight),p)
-        # p_subset <-  E(data)$weight[index]
-        # 
-        # # Funzione per ottenere un nuovo subset di p numeri mantenendo la somma e la distribuzione
-        # target_sum <- sum(p_subset) # La somma target da mantenere
-        # n_dist <- n_numbers / sum(n_numbers) # Distribuzione percentuale del set originale
-        # 
-        # # Campiona p numeri dalla distribuzione di n_numbers
-        # sampled_indices <- sample(1:length(n_numbers), p, replace = TRUE)
-        # sampled_dist <- n_dist[sampled_indices]
-        # 
-        # # Calcola i nuovi valori proporzionali alla distribuzione e alla somma target
-        # new_subset <- target_sum * (sampled_dist / sum(sampled_dist))
-        # 
-        # # Aggiusta leggermente i valori per assicurarsi che la somma sia esattamente quella target
-        # diff <- target_sum - sum(new_subset)
-        # adjustment <- diff / p
-        # new_subset <- new_subset + adjustment
-        # #new_subset <- round(new_subset)
-        # E(data)$weight[index] <- new_subset
-        # if(length(table(E(data)$weight == 0))>1){
-        #     #print("yes there are zeros")
-        #     E(data)$weight[which(E(data)$weight==0)] <- 0.00000001
-        # }
-        # return(data)  
-    }
-    
-    } 
    
 }
 
