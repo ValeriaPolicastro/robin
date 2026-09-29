@@ -22,21 +22,27 @@ import(parallel)
 import(perturbR)
 import(qpdf)
 importFrom(DescTools,AUC)
-importFrom(grDevices,dev.off)
-importFrom(grDevices,dev.set)
-importFrom(grDevices,gray.colors)
-importFrom(grDevices,pdf)
-importFrom(grDevices,rgb)
+importFrom(grDevices,
+  dev.off,
+  dev.set,
+  gray.colors,
+  pdf,
+  rgb
+)
 importFrom(graphics,image)
 importFrom(igraph,vcount)
 importFrom(methods,is)
 importFrom(reshape2,melt)
-importFrom(stats,optim)
-importFrom(stats,optimize)
-importFrom(stats,qgamma)
-importFrom(stats,qnorm)
-importFrom(stats,rnorm)
-importFrom(stats,sd)
-importFrom(stats,var)
-importFrom(utils,read.table)
-importFrom(utils,tail)
+importFrom(stats,
+  optim,
+  optimize,
+  qgamma,
+  qnorm,
+  rnorm,
+  sd,
+  var
+)
+importFrom(utils,
+  read.table,
+  tail
+)
