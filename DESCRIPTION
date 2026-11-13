@@ -15,7 +15,7 @@ Description: Assesses the robustness of the community structure of a network
     different community detection algorithms the one that better fits the network
     of interest. Reference in Policastro V., Righelli D., Carissimo A., Cutillo
     L., De Feis I. (2021)
-    <https://journal.r-project.org/archive/2021/RJ-2021-040/index.html>.
+    <https://journal.r-project.org/articles/RJ-2021-040/index.html>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 URL: https://github.com/ValeriaPolicastro/robin
@@ -41,4 +41,4 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 2.1.0)
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1
