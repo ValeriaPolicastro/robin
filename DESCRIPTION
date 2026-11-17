@@ -1,6 +1,6 @@
 Package: robin
 Title: ROBustness in Network
-Version: 3.0.0
+Version: 3.0.1
 Authors@R: c(
     person("Valeria", "Policastro", role=c("aut", "cre"), email="valeria.policastro@gmail.com"),
     person("Dario", "Righelli", role=c("aut"), email="dario.righelli@gmail.com"),
@@ -13,9 +13,9 @@ Description: Assesses the robustness of the community structure of a network
     algorithms is statistically significant and compares the different selected
     detection algorithms on the same network. robin helps to choose among
     different community detection algorithms the one that better fits the network
-    of interest. Reference in Policastro V., Righelli D., Carissimo A., Cutillo
-    L., De Feis I. (2021)
-    <https://journal.r-project.org/articles/RJ-2021-040/index.html>.
+    of interest. Reference in Policastro et al.(2021)
+    <https://journal.r-project.org/articles/RJ-2021-040/index.html>, Policastro et al.(2025)
+    <https://academic.oup.com/bioinformaticsadvances/article/5/1/vbaf184/8223220>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 URL: https://github.com/ValeriaPolicastro/robin
