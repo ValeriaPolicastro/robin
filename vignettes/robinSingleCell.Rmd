@@ -1,0 +1,174 @@
+---
+title: "Seurat Single cell Analysis with robin"
+author: "Valeria Policastro"
+date: "`r Sys.Date()`"
+output:
+  knitr:::html_vignette:
+    toc: yes
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{RobinSingleCellVignette}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+
+# Single cell RNAseq Analysis
+
+## Package loading 
+
+```{r, message=FALSE}
+
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(mclust)
+library(robin)
+```
+
+## Reading data 
+
+```{r}
+tabMur <- system.file("example/filtered_tabulamuris_mtx.rds", package="robin")
+tabData <- readRDS(file=tabMur)
+
+SingleCellData <- CreateSeuratObject(counts = tabData, project = "singleCell", min.cells = round(dim(tabData)[2]*5/100), min.features = 0)
+SingleCellData 
+```
+
+## Data normalization
+
+```{r}
+
+SingleCellData <- NormalizeData(SingleCellData, normalization.method = "LogNormalize", scale.factor = 10000)
+
+SingleCellData[["RNA"]]@layers$counts[1:5,1:5]
+
+
+```
+
+## Feature selection 
+
+```{r}
+
+SingleCellData <- FindVariableFeatures(object = SingleCellData, selection.method="vst", nfeatures = 2000)
+
+
+```
+
+## Scale the data 
+
+```{r}
+SingleCellData <- ScaleData(SingleCellData, do.center = TRUE, do.scale = TRUE)
+SingleCellData[["RNA"]]@layers$scale.data[1:5,1:5]
+```
+
+
+## Linear dimension reduction
+
+```{r}
+
+SingleCellData <- RunPCA(SingleCellData, features = VariableFeatures(object = SingleCellData))
+```
+
+
+## Graph 
+
+```{r}
+
+SingleCellData <- FindNeighbors(SingleCellData, dims = 1:50) 
+
+SingleCellData@graphs$RNA_snn[1:5,1:5] # Adjacency matrix
+```
+
+
+# How to use Robin
+
+## Reading Graph
+
+```{r}
+
+
+AdjSNN <- SingleCellData@graphs$RNA_snn
+graphSingleCell <- graph_from_adjacency_matrix(AdjSNN,mode="directed",weighted = TRUE,add.colnames = "NA",diag=FALSE)
+edge <- as_edgelist(graphSingleCell)
+graph <- igraph::graph_from_edgelist(edge, directed=FALSE)
+graph <- igraph::simplify(graph)
+graph
+
+```
+
+
+
+## Compare all algorithms vs Louvain
+
+We apply the compare procedure to see which is the algorithm that better fits our network.
+
+```{r}
+#Infomap
+ comp_I <- robinCompare(graph=graph, method1="louvain",
+                        method2="infomap")
+
+#Walktrap
+comp_W <- robinCompare(graph=graph, method1="louvain",
+                       method2="walktrap")
+
+#LabelProp
+comp_La <- robinCompare(graph=graph, method1="louvain",
+                        method2="labelProp")
+
+#Fastgreedy
+comp_F <- robinCompare(graph=graph, method1="louvain",
+                        method2="fastGreedy")
+
+plotMultiCompare(comp_F,comp_La, comp_I, comp_W)
+
+```
+
+
+The lowest curve is the most stable algorithm. Louvain and Walktrap are the best algorithms in our example. 
+
+
+
+## Statistical significance of communities
+
+Due to the fact that Louvain is one of the best algorithm for our network we apply the robust procedure with the Louvain algorithm to see if the communities detected are statistically significant.
+
+```{r}
+graphRandom <- random(graph=graph)
+proc <- robinRobust(graph=graph, graphRandom=graphRandom, method="louvain")
+
+plot(proc)
+
+robinFDATest(proc)
+
+robinGPTest(proc)
+
+
+set.seed(100)
+cluster_louvain(graph)
+mc <- membershipCommunities(graph=graph, method="louvain")
+```
+
+The communities given by Louvain are statistically significant.
+
+# Differential Analysis  (Marker Gene Identification)
+
+Once we found the best clustering algorithm, we can use the found communities
+for identifying marker genes, to subsequently find cell types.
+
+```{r, message=FALSE}
+
+SingleCellData$seurat_clusters = mc
+Idents(SingleCellData) <- "seurat_clusters"
+markers <- FindAllMarkers(SingleCellData, only.pos = TRUE, logfc.threshold = 0.25)
+
+markers %>%
+    group_by(cluster) %>%
+    dplyr::filter(avg_log2FC > 1) %>%
+    slice_head(n = 10) %>%
+    ungroup() -> top10
+DoHeatmap(SingleCellData, features = top10$gene) + NoLegend()
+```
+
+
