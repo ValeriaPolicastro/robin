@@ -74,9 +74,9 @@ robinGPTest(comp)
 ```
 
 ## Reference
-
-ROBustness In Network (robin): an R package for Comparison and Validation of communities Valeria Policastro, Dario Righelli, Annamaria Carissimo, Luisa Cutillo, Italia De Feis. The R Journal (2021) <https://journal.r-project.org/articles/RJ-2021-040/index.html>
-
+- ROBustness In Network (robin): an R package for Comparison and Validation of communities. Valeria Policastro, Dario Righelli, Annamaria Carissimo, Luisa Cutillo, Italia De Feis. The R Journal (2021) <https://journal.r-project.org/articles/RJ-2021-040/index.html>
+- robin2: accelerating single-cell data clustering evaluation. Valeria Policastro, Dario Righelli, Luisa Cutillo, Annamaria Carissimo,  Bioinformatics Advances, Volume 5, Issue 1, 2025, vbaf184,<https://doi.org/10.1093/bioadv/vbaf184>
+  
 ## License
 
 [Copyright (c) 2019 V. Policastro, A. Carissimo, L. Cutillo, I. De Feis and D. Righelli.](https://github.com/ValeriaPolicastro/robin/blob/master/LICENSE)
